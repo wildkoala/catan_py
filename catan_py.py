@@ -89,22 +89,16 @@ def player_turn():
 #========================================================
 
 if __name__ == "__main__": 
-    print("catan_py invoked directly!!")
+  #print("catan_py invoked directly!!")
 
-    # this should be a function
-    num_players = int(input("Press Enter the number of players\n"))
-    player_list = []; # this will be a list of Player objects
-
-'''
-else: 
-    print("catan_py was imported")
-'''
-
-i = 0
-while i < num_players:
-  name = input("Please Enter Player " + (i + 1) + "'s Name")
-  player_list[i] = Player(name) # need the classes file for this to be defined
-  i+=1
+  # this should be a function
+  num_players = int(input("Press Enter the number of players\n"))
+  player_list = [] # this will be a list of Player objects
+  i = 0
+  while i < num_players:
+    name = input("Please Enter Player " + str((i + 1)) + "'s Name\n")
+    player_list.append(classes.Player(name))
+    i+=1
 
 # most of this should be wrapped up in a "setup" function
 points_to_win = int(input("Press Enter the Amount of Points Required to Win\n"))
@@ -112,18 +106,18 @@ points_to_win = int(input("Press Enter the Amount of Points Required to Win\n"))
 winner = 0
 current_player_turn = 0
 
-my_card = Card("B") # need the classes file for this to be defined
+my_card = classes.Card("B") # need the classes file for this to be defined
 player_list[0].add_card(my_card)
 player_list[0].add_card(my_card)
 player_list[0].add_card(my_card)
 
-my_card2 = Card("L")
+my_card2 = classes.Card("L")
 player_list[0].add_card(my_card2)
 player_list[0].add_card(my_card2)
 player_list[0].add_card(my_card2)
 player_list[0].add_card(my_card2)
 
-my_card3 = Card("C")
+my_card3 = classes.Card("C")
 player_list[0].add_card(my_card3)
 
 
