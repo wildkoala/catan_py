@@ -10,14 +10,14 @@
 #/* Requirements and Exports */
 #Fuck this shit
 #var game = require('./catan_js.js');
-from catan_py.py import game
+import catan_py
 import random;
 
 class Player:
 
   def __init__(self, name):
     self.p_name = name
-    self.p_hand = []
+    self.p_hand = [] # this is a list of cards
     self.p_color = ""
     self.p_victory_pts = 0
     self.p_dev_cards = []
@@ -27,7 +27,7 @@ class Player:
 
   def show_hand(self):
     for i in range(0, len(self.p_hand)):
-      print("Resource: " + self.p_hand[i])
+      print("Resource: " + self.p_hand[i].resource)
 
   def add_card(self, new_card):
     self.p_hand.insert(len(self.p_hand), new_card)
