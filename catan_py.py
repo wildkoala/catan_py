@@ -16,154 +16,139 @@ import random
 import classes
 import build_items
 
+
 #========================================================
-# FUNCTION DECLARATIONS */
+# FUNCTION DECLARATIONS
 #========================================================
 
-def roll_dice(){
+def robber(player_list):
+  print("Robber has been called")
+
+  # Loop checks to see if any players have 7 or more cards
+  for i in player_list.length:
+    if player_list[i].p_hand.length >= 7: 
+      print(player_list[i].p_name + " Please discard half your cards")
+
+def roll_dice():
     x = random.randint(1, 6) 
     y = random.randint(1, 6) 
     return x + y
-}
 
 
-def increment_player_turn() {
-  current_player_turn = (current_player_turn + 1) % num_players;
-}
+def increment_player_turn():
+  current_player_turn = (current_player_turn + 1) % num_players
 
 
-def player_menu() {
-  print('Here are your options: \n' +
-    '   1. View your hand \n' +
-    '   2. Buy a road \n' +
-    '   3. Buy a settlement\n' +
-    '   4. Upgrade a settlement to a city\n' +
-    '   5. Buy a development card\n' +
-    '   6. Trade with a player\n' +
-    '   7. Trade with the bank (4 for 1)\n' +
-    '   8. Trade using a port\n' +
-    '   0. End Turn\n'
-  )
-}
+def player_menu():
+  print(
+'''
+		1. View your hand
+		2. Buy a road
+		3. Buy a settlement
+		4. Upgrade a settlement to a city
+		5. Buy a development card
+		6. Trade with a player
+		7. Trade with the bank (4 for 1)
+		8. Trade using a port
+'''
+    )
 
-def player_turn() {
+def player_turn():
+  user_input = input("Press Enter to Roll Die\n")
+  roll = roll_dice()
+  print(roll + " has been rolled")
 
-  
-  user_input = input("Press Enter to Roll Die\n");
-  var roll = roll_dice();
-  console.log(roll + " has been rolled\n");
+  #Check to see if robber() should be called
+  if roll == 7:
+    robber()
 
-  //Check to see if robber() is called
-  if (roll == 7)
-    robber();
+  #Player Selects an Option
+  selection = -1
+  while selection != 0:
+    player_menu()
+    selection = int(input("Please Select One"))
 
-  //Player Selects an Option
-  var selection = -1;
-  do {
-    player_menu();
-    selection = prompt("Please Select One");
-
-    if (selection == 1) {
-      player_list[current_player_turn].show_hand();
-    }
-    else if (selection == 2) {
+    if selection == 1:
+      player_list[current_player_turn].show_hand()
+    
+    elif selection == 2:
       build_road(player_list[current_player_turn])
-    }
-    else if (selection == 3) {
-      build_settlement(player_list[current_player_turn]);
-    }
-    else if (selection == 4) {
-      build_city(player_list[current_player_turn]);
-    }
-    else if (selection == 5) {
-      build_dev_card(player_list[current_player_turn]);
-    }
-  } while (selection != 0);
-}
-
-
-///////////////////////////
-//
-//  This is the start of the game
-//
-//////////////////////////
-
-// A lot of this should be moved into the testing.js file.
-
-var num_players;
-
-num_players = prompt("Press Enter the number of players\n");
-
-var player_list = [num_players];
-
-
-// the why robber() is written, it is dependent on player_list being defined
-// in the global scope. So it must be placed after the player_list definition
-// in the code and makes it kind of messy. Maybe should take a player_list argument?
-function robber() {
-  console.log("Robber has been called\n");
-
-//Loop checks to see if any players have 7 or more cards
-  for (var i = 0; i < player_list.length; i++) {
-    if (player_list[i].p_hand.length >= 7) {
-      console.log(player_list[i].p_name + " Please discard half your cards");
-    }
-  }
-}
-
-// objects do not need declaration as var (seen as a container for variables)
-for (var i = 0; i < num_players; i++) {
-  var name = prompt("Please Enter Player " + (i + 1) + "'s Name");
-  player_list[i] = new Player(name);
-}
-
-var points_to_win;
-
-points_to_win = prompt("Press Enter the Amount of Points Required to Win\n");
-
-var winner = 0;
-var current_player_turn = 0;
-
-my_card = new Card("B");
-player_list[0].add_card(my_card);
-player_list[0].add_card(my_card);
-player_list[0].add_card(my_card);
-
-my_card2 = new Card("L");
-player_list[0].add_card(my_card2);
-player_list[0].add_card(my_card2);
-player_list[0].add_card(my_card2);
-player_list[0].add_card(my_card2);
-
-my_card3 = new Card("C");
-player_list[0].add_card(my_card3);
-
-
-do {
   
-  if (player_list[current_player_turn].show_victory_pts() >= points_to_win) {
-    console.log(player_list[current_player_turn].present() + " wins");
-    winner = 1;
-  }
+    elif selection == 3:
+      build_settlement(player_list[current_player_turn])
+    
+    elif selection == 4:
+      build_city(player_list[current_player_turn])
+    
+    elif selection == 5:
+      build_dev_card(player_list[current_player_turn])
 
-  console.log(player_list[current_player_turn].present() + " it is your turn\n");
+
+#========================================================
+# START OF GAME
+#========================================================
+
+if __name__ == "__main__": 
+    print("catan_py invoked directly!!")
+
+    # this should be a function
+    num_players = int(input("Press Enter the number of players\n"))
+    player_list = []; # this will be a list of Player objects
+
+'''
+else: 
+    print("catan_py was imported")
+'''
+
+i = 0
+while i < num_players:
+  name = input("Please Enter Player " + (i + 1) + "'s Name")
+  player_list[i] = Player(name) # need the classes file for this to be defined
+  i+=1
+
+# most of this should be wrapped up in a "setup" function
+points_to_win = int(input("Press Enter the Amount of Points Required to Win\n"))
+
+winner = 0
+current_player_turn = 0
+
+my_card = Card("B") # need the classes file for this to be defined
+player_list[0].add_card(my_card)
+player_list[0].add_card(my_card)
+player_list[0].add_card(my_card)
+
+my_card2 = Card("L")
+player_list[0].add_card(my_card2)
+player_list[0].add_card(my_card2)
+player_list[0].add_card(my_card2)
+player_list[0].add_card(my_card2)
+
+my_card3 = Card("C")
+player_list[0].add_card(my_card3)
+
+
+while(winner == 0):
+  if player_list[current_player_turn].show_victory_pts() >= points_to_win:
+    print(player_list[current_player_turn].present() + " wins")
+    winner = 1
+
+  print(player_list[current_player_turn].present() + " it is your turn\n");
 
   player_turn();
-//Increments to the next player
+#Increments to the next player
   increment_player_turn();
 
-  //Debug Purpose
-  //console.log(selection + "\n");
-} while(winner == 0);
+  #Debug Purpose
+  #console.log(selection + "\n");
 
 
 
 
 
-//If 7 is rolled then robber effects players with more than 7 cards and blocked tile
+#If 7 is rolled then robber effects players with more than 7 cards and blocked tile
 
-/* PSEUDO CODE */
-
+# PSEUDO CODE
+'''
 //my_tile = new Tile("W", 5);
 //console.log(my_tile.present());
 // their methods can be accessed like this.
@@ -217,8 +202,8 @@ function player_menu(){
 		7. Trade with the bank (4 for 1)
 		8. Trade using a port
 }
-function show_hand(player){}
-function robber(){}
+show_hand(player)
+robber()
 
 We need to figure out how we're going to describe where people want to place their roads and where they want to place their settlements
 I think we should specify which corners of a tile are open with "O" for open.
@@ -230,10 +215,4 @@ What will clients send?
 
 How do i draw multiple tiles? I think I might just have 2 defined board sizes, and just populate the board randomly at the start of the game.
 
-
-How do i 
-
-
-*/
-
-module.exports.roll_dice = roll_dice;
+'''
