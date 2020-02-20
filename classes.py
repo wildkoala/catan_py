@@ -10,8 +10,8 @@
 #/* Requirements and Exports */
 #Fuck this shit
 #var game = require('./catan_js.js');
-
-#import catan_py.py
+from catan_py.py import game
+import random;
 
 class Player:
 
@@ -27,81 +27,78 @@ class Player:
 
   def show_hand(self):
     for i in range(0, len(self.p_hand)):
-      self.p_hand[i].present()
+      print("Resource: " + self.p_hand[i])
 
   def add_card(self, new_card):
-    self.p_hand.push(new_card)
+    self.p_hand.insert(len(self.p_hand), new_card)
   
 	#returns how many victory points a player has
   def show_victory_pts(self):
     return self.p_victory_pts
 
-'''
 
-class Card {
-  constructor(resource) {
-    this.resource = resource;
-  }
-  present() {
-    console.log("Resource: " + this.resource);
-  }
-}
+class Card:
+  def __init__(self, resource):
+    self.resource = resource
 
-// Partial implementation
-class Board {
-  constructor(size) {
-    this.size = size;
-  }
-  present() {
-    console.log("This board is " + this.size + " tiles large");
-  }
-}
+  def present(self):
+    print("Resource: " + self.resource)
 
-class Tile {
-  constructor(resource, number) {
-    this.resource = resource;
-    this.number = number;
-  }
-  present() {
+
+
+
+#Partial implementation
+class Board:
+  def __init__(self, size):
+    self.size = size
+
+  def present(self):
+    print("This board is " + self.size + " tiles large")
+ 
+
+
+class Tile:
+  def __init__(self, resource, number):
+    self.resource = resource;
+    self.number = number;
+
+#Need to look up proper syntax to create this format in python
+  '''def present(self):
     const format = `   _____
   /     \\ 
  /       \\ 
 (    ` + this.resource + `    )
  \\   ` + this.number + `   /
-  \\_____/`;
+  \\_____/`
+  
     return format;
-  }
-}
+  '''
 
-function random_tile(){
-  var tile_r;
-  var tile_n;
 
-  // Determine the resource
-  var x = Math.floor((Math.random() * 5) + 1); // gives random number between 1 and 5
-  if (x == 1){
-    tile_r = "O";
-  }
-  if (x == 2){
-    tile_r = "W";
-  }
-  if (x == 3){
-    tile_r = "B";
-  }
-  if (x == 4){
-    tile_r = "L";
-  }
-  if (x == 5){
-    tile_r = "S";
-  }
 
-  // Determine the number, 7's not allowed
-  tile_n = game.roll_dice(); 
-  while(tile_n == 7){
-    tile_n = game.roll_dice();
-  }
-  rand_tile = new Tile(tile_r, tile_n);
-  //return rand_tile;
-  console.log(rand_tile.present());
-}
-'''
+def random_tile():
+  tile_r = ""
+  tile_n = -1
+
+  #Determine the resource
+  x = random.randint(1, 6)  #gives random number between 1 and 5
+  if (x == 1):
+    tile_r = "O"
+  if (x == 2):
+    tile_r = "W"
+  if (x == 3):
+    tile_r = "B"
+  if (x == 4):
+    tile_r = "L"
+  if (x == 5):
+    tile_r = "S"
+
+  #Determine the number, 7's not allowed
+  tile_n = game.roll_dice()
+  while(tile_n == 7):
+    tile_n = game.roll_dice()
+  rand_tile = Tile(tile_r, tile_n)
+  return rand_tile;
+  #Need to finish present method in tile class
+  #print(rand_tile.present());
+
