@@ -88,10 +88,10 @@ def player_turn():
 # START OF GAME
 #========================================================
 
-if __name__ == "__main__": 
-  #print("catan_py invoked directly!!")
 
+def setup():
   # this should be a function
+  print("catan_py invoked directly!!")
   num_players = int(input("Press Enter the number of players\n"))
   player_list = [] # this will be a list of Player objects
   i = 0
@@ -101,36 +101,36 @@ if __name__ == "__main__":
     i+=1
 
 # most of this should be wrapped up in a "setup" function
-points_to_win = int(input("Press Enter the Amount of Points Required to Win\n"))
+  points_to_win = int(input("Press Enter the Amount of Points Required to Win\n"))
 
-winner = 0
-current_player_turn = 0
+  winner = 0
+  current_player_turn = 0
 
-my_card = classes.Card("B") # need the classes file for this to be defined
-player_list[0].add_card(my_card)
-player_list[0].add_card(my_card)
-player_list[0].add_card(my_card)
+  my_card = classes.Card("B") # need the classes file for this to be defined
+  player_list[0].add_card(my_card)
+  player_list[0].add_card(my_card)
+  player_list[0].add_card(my_card)
 
-my_card2 = classes.Card("L")
-player_list[0].add_card(my_card2)
-player_list[0].add_card(my_card2)
-player_list[0].add_card(my_card2)
-player_list[0].add_card(my_card2)
+  my_card2 = classes.Card("L")
+  player_list[0].add_card(my_card2)
+  player_list[0].add_card(my_card2)
+  player_list[0].add_card(my_card2)
+  player_list[0].add_card(my_card2)
 
-my_card3 = classes.Card("C")
-player_list[0].add_card(my_card3)
+  my_card3 = classes.Card("C")
+  player_list[0].add_card(my_card3)
 
 
-while(winner == 0):
-  if player_list[current_player_turn].show_victory_pts() >= points_to_win:
-    print(player_list[current_player_turn].present() + " wins")
-    winner = 1
+  while(winner == 0):
+    if player_list[current_player_turn].show_victory_pts() >= points_to_win:
+      print(player_list[current_player_turn].present() + " wins")
+      winner = 1
 
-  print(player_list[current_player_turn].present() + " it is your turn\n");
+    print(str(player_list[current_player_turn].present()) + " it is your turn\n");
 
-  player_turn();
+    player_turn();
 #Increments to the next player
-  increment_player_turn();
+    increment_player_turn();
 
   #Debug Purpose
   #console.log(selection + "\n");
@@ -210,3 +210,7 @@ What will clients send?
 How do i draw multiple tiles? I think I might just have 2 defined board sizes, and just populate the board randomly at the start of the game.
 
 '''
+
+if __name__ == "__main__": 
+  setup()
+  #print("catan_py invoked directly!!")
