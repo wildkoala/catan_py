@@ -1,6 +1,6 @@
 
 #========================================================
-#FILE PURPOSE: 
+#FILE PURPOSE:
 #  - The functions contained in this file will directly pertain to the game loop.
 #========================================================
 
@@ -10,10 +10,10 @@
 #========================================================
 
 #========================================================
-# Requirements and Exports 
+# Requirements and Exports
 #========================================================
 import random
-import classes
+import catan_classes
 import items
 
 
@@ -21,26 +21,26 @@ import items
 # FUNCTION DECLARATIONS
 #========================================================
 
-def robber(player_list):
-  print("Robber has been called")
+def robber():
+    print("Robber has been called")
 
-  # Loop checks to see if any players have 7 or more cards
-  for i in player_list.length:
-    if player_list[i].p_hand.length >= 7: 
-      print(player_list[i].p_name + " Please discard half your cards")
+    # Loop checks to see if any players have 7 or more cards
+    for i in player_list:
+        if len(i.p_hand) >= 7:
+            print(i.p_name + " Please discard half your cards")
 
 def roll_dice():
-    x = random.randint(1, 6) 
-    y = random.randint(1, 6) 
+    x = random.randint(1, 6)
+    y = random.randint(1, 6)
     return x + y
 
 
 def increment_player_turn(current_player_turn, num_players):
-  return (current_player_turn + 1) % num_players
+    return (current_player_turn + 1) % num_players
 
 
 def player_menu():
-  print(
+    print(
 '''
 		1. View your hand
 		2. Buy a road
@@ -50,41 +50,57 @@ def player_menu():
 		6. Trade with a player
 		7. Trade with the bank (4 for 1)
 		8. Trade using a port
-    '''
+        0. End Turn
+'''
     )
 
-def player_turn(a_player):
-  user_input = input("Press Enter to Roll Die")
-  roll = roll_dice()
-  print(str(roll) + " has been rolled")
+def player_turn(player, points_to_win):
+    print(str(player.present()) + " it is your turn")
 
-  #Check to see if robber() should be called
-  if roll == 7:
-    robber()
+    user_input = input("Press Enter to Roll Die")
+
+    roll = roll_dice()
+
+    print(str(roll) + " has been rolled")
+
+    #Check to see if robber() should be called
+    if roll == 7:
+        robber()
 
   #Player Selects an Option
-  selection = -1
-  while selection != 0:
-    player_menu()
-    selection = int(input("Please Select One\n"))
+    selection = -1
+    while selection != 0:
+        player_menu()
+        selection = int(input("Please Select One\n"))
 
-    if selection == 1:
-      a_player.show_hand()
-    
-    elif selection == 2:
-      build_road(a_player)
-  
-    elif selection == 3:
-      build_settlement(a_player)
-    
-    elif selection == 4:
-      build_city(a_player)
-    
-    elif selection == 5:
-      build_dev_card(a_player)
+        if selection == 1:
+            player.show_hand()
 
+        elif selection == 2:
+            build_road(player)
 
+        elif selection == 3:
+            build_settlement(player)
 
+        elif selection == 4:
+            build_city(player)
+
+        elif selection == 5:
+            build_dev_card(player)
+
+        elif selection == 6:
+            print("Trade with Player")
+
+        elif selection == 7:
+            print("Trade with bank")
+
+        elif selection == 8:
+            print("Trade using a port")
+
+        if (player.show_victory_pts() >= points_to_win):
+            return True
+
+    return False
 
 #========================================================
 # START OF GAME
@@ -92,51 +108,21 @@ def player_turn(a_player):
 
 
 def setup():
+    num_players = int(input("Please enter the number of players\n"))
 
-  draw_tile()
-  # this should be a function
-  
-  num_players = int(input("Please enter the number of players\n"))
-  player_list = [] # this will be a list of Player objects
-  i = 0
-  while i < num_players:
-    name = input("Please Enter Player " + str((i + 1)) + "'s Name\n")
-    player_list.append(classes.Player(name))
-    i+=1
+    player_list = [] # this will be a list of Player objects
+
+    i = 0
+
+    while i < num_players:
+        name = input("Please Enter Player " + str((i + 1)) + "'s Name\n")
+        player_list.append(catan_classes.Player(name))
+        i+=1
 
 # most of this should be wrapped up in a "setup" function
-  points_to_win = int(input("Press Enter the Amount of Points Required to Win\n"))
+    points_to_win = int(input("Enter the Amount of Points Required to Win\n"))
 
-  winner = 0
-  current_player_turn = 0
-
-  my_card = classes.Card("B") # need the classes file for this to be defined
-  player_list[0].add_card(my_card)
-  player_list[0].add_card(my_card)
-  player_list[0].add_card(my_card)
-
-  my_card2 = classes.Card("L")
-  player_list[0].add_card(my_card2)
-  player_list[0].add_card(my_card2)
-  player_list[0].add_card(my_card2)
-  player_list[0].add_card(my_card2)
-
-  my_card3 = classes.Card("C")
-  player_list[0].add_card(my_card3)
-
-
-  while(winner == 0):
-    if player_list[current_player_turn].show_victory_pts() >= points_to_win:
-      print(player_list[current_player_turn].present() + " wins")
-      winner = 1
-
-    # this should be part of the player_turn function
-    print(player_list[current_player_turn].p_name + " it is your turn")
-
-    player_turn(player_list[current_player_turn])
-    
-    #Increments to the next player
-    increment_player_turn()
+    return (player_list, points_to_win)
 
   #Debug Purpose
   #console.log(selection + "\n");
@@ -157,8 +143,8 @@ def setup():
 /*
 console.log(
 `   _____
-  /     \\ 
- /       \\ 
+  /     \\
+ /       \\
 (    ` + "W" + `    )
  \\       /
   \\_____/`);
@@ -207,7 +193,7 @@ robber()
 
 We need to figure out how we're going to describe where people want to place their roads and where they want to place their settlements
 I think we should specify which corners of a tile are open with "O" for open.
-I think we need some colors in this game, even though its a terminal... can we do that? 
+I think we need some colors in this game, even though its a terminal... can we do that?
 How else will we specify who has a corner? Is the first letter of the player name okay? What if there are two players with the same name?
 Wouldn't that be confusing with the resources?
 
@@ -225,16 +211,31 @@ if the player has a road that touches the start node
 		if any other road.owned_by == Player setting road
 		return True
 '''
-if __name__ == "__main__": 
-  setup() 
+if __name__ == "__main__":
+    #Setup the game and return player_list and amount of points to win
+    game_specifications = setup()
+
+    #Store player_list and points to win in variables
+    player_list = game_specifications[0]
+    points_to_win = game_specifications[1]
+    curr_player_turn = 0
+
+    winner = False
+
+    while winner == False:
+
+        #Declare whos turn it is in the game
+        winner = player_turn(player_list[curr_player_turn], points_to_win)
+
+        curr_player_turn = increment_player_turn(curr_player_turn, len(player_list))
+
+
   # accept connections
   # first menu
   # set options
-  # create board 
+  # create board
   # create players
 
   # while winner != 1:
     #player_turn
     #check_win
-
-  
