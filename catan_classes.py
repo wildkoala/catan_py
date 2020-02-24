@@ -15,7 +15,7 @@ import random
 class Player:
     def __init__(self, name, color):
         self.p_name = name
-        self.p_hand = "" # this is a list of cards. Cards changed to strings
+        self.p_hand = [] # should be a list of characters
         self.p_color = "" # Red, Yellow, Purple, Green, Cyan, Tan
         self.p_victory_pts = 0
         self.p_dev_cards = []
@@ -24,7 +24,7 @@ class Player:
         print("My name is " + self.p_name)
 
     def show_hand(self):
-        print(self.p_hand)
+        print(''.join(self.p_hand))
 
     def add_card(self, new_card):
         self.p_hand += new_card
@@ -112,7 +112,7 @@ class Road:
 class Node:
     def __init__(self, id): # Just gonna have every node have an id.
         self.id = id
-        self.owns_node = "" # player with a settlement or city on this node 
+        self.owns_node = "" # color of player with a settlement or city on this node 
         self.alias = [] # this is a list of tuples, where the first vvalue is the tile it's on, and the second is the corner that it is.
         self.can_place = False # basically, this is only true in limited circumstances
         self.adj_nodes = [] # list of id's for connected nodes

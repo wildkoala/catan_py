@@ -73,20 +73,24 @@ def build_road(a_player):
 			a_player.p_hand.remove("B")
 			a_player.p_hand.remove("L")
 
-
+		else:
+			print("That space is already taken, or you're not connected to that road")
 		
 	else:
 		print("Not enough resources to build a road!!")
-  
-  # Space is open
-  # It's connected to another road or settlement
+
 
 # partially implemented
 # the intial setup will probably not work with this function.
 def build_settlement(a_player):
 	have_resources = has_needed_resources("settlement", a_player)
 	if (have_resources):
-		print("building a settlement")
+		# check if that settlement is open
+		n1 = int(input("Where do you want to place your settlement?")) #1
+
+		#ensure that the adjacent nodes don't have a settlement or city
+
+
 	else:
 		print("Not enough resources to build a settlement!!")
 
