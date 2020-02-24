@@ -41,7 +41,7 @@ def get_road_by_nodes(node_list, road_list, alias1, alias2):
 
 # player.id this will have to be added to player. it's their icon on the map
 def road_is_connected(player_color, n1, n2):
-	if n1.owns_node == player_color: 
+	if n1.owns_node.lower() == player_color: # lower makes sure that a city counts too.
 		return True
 	else:
 		for adj in n1.adj_nodes:
@@ -49,25 +49,30 @@ def road_is_connected(player_color, n1, n2):
 				return True
 		return False
 
-
-# partially implemented
 def build_road(a_player):
 	have_resources = has_needed_resources("road", a_player)
 	if have_resources:
 		# ask for the two nodes they want to build a road between
-		n1 = input("Give the location of the start of the road")
-		n2 = input("Give the location of the end of the road")
+		n1 = input("Give the location of the start of the road") #"1,6"
+		n2 = input("Give the location of the end of the road") #"1,5"
+		
+		n1 = n1.split(",")
+		n1 = tuple(n1)
 
-		# node1 = # take an alias and get back the id
-		# node2 = # take an alias and get back the id
-
-		# i need all the roads to be initialized in between all the nodes.
+		n2 = n2.split(",")
+		n2 = tuple(n2)
+		
 		r = get_road_by_nodes(n1, n2)
 		is_open = not r.is_owned # i think this is valid, but not sure
 		is_connected = road_is_connected(a_player.player_color, n1, n2)
 
 		if is_open and is_connected:
 			r.owns_node = a_player.id
+			print(a_player.p_name + "has placed down a road!")
+			#remove the cards that the player spent
+			a_player.p_hand.remove("B")
+			a_player.p_hand.remove("L")
+
 
 		
 	else:
@@ -108,8 +113,6 @@ def build_dev_card(a_player):
 	else:
 		print("Not enough resources to get dev card!!")
   
-
-
 
 
 # CHECK FOR RESOURCES TO GET ITEMS
