@@ -40,19 +40,17 @@ def get_road_by_nodes(node_list, road_list, alias1, alias2):
 
 
 # player.id this will have to be added to player. it's their icon on the map
-def road_is_connected(player_id, n1, n2):
-	if n1.owns_node == player_id: 
+def road_is_connected(player_color, n1, n2):
+	if n1.owns_node == player_color: 
 		return True
 	else:
 		for adj in n1.adj_nodes:
-			if get_road_by_nodes(n1,n2).owns_road == player_id:
+			if get_road_by_nodes(n1,n2).owns_road == player_color:
 				return True
 		return False
 
 
 # partially implemented
-# need get_road_by_nodes(alias, alias)
-# need road_is_valid(Player, Node.alias, Node.alias)
 def build_road(a_player):
 	have_resources = has_needed_resources("road", a_player)
 	if have_resources:
@@ -66,51 +64,49 @@ def build_road(a_player):
 		# i need all the roads to be initialized in between all the nodes.
 		r = get_road_by_nodes(n1, n2)
 		is_open = not r.is_owned # i think this is valid, but not sure
-		is_connected = road_is_connected(a_player, n1, n2)
+		is_connected = road_is_connected(a_player.player_color, n1, n2)
 
 		if is_open and is_connected:
 			r.owns_node = a_player.id
 
 		
 	else:
-		console.log("Not enough resources to build a road!!")
+		print("Not enough resources to build a road!!")
   
   # Space is open
   # It's connected to another road or settlement
 
 # partially implemented
 # the intial setup will probably not work with this function.
-
 def build_settlement(a_player):
-  have_resources = has_needed_resources("settlement", a_player)
-  if (have_resources):
-    print("building a settlement")
-  else:
-    print("Not enough resources to build a settlement!!")
+	have_resources = has_needed_resources("settlement", a_player)
+	if (have_resources):
+		print("building a settlement")
+	else:
+		print("Not enough resources to build a settlement!!")
 
-  # Space is open
-  # no one is on an adjacent territory
+	# Space is open
+	# no one is on an adjacent territory
 
 
 # partially implemented
 def build_city(a_player):
-  have_resources = has_needed_resources("city", a_player)
-  if have_resources:
-    print("building a city")
-  
-  else:
-    print("Not enough resources to upgrade into a city!!") 
-  # Have a settlement
-  # It is a settlement, and not anything else
+	have_resources = has_needed_resources("city", a_player)
+	if have_resources:
+		print("building a city")
+	else:
+    	print("Not enough resources to upgrade into a city!!") 
+# Have a settlement
+# It is a settlement, and not anything else
 
 
 # partially implemented
 def build_dev_card(a_player):
-  have_resources = has_needed_resources("dev_card", a_player)
-  if have_resources:
-    print("here's a dev card")
-  else:
-    print("Not enough resources to get dev card!!")
+	have_resources = has_needed_resources("dev_card", a_player)
+	if have_resources:
+		print("here's a dev card")
+	else:
+		print("Not enough resources to get dev card!!")
   
 
 
@@ -118,82 +114,38 @@ def build_dev_card(a_player):
 
 # CHECK FOR RESOURCES TO GET ITEMS
 def has_needed_resources(item, a_player):
-  if item == "road":
-    # Check that they have 1 brick and lumber
-    b = 0
-    l = 0
-    for card in a_player.p_hand:
-      if card.resource == "B":
-        b+=1
-      if card.resource == "L":
-        l+=1
-      
-    if (b > 0 and l > 0):
-      return True
-    else:
-      return False
-    
+	if item == "road":
+		# Check that they have 1 brick and lumber
+		hand = a_player.p_hand
+		if (hand.count("B") > 0 and hand.count("L") > 0):
+			return True
+		else:
+			return False
   
-  elif (item == "settlement"):
-    # Check that they have 1 sheep, wheat, brick, and lumber
-    b = 0
-    l = 0
-    s = 0
-    w = 0
-
-    for card in a_player.p_hand:
-      if card.resource == "B":
-        b+=1
-      if card.resource == "L":
-        l+=1
-      if card.resource == "W":
-        w+=1
-      if card.resource == "S":
-        s+=1
-      
-    
-    if (b > 0 and l > 0 and w > 0 and s > 0):
-      return True
-    
-    else:
-      return False
+	elif (item == "settlement"):
+	# Check that they have 1 sheep, wheat, brick, and lumber
+      	hand = a_player.p_hand
+		if (hand.count("S") > 0 and hand.count("L") > 0 and hand.count("W") > 0 and hand.count("B") > 0):
+			return True
+		else:
+			return False
 
 
-  elif (item == "city"):
-    # Check that they have 2 wheat, 3 ore
-    o = 0
-    w = 0
-    for card in a_player.p_hand:
-      if card.resource == "O":
-        o+=1 
-      elif card.resource == "W":
-        w+=1    
-      
-    
-    if (o > 2 and w > 1):
-      return True
-    else:
-      return False
+	elif (item == "city"):
+	# Check that they have 2 wheat, 3 ore
+		hand = a_player.p_hand
+		if (hand.count("O") > 2 and hand.count("W") > 1):
+			return True
+		else:
+			return False
 
-  elif (item == "dev_card"):
-    # Check they have 1 sheep, ore and wheat
-    o = 0
-    w = 0
-    s = 0
-    counter = 0
-
-    for card in a_player.p_hand:
-      if card.resource == "O":
-        o+=1
-      elif card.resource == "W":
-        w+=1
-      elif card.resource == "S":
-        s+=1
-
-    if (o > 0 and w > 0 and s > 0):
-      return True
-    else:
-      return False
+	elif (item == "dev_card"):
+	# Check they have 1 sheep, ore and wheat
+		hand = a_player.p_hand
+		if (hand.count("O") > 0 and hand.count("W") > 0 and hand.count("S") > 0):
+			return True
+		else:
+			return False
 
 
 
