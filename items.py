@@ -13,14 +13,46 @@
 # FUNCTION DEFINITIONS
 #========================================================
 
+# need globally accessible list of nodes
+# need globally accessible list of roads
+def get_road_by_nodes(alias1, alias2):
+	n1 = get_node_by_alias(alias1)
+	n2 = get_node_by_alias(alias2)
+
+def road_is_connected(a_player, n1, n2):
+	if n1.owns_node == a_player.id: # this will have to be added to player
+		return True
+	else:
+		for adj in n1.adj_nodes:
+			if get_road_by_nodes(n1,n2).owns_road == player.id:
+				return True
+		return False
+
+
 # partially implemented
+# need get_road_by_nodes(alias, alias)
+# need road_is_valid(Player, Node.alias, Node.alias)
 def build_road(a_player):
-  have_resources = has_needed_resources("road", a_player)
-  if have_resources:
-    console.log("building a road")
-  
-  else:
-    console.log("Not enough resources to build a road!!")
+	have_resources = has_needed_resources("road", a_player)
+	if have_resources:
+		# ask for the two nodes they want to build a road between
+		n1 = input("Give the location of the start of the road")
+		n2 = input("Give the location of the end of the road")
+
+		# node1 = # take an alias and get back the id
+		# node2 = # take an alias and get back the id
+
+		# i need all the roads to be initialized in between all the nodes.
+		r = get_road_by_nodes(n1, n2)
+		is_open = not r.is_owned # i think this is valid, but not sure
+		is_connected = road_is_connected(a_player, n1, n2)
+
+		if is_open and is_connected:
+			r.owns_node = a_player.id
+
+		
+	else:
+		console.log("Not enough resources to build a road!!")
   
   # Space is open
   # It's connected to another road or settlement
@@ -141,3 +173,6 @@ def has_needed_resources(item, a_player):
       return True
     else:
       return False
+
+
+

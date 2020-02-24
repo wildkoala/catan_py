@@ -1,3 +1,121 @@
+#
+#FILE PURPOSE: 
+#  1. This file contains all class definitions and functions that instantiate one of
+#  the created classes.
+
+#BUG SECTION: 
+#  1. showing a tile needs to have a point at the top, not an edge
+# */
+
+#/* Requirements and Exports */
+import catan_py
+import random
+
+class Player:
+	def __init__(self, name):
+		self.p_name = name
+		self.p_hand = [] # this is a list of cards
+		self.p_color = ""
+		self.p_victory_pts = 0
+		self.p_dev_cards = []
+
+	def present(self):
+		print("My name is " + self.p_name)
+
+	def show_hand(self):
+		for i in range(0, len(self.p_hand)):
+	  		print("Resource: " + self.p_hand[i].resource)
+
+	def add_card(self, new_card):
+		self.p_hand.insert(len(self.p_hand), new_card)
+  
+	#returns how many victory points a player has
+	def show_victory_pts(self):
+		return self.p_victory_pts
+
+
+class Card:
+	def __init__(self, resource):
+		self.resource = resource
+
+	def present(self):
+		print("Resource: " + self.resource)
+
+
+
+
+#Partial implementation
+class Board:
+	def __init__(self, size):
+		self.size = size
+
+	def present(self):
+		print("This board is " + self.size + " tiles large")
+ 
+
+
+class Tile:
+	def __init__(self, resource, number):
+		self.resource = resource
+		self.number = number
+
+#Need to look up proper syntax to create this format in python
+'''
+  def present(self):
+    const format = `   _____
+  /     \\ 
+ /       \\ 
+(    ` + this.resource + `    )
+ \\   ` + this.number + `   /
+  \\_____/`
+  
+    return format;
+'''
+
+
+
+def random_tile():
+	tile_r = ""
+	tile_n = -1
+
+  #Determine the resource
+    x = random.randint(1, 6)  #gives random number between 1 and 5
+    if (x == 1):
+    tile_r = "O"
+    if (x == 2):
+        tile_r = "W"
+    if (x == 3):
+        tile_r = "B"
+	if (x == 4):
+        tile_r = "L"
+    if (x == 5):
+        tile_r = "S"
+
+#Determine the number, 7's not allowed
+    tile_n = game.roll_dice()
+    while(tile_n == 7):
+        tile_n = game.roll_dice()
+        rand_tile = Tile(tile_r, tile_n)
+    return rand_tile
+  #Need to finish present method in tile class
+  #print(rand_tile.present());
+
+
+class Road:
+    def __init__(self, start_n, end_n):
+        self.owns_road = ""  
+        self.start_n = 0 
+        self.end_n = 0
+
+    def is_owned(self):
+        if self.owns_node == "":
+            return False
+        else:
+            return True
+
+    def __str__(self):
+		return "Road: " + str(self.start_n + str(self.end_n))
+
 class Node:
 	def __init__(self, id): # Just gonna have every node have an id.
 		self.id = id
@@ -27,17 +145,18 @@ class Node:
 
 
 def create_nodes():
-    nodes = []
-    for x in range(1,55):
-    	nodes.append(Node(x))
-    return nodes
+	nodes = []
+	for x in range(1,55):
+		nodes.append(Node(x))
+	return nodes
 
 def print_nodes(node_list):
-    for n in node_list:
-    	print(n)
+	for n in node_list:
+		print(n)
 
 
 x = create_nodes()
+#print_nodes(x)
 
 x[0].alias = [(1,6)]
 x[1].alias = [(1,1)]
@@ -94,7 +213,6 @@ x[51].alias = [(18,3),(19,5)]
 x[52].alias = [(19,4)]
 x[53].alias = [(19,3)]
 
-# print(x[32].alias)
 
 # id by number
 x[0].adj_nodes = [2,8]
@@ -152,4 +270,23 @@ x[51].adj_nodes = [44,51,53]
 x[52].adj_nodes = [52,54]
 x[53].adj_nodes = [46,53]
 
-#print(x[32].adj_nodes)
+
+def create_roads(list_of_nodes):
+    roads =[]
+    for n in list_of_nodes:
+        for thing in n.adj_nodes:
+            #print(str(n.id) + " " + str(thing))
+            if n.id < thing:
+                print(str(n.id) + " " + str(thing))
+                roads.append(n.id, thing)
+    return roads
+                
+def print_roads(road_list):
+    for r in road_list:
+        print(r)
+
+roads = create_roads(x)
+print_roads(roads)
+
+
+

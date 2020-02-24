@@ -50,48 +50,40 @@ def player_menu():
 		6. Trade with a player
 		7. Trade with the bank (4 for 1)
 		8. Trade using a port
-      0. End turn
-'''
+    '''
     )
 
-def player_turn(player, points_to_win):
-  user_input = input("Press Enter to Roll Die\n")
+def player_turn(a_player):
+  user_input = input("Press Enter to Roll Die")
   roll = roll_dice()
   print(str(roll) + " has been rolled")
 
   #Check to see if robber() should be called
-  #if roll == 7:
-    #robber()
+  if roll == 7:
+    robber()
 
   #Player Selects an Option
   selection = -1
-
   while selection != 0:
     player_menu()
-    selection = int(input("Please Select One"))
+    selection = int(input("Please Select One\n"))
 
     if selection == 1:
-      player.show_hand()
+      a_player.show_hand()
     
     elif selection == 2:
-      build_road(player)
+      build_road(a_player)
   
     elif selection == 3:
-      build_settlement(player)
+      build_settlement(a_player)
     
     elif selection == 4:
-      build_city(player)
+      build_city(a_player)
     
     elif selection == 5:
-      build_dev_card(player)
+      build_dev_card(a_player)
 
-    if (player.show_victory_pts() >= points_to_win):
-      print(player.present() + " wins")
-      return True
-    
-  return False
 
-      
 
 
 #========================================================
@@ -100,9 +92,11 @@ def player_turn(player, points_to_win):
 
 
 def setup():
+
+  draw_tile()
   # this should be a function
-  print("catan_py invoked directly!!")
-  num_players = int(input("Press Enter the number of players\n"))
+  
+  num_players = int(input("Please enter the number of players\n"))
   player_list = [] # this will be a list of Player objects
   i = 0
   while i < num_players:
@@ -113,18 +107,43 @@ def setup():
 # most of this should be wrapped up in a "setup" function
   points_to_win = int(input("Press Enter the Amount of Points Required to Win\n"))
 
-  game_requirements = (player_list, points_to_win)
-  return game_requirements
+  winner = 0
+  current_player_turn = 0
+
+  my_card = classes.Card("B") # need the classes file for this to be defined
+  player_list[0].add_card(my_card)
+  player_list[0].add_card(my_card)
+  player_list[0].add_card(my_card)
+
+  my_card2 = classes.Card("L")
+  player_list[0].add_card(my_card2)
+  player_list[0].add_card(my_card2)
+  player_list[0].add_card(my_card2)
+  player_list[0].add_card(my_card2)
+
+  my_card3 = classes.Card("C")
+  player_list[0].add_card(my_card3)
+
+
+  while(winner == 0):
+    if player_list[current_player_turn].show_victory_pts() >= points_to_win:
+      print(player_list[current_player_turn].present() + " wins")
+      winner = 1
+
+    # this should be part of the player_turn function
+    print(player_list[current_player_turn].p_name + " it is your turn")
+
+    player_turn(player_list[current_player_turn])
+    
+    #Increments to the next player
+    increment_player_turn()
+
   #Debug Purpose
   #console.log(selection + "\n");
 
-def next_turn(player_list, current_player_turn):
 
-  curr_player = player_list[current_player_turn]
 
-  print(str(curr_player.present()) + " it is your turn\n");
 
-  return curr_player
 
 #If 7 is rolled then robber effects players with more than 7 cards and blocked tile
 
@@ -196,29 +215,26 @@ What will clients send?
 
 How do i draw multiple tiles? I think I might just have 2 defined board sizes, and just populate the board randomly at the start of the game.
 
+How am i going to determine if a road is valid?
+if a player has a settlement at the starting node of the road
+	- if n1.owned_by == Player setting road:
+		return True
+or
+if the player has a road that touches the start node
+	- iterate over the adjacencies and see if there's a road that has the player's id on it
+		if any other road.owned_by == Player setting road
+		return True
 '''
-
 if __name__ == "__main__": 
-  #Run Setup of the Game
-  game_specs = setup()
+  setup() 
+  # accept connections
+  # first menu
+  # set options
+  # create board 
+  # create players
 
-  current_player_turn = 0
+  # while winner != 1:
+    #player_turn
+    #check_win
 
-  points_to_win = game_specs[1]
-
-  #Save the player list in player_list array for future reference in main
-  player_list = game_specs[0]
-
-  win = False
-
-  #Loop until somebody wins
-  while(win == False):
-    #specify who has the next turn in the game and return a player
-    player = next_turn(player_list, current_player_turn)
-
-    #After next turn is declared have that player perform their turn and check to see if they won at the end of their turn
-    win = player_turn(player, points_to_win)
-
-    #Increment player if nobody has won
-    current_player_turn = increment_player_turn(current_player_turn, len(player_list));
-    
+  
