@@ -8,24 +8,26 @@
 #========================================================
 # Requirements and Exports
 #========================================================
-import catan_classes
+from catan_classes import *
 #========================================================
 # FUNCTION DEFINITIONS
 #========================================================
 
 # need globally accessible list of nodes
 # need globally accessible list of roads
-node_list = catan_classes.game_nodes
-road_list - catan_classes.game_roads
+#node_list = create_nodes() # this doesnt work?
+#road_list = create_roads(node_list) # this doesnt work?
 
-def get_node_by_alias(g_alias):
+#this function works, but it needs a node list and alias as a tuple ex. (1,6)
+def get_node_by_alias(node_list, g_alias):
 	for n in node_list:
 		if g_alias in n.alias:
 			return n.id
 
-def get_road_by_nodes(alias1, alias2):
-	n1 = get_node_by_alias(alias1)
-	n2 = get_node_by_alias(alias2)
+#this function works, but it needs the node list, road list and the aliases as tuples (tile,corner)
+def get_road_by_nodes(node_list, road_list, alias1, alias2):
+	n1 = get_node_by_alias(node_list, alias1)
+	n2 = get_node_by_alias(node_list, alias2)
 	if n1 < n2:
 		for r in road_list:
 			if r.start_n == n1 and r.end_n == n2:

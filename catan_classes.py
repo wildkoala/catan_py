@@ -154,7 +154,7 @@ def print_nodes(node_list):
 		print(n)
 
 
-game_nodes = create_nodes()
+x = create_nodes()
 #print_nodes(x)
 
 x[0].alias = [(1,6)]
@@ -275,7 +275,6 @@ def create_roads(list_of_nodes):
     for n in list_of_nodes:
         for thing in n.adj_nodes:
             if n.id < thing:
-                print(str(n.id) + " " + str(thing))
                 new_road = Road(n.id,thing)
                 roads.append(new_road)
     return roads
