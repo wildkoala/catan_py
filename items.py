@@ -84,19 +84,30 @@ def build_road(a_player):
 # the intial setup will probably not work with this function.
 def build_settlement(a_player):
 	have_resources = has_needed_resources("settlement", a_player)
-	if (have_resources):
+	if have_resources:
 		# check if that settlement is open
-		n1 = int(input("Where do you want to place your settlement?")) #1
+		n1 = input("Where do you want to place your settlement?") #1,6 for example
+		n1 = n1.split(",")
+		n1 = tuple(n1)
+		wanted_node = get_node_by_alias(node_list, n1)
 
-		#ensure that the adjacent nodes don't have a settlement or city
+		if wanted_node.owns_node != "":
+			print(wanted_node.owns_node + " is already on that space!!")
+			return #this is a NoneType
 
+		for n in wanted_node.adj_nodes:
+			if n.owns_node != "":
+				print("There's a player on an adjacent space!!")
+				return #this is a NoneType
+
+		print(a_player.p_name + "has placed down a road!")
+		a_player.p_hand.remove("B")
+		a_player.p_hand.remove("L")
+		a_player.p_hand.remove("S")
+		a_player.p_hand.remove("W")
 
 	else:
 		print("Not enough resources to build a settlement!!")
-
-	# Space is open
-	# no one is on an adjacent territory
-
 
 # partially implemented
 def build_city(a_player):
