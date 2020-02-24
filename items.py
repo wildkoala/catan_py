@@ -8,23 +8,41 @@
 #========================================================
 # Requirements and Exports
 #========================================================
-
+import catan_classes
 #========================================================
 # FUNCTION DEFINITIONS
 #========================================================
 
 # need globally accessible list of nodes
 # need globally accessible list of roads
+node_list = catan_classes.game_nodes
+road_list - catan_classes.game_roads
+
+def get_node_by_alias(g_alias):
+	for n in node_list:
+		if g_alias in n.alias:
+			return n.id
+
 def get_road_by_nodes(alias1, alias2):
 	n1 = get_node_by_alias(alias1)
 	n2 = get_node_by_alias(alias2)
+	if n1 < n2:
+		for r in road_list:
+			if r.start_n == n1 and r.end_n == n2:
+				return r
+	else:
+		for r in road_list:
+			if r.start_n == n2 and r.end_n == n1:
+				return r
 
-def road_is_connected(a_player, n1, n2):
-	if n1.owns_node == a_player.id: # this will have to be added to player
+
+# player.id this will have to be added to player. it's their icon on the map
+def road_is_connected(player_id, n1, n2):
+	if n1.owns_node == player_id: 
 		return True
 	else:
 		for adj in n1.adj_nodes:
-			if get_road_by_nodes(n1,n2).owns_road == player.id:
+			if get_road_by_nodes(n1,n2).owns_road == player_id:
 				return True
 		return False
 
