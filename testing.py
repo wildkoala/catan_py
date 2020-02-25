@@ -153,5 +153,5 @@ def main():
     print(r)
 '''
 if __name__ == "__main__":
-	b = catan_classes.Board(10)
+	b = catan_classes.Board()
 	b.show_board()
