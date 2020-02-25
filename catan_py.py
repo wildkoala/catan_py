@@ -59,14 +59,14 @@ def player_menu():
 '''
     )
 
-def player_turn(player, points_to_win):
+def player_turn(player, points_to_win, game_board, game_players):
     print(player.p_name + " it is your turn")
 
     user_input = input("Press Enter to Roll Die")
 
     roll = catan_classes.roll_dice()
-
     print(str(roll) + " has been rolled")
+    give_resources(roll, game_board, game_players)
 
     #Check to see if robber() should be called
     if roll == 7:
@@ -252,6 +252,9 @@ if __name__ == "__main__":
     #Setup the game and return player_list and amount of points to win
     b = catan_classes.Board()
 
+    # need node list
+    # need road list
+
     game_specifications = setup()
 
     #Store player_list and points to win in variables
@@ -264,7 +267,7 @@ if __name__ == "__main__":
     while winner == False:
 
         #Declare whos turn it is in the game
-        winner = player_turn(player_list[curr_player_turn], points_to_win)
+        winner = player_turn(player_list[curr_player_turn], points_to_win, b, player_list)
 
         curr_player_turn = increment_player_turn(curr_player_turn, len(player_list))
 

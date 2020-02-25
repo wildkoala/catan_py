@@ -3,6 +3,10 @@
 #   - This file contains all functions necessary to create a new "physical" item in catan
 #========================================================
 
+#========================================================
+# BUGS: some functions only have n set as a node id instead of a node object.
+#========================================================
+
 # POSSIBLE RESOURCES: Ore, Wheat, Brick, Lumber, Sheep
 
 #========================================================
@@ -24,6 +28,11 @@ def get_node_by_alias(node_list, g_alias):
     for n in node_list:
         if g_alias in n.alias:
             return n.id
+
+def get_node_by_id(node_list, n):
+    for n in node_list:
+        if n.id == n:
+            return n
 
 #this function works, but it needs the node list, road list and the aliases as tuples (tile,corner)
 def get_road_by_nodes(node_list, road_list, alias1, alias2):
@@ -48,66 +57,120 @@ def road_is_connected(player_color, n1, n2):
                 return True
         return False
 
-def build_road(a_player):
-    have_resources = has_needed_resources("road", a_player)
-    if have_resources:
-        # ask for the two nodes they want to build a road between
-        n1 = input("Give the location of the start of the road") #"1,6"
-        n2 = input("Give the location of the end of the road") #"1,5"
+# maybe have is_init set to False by default (a keyword argument)
+def build_road(a_player, initializing = False):
 
-        n1 = n1.split(",")
-        n1 = tuple(n1)
+    if initializing:
+        placed = False
+        while not settled:
+            n1 = input("Where do you want to start your road?") #1,6 for example
+            n1 = n1.split(",")
+            n1 = tuple(n1)
+            n1 = get_node_by_alias(node_list, n1)
 
-        n2 = n2.split(",")
-        n2 = tuple(n2)
+            n2 = input("Where do you want to end your road?") #1,6 for example
+            n2 = n2.split(",")
+            n2 = tuple(n2)
+            n2 = get_node_by_alias(node_list, n2)
 
-        r = get_road_by_nodes(n1, n2)
-        is_open = not r.is_owned # i think this is valid, but not sure
-        is_connected = road_is_connected(a_player.player_color, n1, n2)
+            if n1.owns_node == a_player.p_color or n2.owns_node == a_player.p_color:
 
-        if is_open and is_connected:
-            r.owns_node = a_player.id
-            print(a_player.p_name + "has placed down a road!")
-            #remove the cards that the player spent
-            a_player.p_hand.remove("B")
-            a_player.p_hand.remove("L")
+                wanted_road = get_road_by_nodes(node_list, road_list, n1, n2)
+                if wanted_node.owns_road != "":
+                    print(wanted_road.owns_road + " is already on that space!!")
+                    continue     
+                else:
+                    wanted_node.owns_node = a_player.p_color
+                    print(a_player.p_name + " has placed a settlement!!")
+                    placed = True
 
-        else:
-            print("That space is already taken, or you're not connected to that road")
+            else:
+                print("Your road must be connected to one of your settlements")
 
     else:
-        print("Not enough resources to build a road!!")
+        have_resources = has_needed_resources("road", a_player)
+        if have_resources:
+            # ask for the two nodes they want to build a road between
+            n1 = input("Give the location of the start of the road") #"1,6"
+            n2 = input("Give the location of the end of the road") #"1,5"
+
+            n1 = n1.split(",")
+            n1 = tuple(n1)
+
+            n2 = n2.split(",")
+            n2 = tuple(n2)
+
+            r = get_road_by_nodes(n1, n2)
+            is_open = not r.is_owned # i think this is valid, but not sure
+            is_connected = road_is_connected(a_player.player_color, n1, n2)
+
+            if is_open and is_connected:
+                r.owns_node = a_player.id
+                print(a_player.p_name + "has placed down a road!")
+                #remove the cards that the player spent
+                a_player.p_hand.remove("B")
+                a_player.p_hand.remove("L")
+
+            else:
+                print("That space is already taken, or you're not connected to that road")
+
+        else:
+            print("Not enough resources to build a road!!")
 
 
 # partially implemented
 # the intial setup will probably not work with this function.
-def build_settlement(a_player):
-    have_resources = has_needed_resources("settlement", a_player)
-    if have_resources:
-        # check if that settlement is open
-        n1 = input("Where do you want to place your settlement?") #1,6 for example
-        n1 = n1.split(",")
-        n1 = tuple(n1)
-        wanted_node = get_node_by_alias(node_list, n1)
+def build_settlement(a_player, initializing = False, node_list = None):
 
-        if wanted_node.owns_node != "":
-            print(wanted_node.owns_node + " is already on that space!!")
-            return #this is a NoneType
+    if initializing:
+        settled = False
+        while not settled:
+            n1 = input("Where do you want to place your settlement?") #1,6 for example
+            n1 = n1.split(",")
+            n1 = tuple(n1)
+            wanted_node = get_node_by_alias(node_list, n1)
+            if wanted_node.owns_node != "":
+                print(wanted_node.owns_node + " is already on that space!!")
+                continue
+            for n in wanted_node.adj_nodes:
+                neighbor = get_node_by_id(node_list, n)
+                if neighbor.owns_node != "":
+                    print("There's a player on an adjacent space!!")
+                    continue
+            
+            wanted_node.owns_node = a_player.p_color
+            print(a_player.p_name + " has placed a settlement!!")
+            settled = True
 
-        for n in wanted_node.adj_nodes:
-            if n.owns_node != "":
-                print("There's a player on an adjacent space!!")
-                return #this is a NoneType
 
-        wanted_node.owns_node = a_player.color
-        print(a_player.p_name + "has placed down a road!")
-        a_player.p_hand.remove("B")
-        a_player.p_hand.remove("L")
-        a_player.p_hand.remove("S")
-        a_player.p_hand.remove("W")
 
     else:
-        print("Not enough resources to build a settlement!!")
+        have_resources = has_needed_resources("settlement", a_player)
+        if have_resources:
+            # check if that settlement is open
+            n1 = input("Where do you want to place your settlement?") #1,6 for example
+            n1 = n1.split(",")
+            n1 = tuple(n1)
+            wanted_node = get_node_by_alias(node_list, n1)
+
+            if wanted_node.owns_node != "":
+                print(wanted_node.owns_node + " is already on that space!!")
+                return #this is a NoneType
+
+            for n in wanted_node.adj_nodes:
+                if n.owns_node != "":
+                    print("There's a player on an adjacent space!!")
+                    return #this is a NoneType
+
+            wanted_node.owns_node = a_player.color
+            print(a_player.p_name + "has placed down a road!")
+            a_player.p_hand.remove("B")
+            a_player.p_hand.remove("L")
+            a_player.p_hand.remove("S")
+            a_player.p_hand.remove("W")
+
+        else:
+            print("Not enough resources to build a settlement!!")
 
 # partially implemented
 def build_city(a_player):
@@ -198,7 +261,7 @@ def has_needed_resources(item, a_player):
 
 
 # Need  a function for distributing resources
-def give_resources(roll_num, a_board):
+def give_resources(roll_num, a_board, game_players):
     for t in a_board.tiles:
         if t.number == roll_num:
             if t.has_robber:
@@ -221,9 +284,11 @@ def give_resources(roll_num, a_board):
                             for p in game_players:
                                 if n.owns_node == p.color:
                                     p.p_hand.append(t.resource)
+                                    print(p.p_name + " got a " + t.resource)
                         else:
                             p.p_hand.append(t.resource)
                             p.p_hand.append(t.resource)
+                            print(p.p_name + " got 2 " + t.resource)
 
 
                 # if it's a settlement, give that player 1 of t.resource
