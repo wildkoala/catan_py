@@ -287,9 +287,41 @@ def has_needed_resources(item, a_player):
 
 
 # Need  a function for distributing resources
-def give_resources(roll_num, a_board, game_players):
+def give_resources(roll_num, a_board, game_players, initial = False):
     for t in a_board.tiles:
-        if t.number == roll_num:
+        if initial:
+            # Check every node for a player
+            n1 = get_node_by_alias((t.id, 1))
+            n2 = get_node_by_alias((t.id, 2))
+            n3 = get_node_by_alias((t.id, 3))
+            n4 = get_node_by_alias((t.id, 4))
+            n5 = get_node_by_alias((t.id, 5))
+            n6 = get_node_by_alias((t.id, 6))
+
+            corners = []
+            corners.append(n1)
+            corners.append(n2)
+            corners.append(n3)
+            corners.append(n4)
+            corners.append(n5)
+            corners.append(n6)
+
+            for n in corners:
+                if not n.is_empty():
+                    if n.is_settlement():
+                        # need game_players to be accessible
+                        # go through players to find out who has
+                        for p in game_players:
+                            if n.owns_node == p.p_color:
+                                p.p_hand.append(t.resource)
+                                print(p.p_name + " got a " + t.resource)
+                    else:
+                        p.p_hand.append(t.resource)
+                        p.p_hand.append(t.resource)
+                        print(p.p_name + " got 2 " + t.resource)
+                #print(n)
+
+        elif t.number == roll_num:
             if t.has_robber:
                 print("The robber stole your " + t.resource + "!!")
             else:
@@ -301,22 +333,13 @@ def give_resources(roll_num, a_board, game_players):
                 n5 = get_node_by_alias((t.id, 5))
                 n6 = get_node_by_alias((t.id, 6))
 
-                n1 = config.node_list.index(n1)
-                n2 = config.node_list.index(n2)
-                n3 = config.node_list.index(n3)
-                n4 = config.node_list.index(n4)
-                n5 = config.node_list.index(n5)
-                n6 = config.node_list.index(n6)
-
-
                 corners = []
-                corners.append(config.node_list[n1])
-                corners.append(config.node_list[n2])
-                corners.append(config.node_list[n3])
-                corners.append(config.node_list[n4])
-                corners.append(config.node_list[n5])
-                corners.append(config.node_list[n6])
-
+                corners.append(n1)
+                corners.append(n2)
+                corners.append(n3)
+                corners.append(n4)
+                corners.append(n5)
+                corners.append(n6)
 
                 for n in corners:
                     if not n.is_empty():

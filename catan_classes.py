@@ -200,6 +200,7 @@ class Node:
             return True
         else:
             return False
+
     def is_city(self):
         if self.owns_node.isupper():
             return True
