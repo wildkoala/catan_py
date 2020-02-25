@@ -136,11 +136,9 @@ C:::::C                   A:::::::::::::::::::::A       T:::::T       A:::::::::
     player_list = [] # this will be a list of Player objects
     i = 0
     color_options = ["Red", "Yellow", "Purple", "Green", "Cyan", "Tan"]
-    
+
     while i < num_players:
         name = input("Please Enter Player " + str((i + 1)) + "'s Name\n")
-        # give player a list of color options
-        
         p_color =  color_options.pop(player_choose_color(color_options)-1)
         print("You selected: " + p_color)
         color = p_color[0].lower()
