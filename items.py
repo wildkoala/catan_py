@@ -38,7 +38,7 @@ def get_road_by_nodes(node_list, road_list, alias1, alias2):
                     if r.start_n == n2 and r.end_n == n1:
                         return r
 
-# using player.color as an id
+# player.id this will have to be added to player. it's their icon on the map
 def road_is_connected(player_color, n1, n2):
     if n1.owns_node.lower() == player_color: # lower makes sure that a city counts too.
         return True
@@ -66,7 +66,7 @@ def build_road(a_player):
         is_connected = road_is_connected(a_player.player_color, n1, n2)
 
         if is_open and is_connected:
-            r.owns_node = a_player.color
+            r.owns_node = a_player.id
             print(a_player.p_name + "has placed down a road!")
             #remove the cards that the player spent
             a_player.p_hand.remove("B")
@@ -79,7 +79,7 @@ def build_road(a_player):
         print("Not enough resources to build a road!!")
 
 
-
+# partially implemented
 # the intial setup will probably not work with this function.
 def build_settlement(a_player):
     have_resources = has_needed_resources("settlement", a_player)
@@ -99,7 +99,6 @@ def build_settlement(a_player):
                 print("There's a player on an adjacent space!!")
                 return #this is a NoneType
 
-		wanted_node.owns_node = a_player.color
         print(a_player.p_name + "has placed down a road!")
         a_player.p_hand.remove("B")
         a_player.p_hand.remove("L")
@@ -109,48 +108,22 @@ def build_settlement(a_player):
     else:
         print("Not enough resources to build a settlement!!")
 
-
+# partially implemented
 def build_city(a_player):
     have_resources = has_needed_resources("city", a_player)
     if have_resources:
-		# check that a player has a settlement at that location
-        n1 = input("Where do you want to place your city?") #1,6 for example
-        n1 = n1.split(",")
-        n1 = tuple(n1)
-        wanted_node = get_node_by_alias(node_list, n1)
-
-		# needs to specifically be a lower case letter.
-		if wanted_node.owns_node == a_player.color:
-			print("building a city")
-			print(a_player.p_name + "has placed down a city!")
-			wanted_node.owns_node = a_player.color.upper()
-			a_player.p_hand.remove("O")
-			a_player.p_hand.remove("O")
-			a_player.p_hand.remove("O")
-			a_player.p_hand.remove("W")
-			a_player.p_hand.remove("W")
-
-		elif wanted_node.owns_node == a_player.color.upper():
-			print("That's already a city!")
-		elif wanted_node.owns_node != "":
-			print(wanted_node.owns_node + " is already on that space!!")
-		else:
-			print("You don't have a settlement here...")
-
+        print("building a city")
     else:
         print("Not enough resources to upgrade into a city!!")
+# Have a settlement
+# It is a settlement, and not anything else
 
 
 # partially implemented
 def build_dev_card(a_player):
     have_resources = has_needed_resources("dev_card", a_player)
     if have_resources:
-        print(a_player.p_name + " bought a development card!")
-		a_player.p_hand.remove("O")
-		a_player.p_hand.remove("S")
-		a_player.p_hand.remove("W")
-		# give player a dev card... I need to have dev cards (and shuffled)
-
+        print("here's a dev card")
     else:
         print("Not enough resources to get dev card!!")
 
@@ -189,34 +162,3 @@ def has_needed_resources(item, a_player):
             return True
         else:
             return False
-
-
-
-# Need  a function for distributing resources
-def give_resources(roll_num, a_board):
-	for t in a_board.tiles:
-		if t.number == roll_num:
-			# Check every node for a player
-			corners = []
-			corners.append(get_node_by_alias(node_list, (t.id, 1)))
-			corners.append(get_node_by_alias(node_list, (t.id, 2)))
-			corners.append(get_node_by_alias(node_list, (t.id, 3)))
-			corners.append(get_node_by_alias(node_list, (t.id, 4)))
-			corners.append(get_node_by_alias(node_list, (t.id, 5)))
-			corners.append(get_node_by_alias(node_list, (t.id, 6)))
-
-			for n in corners:
-				if not n.is_empty:
-					if n.is_settlement:
-						# need game_players to be accessible
-						# go through players to find out who has 
-						for p in game_players: 
-							if n.owns_node == p.color:
-								p.p_hand.append(t.resource)
-					else:
-						p.p_hand.append(t.resource)
-						p.p_hand.append(t.resource)
-						
-
-			# if it's a settlement, give that player 1 of t.resource
-			# if it's a city, give that player 2 of t.resource
