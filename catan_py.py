@@ -113,6 +113,12 @@ def player_turn(player, points_to_win, game_board, game_players):
 # START OF GAME
 #========================================================
 
+def place_initial(player_list):
+    for i in player_list:
+        items.build_settlement(i, True)
+    for i in reversed(player_list):
+        items.build_settlement(i, True)
+
 
 def setup():
 
@@ -257,10 +263,14 @@ if __name__ == "__main__":
 
     game_specifications = setup()
 
+    #catan_classes.create_nodes()
+
     #Store player_list and points to win in variables
     player_list = game_specifications[0]
     points_to_win = game_specifications[1]
     curr_player_turn = 0
+
+    place_initial(player_list)
 
     winner = False
 

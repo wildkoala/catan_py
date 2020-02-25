@@ -121,7 +121,6 @@ class Tile:
         self.resource = resource
         self.number = number
         self.id = id
-        self.has_robber = False
 
 
 
