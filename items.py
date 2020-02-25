@@ -36,6 +36,7 @@ def get_node_by_id(n):
             return a
 
 #this function works, but it needs the node list, road list and the aliases as tuples (tile,corner)
+<<<<<<< HEAD
 def get_road_with_aliases(alias1, alias2):
     n1 = get_node_by_alias(config.node_list, alias1)
     n2 = get_node_by_alias(config.node_list, alias2)
@@ -76,7 +77,9 @@ def build_road(a_player, initializing = False):
             n1 = n1.split(",")
             n1 = [ int(x) for x in n1]
             n1 = tuple(n1)
+
             n1 = get_node_by_alias(n1)
+
 
             n2 = input("Where do you want to end your road?") #1,6 for example
             n2 = n2.split(",")
@@ -143,6 +146,7 @@ def build_settlement(a_player, initializing = False):
             n1 = tuple(n1)
 
             wanted_node = get_node_by_alias(n1)
+
             # my wanted node is really the node in the global "node_list". Maybe I should get it's index?
             i = config.node_list.index(wanted_node)
             
