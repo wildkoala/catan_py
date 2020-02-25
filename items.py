@@ -35,17 +35,34 @@ def get_node_by_id(node_list, n):
             return a
 
 #this function works, but it needs the node list, road list and the aliases as tuples (tile,corner)
+<<<<<<< HEAD
 def get_road_by_nodes(node_list, road_list, alias1, alias2):
     n1 = get_node_by_alias(node_list, alias1.id)
     n2 = get_node_by_alias(node_list, alias2.id)
     if n1.id < n2.id:
         for r in road_list:
             if r.start_n == n1.id and r.end_n == n2.id:
+=======
+def get_road_with_aliases(node_list, road_list, alias1, alias2):
+    n1 = get_node_by_alias(node_list, alias1)
+    n2 = get_node_by_alias(node_list, alias2)
+    for r in road_list:
+        if r.start_n == n1.id and r.end_n == n2.id:
+            return r
+        else:
+            if r.start_n == n2.id and r.end_n == n1.id:
+>>>>>>> 3470353f6f26840ccd5e3b6379cc84819177bae7
                 return r
-            else:
-                for r in road_list:
-                    if r.start_n == n2.id and r.end_n == n1.id:
-                        return r
+    print("COULDN'T FIND ROAD")
+
+def get_road_with_nodes(road_list, node1, node2):
+    for r in road_list:
+        if r.start_n == node1.id and r.end_n == node2.id:
+            return r
+        else:
+            if r.start_n == node2.id and r.end_n == node1.id:
+                return r
+    print("COULDN'T FIND ROAD")
 
 # player.id this will have to be added to player. it's their icon on the map
 def road_is_connected(player_color, n1, n2):
@@ -80,13 +97,13 @@ def build_road(a_player, initializing = False, node_list = None, road_list = Non
 
             if n1.owns_node == a_player.p_color or n2.owns_node == a_player.p_color:
 
-                wanted_road = get_road_by_nodes(node_list, road_list, n1, n2)
-                if wanted_node.owns_road != "":
+                wanted_road = get_road_with_nodes(road_list, n1, n2)
+                if wanted_road.owns_road != "":
                     print(wanted_road.owns_road + " is already on that space!!")
                     continue
                 else:
-                    wanted_node.owns_node = a_player.p_color
-                    print(a_player.p_name + " has placed a settlement!!")
+                    wanted_road.owns_road = a_player.p_color
+                    print(a_player.p_name + " has placed a road!!")
                     placed = True
 
             else:
@@ -134,7 +151,16 @@ def build_settlement(a_player, initializing = False, node_list = None):
             n1 = n1.split(",")
             n1 = [ int(x) for x in n1]
             n1 = tuple(n1)
+<<<<<<< HEAD
+=======
+            print(n1)
+
+>>>>>>> 3470353f6f26840ccd5e3b6379cc84819177bae7
             wanted_node = get_node_by_alias(node_list, n1)
+            # my wanted node is really the node in the global "node_list". Maybe I should get it's index?
+            index_in_node_list = node_list.index(wanted_node)
+            print(index_in_node_list)
+            
             if wanted_node.owns_node != "":
                 print(wanted_node.owns_node + " is already on that space!!")
                 continue
@@ -144,7 +170,14 @@ def build_settlement(a_player, initializing = False, node_list = None):
                     print("There's a player on an adjacent space!!")
                     continue
 
-            wanted_node.owns_node = a_player.p_color
+            node_list[index_in_node_list].owns_node = a_player.p_color
+            #wanted_node.owns_node = a_player.p_color
+
+            # want to change the global node_list, not just this local var
+            # this should do the job, but I want a cleaner way of doing it.
+            
+
+
             print(a_player.p_name + " has placed a settlement!!")
             settled = True
 
