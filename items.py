@@ -13,6 +13,7 @@
 # Requirements and Exports
 #========================================================
 import catan_classes
+import config
 
 #========================================================
 # FUNCTION DEFINITIONS
@@ -24,21 +25,21 @@ import catan_classes
 #road_list = catan_classes.create_roads(node_list) # this doesnt work?
 
 #this function works, but it needs a node list and alias as a tuple ex. (1,6)
-def get_node_by_alias(node_list, g_alias):
-    for n in node_list:
+def get_node_by_alias(g_alias):
+    for n in config.node_list:
         if g_alias in n.alias:
             return n
 
-def get_node_by_id(node_list, n):
-    for a in node_list:
+def get_node_by_id(n):
+    for a in config.node_list:
         if a.id == n:
             return a
 
 #this function works, but it needs the node list, road list and the aliases as tuples (tile,corner)
-def get_road_with_aliases(node_list, road_list, alias1, alias2):
-    n1 = get_node_by_alias(node_list, alias1)
-    n2 = get_node_by_alias(node_list, alias2)
-    for r in road_list:
+def get_road_with_aliases(alias1, alias2):
+    n1 = get_node_by_alias(config.node_list, alias1)
+    n2 = get_node_by_alias(config.node_list, alias2)
+    for r in config.road_list:
         if r.start_n == n1.id and r.end_n == n2.id:
             return r
         else:
@@ -46,8 +47,8 @@ def get_road_with_aliases(node_list, road_list, alias1, alias2):
                 return r
     print("COULDN'T FIND ROAD")
 
-def get_road_with_nodes(road_list, node1, node2):
-    for r in road_list:
+def get_road_with_nodes(node1, node2):
+    for r in config.road_list:
         if r.start_n == node1.id and r.end_n == node2.id:
             return r
         else:
@@ -66,7 +67,7 @@ def road_is_connected(player_color, n1, n2):
         return False
 
 # maybe have is_init set to False by default (a keyword argument)
-def build_road(a_player, initializing = False, node_list = None, road_list = None):
+def build_road(a_player, initializing = False):
 
     if initializing:
         placed = False
@@ -75,17 +76,17 @@ def build_road(a_player, initializing = False, node_list = None, road_list = Non
             n1 = n1.split(",")
             n1 = [ int(x) for x in n1]
             n1 = tuple(n1)
-            n1 = get_node_by_alias(node_list, n1)
+            n1 = get_node_by_alias(n1)
 
             n2 = input("Where do you want to end your road?") #1,6 for example
             n2 = n2.split(",")
             n2 = [ int(x) for x in n2]
             n2 = tuple(n2)
-            n2 = get_node_by_alias(node_list, n2)
+            n2 = get_node_by_alias(n2)
 
             if n1.owns_node == a_player.p_color or n2.owns_node == a_player.p_color:
 
-                wanted_road = get_road_with_nodes(road_list, n1, n2)
+                wanted_road = get_road_with_nodes(n1, n2)
                 if wanted_road.owns_road != "":
                     print(wanted_road.owns_road + " is already on that space!!")
                     continue
@@ -130,7 +131,8 @@ def build_road(a_player, initializing = False, node_list = None, road_list = Non
 
 # partially implemented
 # the intial setup will probably not work with this function.
-def build_settlement(a_player, initializing = False, node_list = None):
+# is build settlement only getting a copy of the list? maybe return node_list, and replace the global one in main file?
+def build_settlement(a_player, initializing = False):
 
     if initializing:
         settled = False
@@ -139,30 +141,21 @@ def build_settlement(a_player, initializing = False, node_list = None):
             n1 = n1.split(",")
             n1 = [ int(x) for x in n1]
             n1 = tuple(n1)
-            print(n1)
 
-            wanted_node = get_node_by_alias(node_list, n1)
+            wanted_node = get_node_by_alias(n1)
             # my wanted node is really the node in the global "node_list". Maybe I should get it's index?
-            index_in_node_list = node_list.index(wanted_node)
-            print(index_in_node_list)
+            i = config.node_list.index(wanted_node)
             
-            if wanted_node.owns_node != "":
+            if config.node_list[i].owns_node != "":
                 print(wanted_node.owns_node + " is already on that space!!")
                 continue
-            for n in wanted_node.adj_nodes:
-                neighbor = get_node_by_id(node_list, n)
+            for n in config.node_list[i].adj_nodes:
+                neighbor = get_node_by_id(n)
                 if neighbor.owns_node != "":
                     print("There's a player on an adjacent space!!")
                     continue
 
-            node_list[index_in_node_list].owns_node = a_player.p_color
-            #wanted_node.owns_node = a_player.p_color
-
-            # want to change the global node_list, not just this local var
-            # this should do the job, but I want a cleaner way of doing it.
-            
-
-
+            config.node_list[i].owns_node = a_player.p_color
             print(a_player.p_name + " has placed a settlement!!")
             settled = True
 
@@ -175,7 +168,7 @@ def build_settlement(a_player, initializing = False, node_list = None):
             n1 = input("Where do you want to place your settlement?") #1,6 for example
             n1 = n1.split(",")
             n1 = tuple(n1)
-            wanted_node = get_node_by_alias(node_list, n1)
+            wanted_node = get_node_by_alias(n1)
 
             if wanted_node.owns_node != "":
                 print(wanted_node.owns_node + " is already on that space!!")
@@ -205,7 +198,7 @@ def build_city(a_player):
         n1 = input("Where do you want to place your city?") #1,6 for example
         n1 = n1.split(",")
         n1 = tuple(n1)
-        wanted_node = get_node_by_alias(node_list, n1)
+        wanted_node = get_node_by_alias(n1)
 
         # needs to specifically be a lower case letter.
         if wanted_node.owns_node == a_player.color:
@@ -293,12 +286,12 @@ def give_resources(roll_num, a_board, game_players):
             else:
                 # Check every node for a player
                 corners = []
-                corners.append(get_node_by_alias(node_list, (t.id, 1)))
-                corners.append(get_node_by_alias(node_list, (t.id, 2)))
-                corners.append(get_node_by_alias(node_list, (t.id, 3)))
-                corners.append(get_node_by_alias(node_list, (t.id, 4)))
-                corners.append(get_node_by_alias(node_list, (t.id, 5)))
-                corners.append(get_node_by_alias(node_list, (t.id, 6)))
+                corners.append(get_node_by_alias((t.id, 1)))
+                corners.append(get_node_by_alias((t.id, 2)))
+                corners.append(get_node_by_alias((t.id, 3)))
+                corners.append(get_node_by_alias((t.id, 4)))
+                corners.append(get_node_by_alias((t.id, 5)))
+                corners.append(get_node_by_alias((t.id, 6)))
 
                 for n in corners:
                     if not n.is_empty:

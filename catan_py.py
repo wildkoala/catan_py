@@ -15,6 +15,7 @@
 import random
 import catan_classes
 import items
+import config
 
 
 #========================================================
@@ -113,13 +114,13 @@ def player_turn(player, points_to_win, game_board, game_players):
 # START OF GAME
 #========================================================
 
-def place_initial(player_list, node_list, road_list):
+def place_initial(player_list):
     for i in player_list:
-        items.build_settlement(i, True, node_list)
-        items.build_road(i, True, node_list, road_list)
+        items.build_settlement(i, True)
+        items.build_road(i, True)
     for i in reversed(player_list):
-        items.build_settlement(i, True, node_list)
-        items.build_road(i, True, node_list, road_list)
+        items.build_settlement(i, True)
+        items.build_road(i, True)
 
 
 def setup():
@@ -185,13 +186,13 @@ if __name__ == "__main__":
     #Setup the game and return player_list and amount of points to win
     b = catan_classes.Board()
 
-    # need node list
-    node_list = catan_classes.init_nodes()
+    # need node list accessible across all modules
+    # config.node_list 
 
     # need road list
-    road_list = catan_classes.create_roads(node_list)
+    
 
-    # need player list
+    # need player list accessible across all modules
     # ask players for their name and color choice
     game_specifications = setup()
 
@@ -218,7 +219,7 @@ if __name__ == "__main__":
     points_to_win = game_specifications[1]
     curr_player_turn = 0
 
-    place_initial(player_list, node_list, road_list)
+    place_initial(player_list)
 
     winner = False
     while winner != True:
