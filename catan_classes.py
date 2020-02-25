@@ -9,7 +9,12 @@
 
 #/* Requirements and Exports */
 import random
-from catan_py import roll_dice
+
+
+def roll_dice():
+    x = random.randint(1, 6)
+    y = random.randint(1, 6)
+    return x + y
 
 # need to give players an id, use first letter of not conflicting colors (NOT BLWSO)
 # Red, Yellow, Purple, Green, Cyan, Tan

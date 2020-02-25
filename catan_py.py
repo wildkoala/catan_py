@@ -29,10 +29,6 @@ def robber():
         if len(i.p_hand) >= 7:
             print(i.p_name + " Please discard half your cards")
 
-def roll_dice():
-    x = random.randint(1, 6)
-    y = random.randint(1, 6)
-    return x + y
 
 
 def increment_player_turn(current_player_turn, num_players):
@@ -42,14 +38,14 @@ def increment_player_turn(current_player_turn, num_players):
 def player_menu():
     print(
 '''
-		1. View your hand
-		2. Buy a road
-		3. Buy a settlement
-		4. Upgrade a settlement to a city
-		5. Buy a development card
-		6. Trade with a player
-		7. Trade with the bank (4 for 1)
-		8. Trade using a port
+        1. View your hand
+        2. Buy a road
+        3. Buy a settlement
+        4. Upgrade a settlement to a city
+        5. Buy a development card
+        6. Trade with a player
+        7. Trade with the bank (4 for 1)
+        8. Trade using a port
         0. End Turn
 '''
     )
@@ -59,7 +55,7 @@ def player_turn(player, points_to_win):
 
     user_input = input("Press Enter to Roll Die")
 
-    roll = roll_dice()
+    roll = catan_classes.roll_dice()
 
     print(str(roll) + " has been rolled")
 
@@ -99,7 +95,6 @@ def player_turn(player, points_to_win):
 
         if (player.show_victory_pts() >= points_to_win):
             return True
-
     return False
 
 #========================================================
@@ -108,15 +103,36 @@ def player_turn(player, points_to_win):
 
 
 def setup():
+
+    print('''
+        CCCCCCCCCCCCC               AAA         TTTTTTTTTTTTTTTTTTTTTTT         AAA               NNNNNNNN        NNNNNNNN
+     CCC::::::::::::C              A:::A        T:::::::::::::::::::::T        A:::A              N:::::::N       N::::::N
+   CC:::::::::::::::C             A:::::A       T:::::::::::::::::::::T       A:::::A             N::::::::N      N::::::N
+  C:::::CCCCCCCC::::C            A:::::::A      T:::::TT:::::::TT:::::T      A:::::::A            N:::::::::N     N::::::N
+ C:::::C       CCCCCC           A:::::::::A     TTTTTT  T:::::T  TTTTTT     A:::::::::A           N::::::::::N    N::::::N
+C:::::C                        A:::::A:::::A            T:::::T            A:::::A:::::A          N:::::::::::N   N::::::N
+C:::::C                       A:::::A A:::::A           T:::::T           A:::::A A:::::A         N:::::::N::::N  N::::::N
+C:::::C                      A:::::A   A:::::A          T:::::T          A:::::A   A:::::A        N::::::N N::::N N::::::N
+C:::::C                     A:::::A     A:::::A         T:::::T         A:::::A     A:::::A       N::::::N  N::::N:::::::N
+C:::::C                    A:::::AAAAAAAAA:::::A        T:::::T        A:::::AAAAAAAAA:::::A      N::::::N   N:::::::::::N
+C:::::C                   A:::::::::::::::::::::A       T:::::T       A:::::::::::::::::::::A     N::::::N    N::::::::::N
+ C:::::C       CCCCCC    A:::::AAAAAAAAAAAAA:::::A      T:::::T      A:::::AAAAAAAAAAAAA:::::A    N::::::N     N:::::::::N
+  C:::::CCCCCCCC::::C   A:::::A             A:::::A   TT:::::::TT   A:::::A             A:::::A   N::::::N      N::::::::N
+   CC:::::::::::::::C  A:::::A               A:::::A  T:::::::::T  A:::::A               A:::::A  N::::::N       N:::::::N
+     CCC::::::::::::C A:::::A                 A:::::A T:::::::::T A:::::A                 A:::::A N::::::N        N::::::N
+        CCCCCCCCCCCCCAAAAAAA                   AAAAAAATTTTTTTTTTTAAAAAAA                   AAAAAAANNNNNNNN         NNNNNNN
+''')
+
     num_players = int(input("Please enter the number of players\n"))
 
     player_list = [] # this will be a list of Player objects
-
     i = 0
 
     while i < num_players:
         name = input("Please Enter Player " + str((i + 1)) + "'s Name\n")
-        color = input("What color will you be?\n")
+        # give player a list of color options
+        color_options = ["Red", "Yellow", "Purple", "Green", "Cyan", "Tan"]
+        color = input("What color will you be?\n") 
         color = color[0].lower()
         player_list.append(catan_classes.Player(name,color))
         i+=1
@@ -152,43 +168,43 @@ console.log(
   \\_____/`);
 /*
 function main(){
-	main_menu(num_players, points_to_win)
-	create_board(size) // Create the board itself, with tiles that have a letter for the resource and number for the probability
-	display_board(board) // Draw the board on screen
-	setup_board() // players pick their initial locations and get their resources
-	int winner = 0;
-	while (winner != 1){
-		player_turn()
-		winner = check_win()
-	}
-	print("Player %s is the winner", player)
+    main_menu(num_players, points_to_win)
+    create_board(size) // Create the board itself, with tiles that have a letter for the resource and number for the probability
+    display_board(board) // Draw the board on screen
+    setup_board() // players pick their initial locations and get their resources
+    int winner = 0;
+    while (winner != 1){
+        player_turn()
+        winner = check_win()
+    }
+    print("Player %s is the winner", player)
 }
 function player_turn(){
-	print("press r and hit enter to roll.")
-	int rolled;
-	rolled = roll_dice();
-	if rolled == 7{
-		robber()
-	}
-	else{
-		give_out_resources() // give everyone their cards
-	}
-	int user_response;
-	user_response = player_menu(); // show them their options now.
-	if user_response == 0{
-		show_hand(player)
-	}
+    print("press r and hit enter to roll.")
+    int rolled;
+    rolled = roll_dice();
+    if rolled == 7{
+        robber()
+    }
+    else{
+        give_out_resources() // give everyone their cards
+    }
+    int user_response;
+    user_response = player_menu(); // show them their options now.
+    if user_response == 0{
+        show_hand(player)
+    }
 }
 function player_menu(){
-	print:
-		1. View your hand
-		2. Buy a road
-		3. Buy a settlement
-		4. Upgrade a settlement to a city
-		5. Buy a development card
-		6. Trade with a player
-		7. Trade with the bank (4 for 1)
-		8. Trade using a port
+    print:
+        1. View your hand
+        2. Buy a road
+        3. Buy a settlement
+        4. Upgrade a settlement to a city
+        5. Buy a development card
+        6. Trade with a player
+        7. Trade with the bank (4 for 1)
+        8. Trade using a port
 }
 show_hand(player)
 robber()
@@ -205,13 +221,13 @@ How do i draw multiple tiles? I think I might just have 2 defined board sizes, a
 
 How am i going to determine if a road is valid?
 if a player has a settlement at the starting node of the road
-	- if n1.owned_by == Player setting road:
-		return True
+    - if n1.owned_by == Player setting road:
+        return True
 or
 if the player has a road that touches the start node
-	- iterate over the adjacencies and see if there's a road that has the player's id on it
-		if any other road.owned_by == Player setting road
-		return True
+    - iterate over the adjacencies and see if there's a road that has the player's id on it
+        if any other road.owned_by == Player setting road
+        return True
 '''
 if __name__ == "__main__":
     #Setup the game and return player_list and amount of points to win
