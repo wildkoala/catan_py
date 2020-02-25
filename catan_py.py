@@ -188,8 +188,6 @@ if __name__ == "__main__":
     # need node list
     node_list = catan_classes.init_nodes()
 
-    print(node_list)
-
     # need road list
     road_list = catan_classes.create_roads(node_list)
 

@@ -30,9 +30,9 @@ def get_node_by_alias(node_list, g_alias):
             return n
 
 def get_node_by_id(node_list, n):
-    for n in node_list:
-        if n.id == n:
-            return n
+    for a in node_list:
+        if a.id == n:
+            return a
 
 #this function works, but it needs the node list, road list and the aliases as tuples (tile,corner)
 def get_road_by_nodes(node_list, road_list, alias1, alias2):
