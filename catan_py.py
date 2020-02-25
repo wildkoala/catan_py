@@ -225,6 +225,9 @@ if __name__ == "__main__":
 
     place_initial(player_list)
 
+    #Give players their initial resources
+    items.give_resources(0, b, player_list, True)
+
     winner = False
     while winner != True:
 
