@@ -196,12 +196,12 @@ class Node:
     def add_adj(self, id):
         self.adj_nodes.append(id)
 
-    def is_settlment():
+    def is_settlment(self):
         if self.owns_node.islower():
             return True
         else:
             return False
-    def is_city():
+    def is_city(self):
         if self.owns_node.isupper():
             return True
         else:

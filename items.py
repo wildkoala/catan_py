@@ -150,7 +150,7 @@ def build_settlement(a_player, initializing = False):
 
             # my wanted node is really the node in the global "node_list". Maybe I should get it's index?
             i = config.node_list.index(wanted_node)
-            
+
             if config.node_list[i].owns_node != "":
                 print(wanted_node.owns_node + " is already on that space!!")
                 continue
