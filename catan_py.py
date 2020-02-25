@@ -55,7 +55,7 @@ def player_menu():
     )
 
 def player_turn(player, points_to_win):
-    print(str(player.present()) + " it is your turn")
+    print(player.p_name + " it is your turn")
 
     user_input = input("Press Enter to Roll Die")
 
