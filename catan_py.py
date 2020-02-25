@@ -167,104 +167,50 @@ C:::::C                   A:::::::::::::::::::::A       T:::::T       A:::::::::
 
     return (player_list, points_to_win)
 
-  #Debug Purpose
-  #console.log(selection + "\n");
 
-
-
-
-
-#If 7 is rolled then robber effects players with more than 7 cards and blocked tile
-
-# PSEUDO CODE
-'''
-//my_tile = new Tile("W", 5);
-//console.log(my_tile.present());
-// their methods can be accessed like this.
-//card.present();
-
-/*
-console.log(
-`   _____
-  /     \\
- /       \\
-(    ` + "W" + `    )
- \\       /
-  \\_____/`);
-/*
-function main(){
-    main_menu(num_players, points_to_win)
-    create_board(size) // Create the board itself, with tiles that have a letter for the resource and number for the probability
-    display_board(board) // Draw the board on screen
-    setup_board() // players pick their initial locations and get their resources
-    int winner = 0;
-    while (winner != 1){
-        player_turn()
-        winner = check_win()
-    }
-    print("Player %s is the winner", player)
-}
-function player_turn(){
-    print("press r and hit enter to roll.")
-    int rolled;
-    rolled = roll_dice();
-    if rolled == 7{
-        robber()
-    }
-    else{
-        give_out_resources() // give everyone their cards
-    }
-    int user_response;
-    user_response = player_menu(); // show them their options now.
-    if user_response == 0{
-        show_hand(player)
-    }
-}
-function player_menu(){
-    print:
-        1. View your hand
-        2. Buy a road
-        3. Buy a settlement
-        4. Upgrade a settlement to a city
-        5. Buy a development card
-        6. Trade with a player
-        7. Trade with the bank (4 for 1)
-        8. Trade using a port
-}
-show_hand(player)
-robber()
-
-We need to figure out how we're going to describe where people want to place their roads and where they want to place their settlements
-I think we should specify which corners of a tile are open with "O" for open.
-I think we need some colors in this game, even though its a terminal... can we do that?
-How else will we specify who has a corner? Is the first letter of the player name okay? What if there are two players with the same name?
-Wouldn't that be confusing with the resources?
-
-What will clients send?
-
-How do i draw multiple tiles? I think I might just have 2 defined board sizes, and just populate the board randomly at the start of the game.
-
-How am i going to determine if a road is valid?
-if a player has a settlement at the starting node of the road
-    - if n1.owned_by == Player setting road:
-        return True
-or
-if the player has a road that touches the start node
-    - iterate over the adjacencies and see if there's a road that has the player's id on it
-        if any other road.owned_by == Player setting road
-        return True
-'''
 if __name__ == "__main__":
+
+    # Display CATAN name
+    # main menu
+    # 1. Play Catan
+    # 2. Explain Rules
+    # 3. Credits
+    #
+    # Players Connected: _#_
+
+    # assume they chose 1. 
+    
     #Setup the game and return player_list and amount of points to win
     b = catan_classes.Board()
 
     # need node list
-    # need road list
+    node_list = catan_classes.init_nodes()
 
+    # need road list
+    road_list = catan_classes.create_roads(node_list)
+
+    # need player list
+    # ask players for their name and color choice
     game_specifications = setup()
 
+<<<<<<< HEAD
     #catan_classes.create_nodes()
 
+=======
+    # establish points to win
+
+    # Everyone rolls for who goes first
+        # highest goes first
+            # place settlement
+            # get resources
+            # place roads
+        # once through list, go in reverse order placing second settlement
+
+
+    # once every player has their settlements down
+
+    # GAME LOOP
+>>>>>>> 2be4d9103c134e5a54bdb8aca9a210e74ddaaa9f
     #Store player_list and points to win in variables
     player_list = game_specifications[0]
     points_to_win = game_specifications[1]
@@ -273,8 +219,7 @@ if __name__ == "__main__":
     place_initial(player_list)
 
     winner = False
-
-    while winner == False:
+    while winner != True:
 
         #Declare whos turn it is in the game
         winner = player_turn(player_list[curr_player_turn], points_to_win, b, player_list)
