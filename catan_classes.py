@@ -21,7 +21,7 @@ class Player:
         self.p_dev_cards = []
 
     def present(self):
-        print("My name is " + self.p_name)
+        return self.p_name
 
     def show_hand(self):
         print(''.join(self.p_hand))
