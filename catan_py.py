@@ -16,8 +16,6 @@ import random
 import catan_classes
 import items
 
-b = catan_classes.Board()
-
 
 #========================================================
 # FUNCTION DECLARATIONS
@@ -84,16 +82,16 @@ def player_turn(player, points_to_win):
             player.show_hand()
 
         elif selection == 2:
-            build_road(player)
+            items.build_road(player)
 
         elif selection == 3:
-            build_settlement(player)
+            items.build_settlement(player)
 
         elif selection == 4:
-            build_city(player)
+            items.build_city(player)
 
         elif selection == 5:
-            build_dev_card(player)
+            items.build_dev_card(player)
 
         elif selection == 6:
             print("Trade with Player")
@@ -252,6 +250,8 @@ if the player has a road that touches the start node
 '''
 if __name__ == "__main__":
     #Setup the game and return player_list and amount of points to win
+    b = catan_classes.Board()
+
     game_specifications = setup()
 
     #Store player_list and points to win in variables
