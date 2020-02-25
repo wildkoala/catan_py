@@ -21,6 +21,15 @@ import items
 # FUNCTION DECLARATIONS
 #========================================================
 
+def player_choose_color(color_options):
+        print("Which color will you be?")
+        i = 1
+        for c in color_options:
+            print("\t" + str(i) + ". " + c)
+            i += 1
+        choice = int(input("Chose the number of the color you'd like?\n"))
+        return choice
+
 def robber():
     print("Robber has been called")
 
@@ -28,7 +37,6 @@ def robber():
     for i in player_list:
         if len(i.p_hand) >= 7:
             print(i.p_name + " Please discard half your cards")
-
 
 
 def increment_player_turn(current_player_turn, num_players):
@@ -127,13 +135,15 @@ C:::::C                   A:::::::::::::::::::::A       T:::::T       A:::::::::
 
     player_list = [] # this will be a list of Player objects
     i = 0
-
+    color_options = ["Red", "Yellow", "Purple", "Green", "Cyan", "Tan"]
+    
     while i < num_players:
         name = input("Please Enter Player " + str((i + 1)) + "'s Name\n")
         # give player a list of color options
-        color_options = ["Red", "Yellow", "Purple", "Green", "Cyan", "Tan"]
-        color = input("What color will you be?\n") 
-        color = color[0].lower()
+        
+        p_color =  color_options.pop(player_choose_color(color_options)-1)
+        print("You selected: " + p_color)
+        color = p_color[0].lower()
         player_list.append(catan_classes.Player(name,color))
         i+=1
 
