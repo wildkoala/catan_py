@@ -116,7 +116,9 @@ def setup():
 
     while i < num_players:
         name = input("Please Enter Player " + str((i + 1)) + "'s Name\n")
-        player_list.append(catan_classes.Player(name))
+        color = input("What color will you be?\n")
+        color = color[0].lower()
+        player_list.append(catan_classes.Player(name,color))
         i+=1
 
 # most of this should be wrapped up in a "setup" function
