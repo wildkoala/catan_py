@@ -27,7 +27,7 @@ import catan_classes
 def get_node_by_alias(node_list, g_alias):
     for n in node_list:
         if g_alias in n.alias:
-            return n.id
+            return n
 
 def get_node_by_id(node_list, n):
     for n in node_list:
@@ -58,12 +58,12 @@ def road_is_connected(player_color, n1, n2):
         return False
 
 # maybe have is_init set to False by default (a keyword argument)
-def build_road(a_player, initializing = False):
+def build_road(a_player, initializing = False, node_list = None, road_list = None):
 
     if initializing:
         placed = False
         while not settled:
-            n1 = input("Where do you want to start your road?") #1,6 for example
+            n1 = input("Where do you want to start your road?")#1,6 for example
             n1 = n1.split(",")
             n1 = tuple(n1)
             n1 = get_node_by_alias(node_list, n1)
@@ -78,7 +78,7 @@ def build_road(a_player, initializing = False):
                 wanted_road = get_road_by_nodes(node_list, road_list, n1, n2)
                 if wanted_node.owns_road != "":
                     print(wanted_road.owns_road + " is already on that space!!")
-                    continue     
+                    continue
                 else:
                     wanted_node.owns_node = a_player.p_color
                     print(a_player.p_name + " has placed a settlement!!")
@@ -127,7 +127,9 @@ def build_settlement(a_player, initializing = False, node_list = None):
         while not settled:
             n1 = input("Where do you want to place your settlement?") #1,6 for example
             n1 = n1.split(",")
+            n1 = [ int(x) for x in n1]
             n1 = tuple(n1)
+            print(n1)
             wanted_node = get_node_by_alias(node_list, n1)
             if wanted_node.owns_node != "":
                 print(wanted_node.owns_node + " is already on that space!!")
@@ -137,7 +139,7 @@ def build_settlement(a_player, initializing = False, node_list = None):
                 if neighbor.owns_node != "":
                     print("There's a player on an adjacent space!!")
                     continue
-            
+
             wanted_node.owns_node = a_player.p_color
             print(a_player.p_name + " has placed a settlement!!")
             settled = True

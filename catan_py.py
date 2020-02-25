@@ -113,11 +113,13 @@ def player_turn(player, points_to_win, game_board, game_players):
 # START OF GAME
 #========================================================
 
-def place_initial(player_list):
+def place_initial(player_list, node_list, road_list):
     for i in player_list:
-        items.build_settlement(i, True)
+        items.build_settlement(i, True, node_list)
+        items.build_road(i, True, node_list, road_list)
     for i in reversed(player_list):
-        items.build_settlement(i, True)
+        items.build_settlement(i, True, node_list)
+        items.build_road(i, True, node_list, road_list)
 
 
 def setup():
@@ -178,13 +180,15 @@ if __name__ == "__main__":
     #
     # Players Connected: _#_
 
-    # assume they chose 1. 
-    
+    # assume they chose 1.
+
     #Setup the game and return player_list and amount of points to win
     b = catan_classes.Board()
 
     # need node list
     node_list = catan_classes.init_nodes()
+
+    print(node_list)
 
     # need road list
     road_list = catan_classes.create_roads(node_list)
@@ -193,10 +197,10 @@ if __name__ == "__main__":
     # ask players for their name and color choice
     game_specifications = setup()
 
-<<<<<<< HEAD
+
     #catan_classes.create_nodes()
 
-=======
+
     # establish points to win
 
     # Everyone rolls for who goes first
@@ -210,13 +214,13 @@ if __name__ == "__main__":
     # once every player has their settlements down
 
     # GAME LOOP
->>>>>>> 2be4d9103c134e5a54bdb8aca9a210e74ddaaa9f
+
     #Store player_list and points to win in variables
     player_list = game_specifications[0]
     points_to_win = game_specifications[1]
     curr_player_turn = 0
 
-    place_initial(player_list)
+    place_initial(player_list, node_list, road_list)
 
     winner = False
     while winner != True:
