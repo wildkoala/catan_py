@@ -211,4 +211,5 @@ def main():
 >>>>>>> d155f33b660a712b194330a8e7c0c3779d7fa290
 if __name__ == "__main__":
 	b = catan_classes.Board()
+	b.create_board()
 	b.show_board()
