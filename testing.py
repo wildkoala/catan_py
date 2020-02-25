@@ -1,6 +1,6 @@
 
-from catan_classes import Node, Road
-
+import catan_classes
+'''
 def get_node_by_alias(node_list, g_alias):
 	for n in node_list:
 		#print(n)
@@ -205,6 +205,10 @@ def main():
     r = get_road_by_nodes(x, road_list, (2,2), (3,1))
     print(r)
 '''
+<<<<<<< HEAD
 
+=======
+>>>>>>> d155f33b660a712b194330a8e7c0c3779d7fa290
 if __name__ == "__main__":
-    main()
+	b = catan_classes.Board(10)
+	b.show_board()

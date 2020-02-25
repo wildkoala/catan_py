@@ -1,9 +1,9 @@
 #
-#FILE PURPOSE: 
+#FILE PURPOSE:
 #  1. This file contains all class definitions and functions that instantiate one of
 #  the created classes.
 
-#BUG SECTION: 
+#BUG SECTION:
 #  1. showing a tile needs to have a point at the top, not an edge
 # */
 
@@ -21,14 +21,14 @@ class Player:
         self.p_dev_cards = []
 
     def present(self):
-        print("My name is " + self.p_name)
+        print(self.p_name)
 
     def show_hand(self):
         print(''.join(self.p_hand))
 
     def add_card(self, new_card):
         self.p_hand += new_card
-  
+
 	#returns how many victory points a player has
     def show_victory_pts(self):
         return self.p_victory_pts
@@ -39,10 +39,10 @@ class Player:
 
 #Partial implementation
 class Board:
-    def __init__(self, size):
-        self.size = size
+    def __init__(self):
+        pass
 
-    def present(self):
+    def show_board(self):
         print('''
                                   >-----<
                                  /~~~~~~~\\
@@ -68,7 +68,7 @@ class Board:
        >-----<   wood    >-----<   brick   >-----<   sheep   >-----<
       /~~~~~~~\         /       \         /       \         /~~~~~~~\\
      /~~~~~~~~~\       /   12    \       /    2    \       /~~~~~~~~~\\
-    <~~~~~~~~~~~>-----<   grain   >-----<   stone   >-----<~~~~~~~~~~~>  
+    <~~~~~~~~~~~>-----<   grain   >-----<   stone   >-----<~~~~~~~~~~~>
      \~~~~~~~~~/       \         /       \         /       \~~~~~~~~~/
       \~~~~~~~/    6    \       /    4    \       /   12    \~~~~~~~/
        >-----<   grain   >-----<   sheep   >-----<   brick   >-----<
@@ -93,25 +93,32 @@ class Board:
 
 
 
-    ''')
- 
+                                  ''')
+
 
 
 class Tile:
+
     def __init__(self, resource, number):
         self.resource = resource
         self.number = number
+        self.id
+
+
+    #def create_tiles(self):
+        #for i in range(1,20):
+
 
 #Need to look up proper syntax to create this format in python
 '''
   def present(self):
     const format = `   _____
-  /     \\ 
- /       \\ 
+  /     \\
+ /       \\
 (    ` + this.resource + `    )
  \\   ` + this.number + `   /
   \\_____/`
-  
+
     return format;
 '''
 
@@ -146,7 +153,7 @@ def random_tile():
 
 class Road:
     def __init__(self, start_n, end_n):
-        self.owns_road = ""  
+        self.owns_road = ""
         self.start_n = start_n
         self.end_n = end_n
 
@@ -162,7 +169,7 @@ class Road:
 class Node:
     def __init__(self, id): # Just gonna have every node have an id.
         self.id = id
-        self.owns_node = "" # color of player with a settlement or city on this node 
+        self.owns_node = "" # color of player with a settlement or city on this node
         self.alias = [] # this is a list of tuples, where the first vvalue is the tile it's on, and the second is the corner that it is.
         self.can_place = False # basically, this is only true in limited circumstances
         self.adj_nodes = [] # list of id's for connected nodes
@@ -320,13 +327,10 @@ def create_roads(list_of_nodes):
                 new_road = Road(n.id,thing)
                 roads.append(new_road)
     return roads
-                
+
 def print_roads(road_list):
     for r in road_list:
         print(r)
 
 
 #print_roads(roads)
-
-
-
