@@ -116,10 +116,14 @@ def player_turn(player, points_to_win, game_board, game_players):
 
 def place_initial(player_list):
     for i in player_list:
+        print(i.p_name + " is placing their first settlement")
         items.build_settlement(i, True)
+        print(i.p_name + " is placing their first road")
         items.build_road(i, True)
     for i in reversed(player_list):
+        print(i.p_name + " is placing their second settlement")
         items.build_settlement(i, True)
+        print(i.p_name + " is placing their second road")
         items.build_road(i, True)
 
 
