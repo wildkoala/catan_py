@@ -201,27 +201,30 @@ def has_needed_resources(item, a_player):
 def give_resources(roll_num, a_board):
     for t in a_board.tiles:
         if t.number == roll_num:
-            # Check every node for a player
-            corners = []
-            corners.append(get_node_by_alias(node_list, (t.id, 1)))
-            corners.append(get_node_by_alias(node_list, (t.id, 2)))
-            corners.append(get_node_by_alias(node_list, (t.id, 3)))
-            corners.append(get_node_by_alias(node_list, (t.id, 4)))
-            corners.append(get_node_by_alias(node_list, (t.id, 5)))
-            corners.append(get_node_by_alias(node_list, (t.id, 6)))
+            if t.has_robber:
+                print("The robber stole your " + t.resource + "!!")
+            else:
+                # Check every node for a player
+                corners = []
+                corners.append(get_node_by_alias(node_list, (t.id, 1)))
+                corners.append(get_node_by_alias(node_list, (t.id, 2)))
+                corners.append(get_node_by_alias(node_list, (t.id, 3)))
+                corners.append(get_node_by_alias(node_list, (t.id, 4)))
+                corners.append(get_node_by_alias(node_list, (t.id, 5)))
+                corners.append(get_node_by_alias(node_list, (t.id, 6)))
 
-            for n in corners:
-                if not n.is_empty:
-                    if n.is_settlement:
-                        # need game_players to be accessible
-                        # go through players to find out who has
-                        for p in game_players:
-                            if n.owns_node == p.color:
-                                p.p_hand.append(t.resource)
-                    else:
-                        p.p_hand.append(t.resource)
-                        p.p_hand.append(t.resource)
+                for n in corners:
+                    if not n.is_empty:
+                        if n.is_settlement:
+                            # need game_players to be accessible
+                            # go through players to find out who has
+                            for p in game_players:
+                                if n.owns_node == p.color:
+                                    p.p_hand.append(t.resource)
+                        else:
+                            p.p_hand.append(t.resource)
+                            p.p_hand.append(t.resource)
 
 
-            # if it's a settlement, give that player 1 of t.resource
-            # if it's a city, give that player 2 of t.resource
+                # if it's a settlement, give that player 1 of t.resource
+                # if it's a city, give that player 2 of t.resource
