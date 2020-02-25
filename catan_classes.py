@@ -66,11 +66,11 @@ class Board:
     <~~~~~~~~~~~>-----<     {}     >-----<     {}     >-----<~~~~~~~~~~~>
      \~~~~~~~~~/       \    {}    /       \    {}    /       \~~~~~~~~~/
       \~~~~~~~/    {}    \       /    {}    \       /    {}    \~~~~~~~/
-       >-----<     a     >-----<     o     >-----<     o     >-----<
-      /~~~~~~~\         /       \         /       \         /~~~~~~~\\
-     /~~~2:1~~~\       /         \       /         \       /~~~2:1~~~\\
-    <~~~brick~~*>-----<     e     >-----<     s     >-----<*~~~ore~~~~>
-     \~~~~~~~~~/       \         /       \         /       \~~~~~~~~~/
+       >-----<     {}     >-----<     {}     >-----<     {}     >-----<
+      /~~~~~~~\    {}    /       \    {}    /       \    {}    /~~~~~~~\\
+     /~~~2:1~~~\       /    {}    \       /    {}    \       /~~~2:1~~~\\
+    <~~~brick~~*>-----<     {}     >-----<     {}     >-----<*~~~ore~~~~>
+     \~~~~~~~~~/       \    {}    /       \    {}    /       \~~~~~~~~~/
       \~~~~~~*/         \       /         \       /         \*~~~~~~/
        >-----<     0     >-----<     i     >-----<     e     >-----<
       /~~~~~~~\         /       \         /       \         /~~~~~~~\\
@@ -95,9 +95,12 @@ class Board:
                                  \~~~~~~~/
                                   >-----<
 
-                                  '''.format(self.tiles[2].number, self.tiles[2].resource, self.tiles[2].id, self.tiles[1].number,
-                                  self.tiles[6].number, self.tiles[1].resource, self.tiles[6].resource,self.tiles[1].id, self.tiles[6].id
-                                  ,self.tiles[0].number, self.tiles[5].number,self.tiles[11].number))
+                                  '''.format(self.tiles[2].number,self.tiles[2].resource,self.tiles[2].id,self.tiles[1].number,
+                                  self.tiles[6].number,self.tiles[1].resource,self.tiles[6].resource,self.tiles[1].id, self.tiles[6].id
+                                  ,self.tiles[0].number,self.tiles[5].number,self.tiles[11].number, self.tiles[0].resource,
+                                  self.tiles[5].resource,self.tiles[11].resource,self.tiles[0].id,self.tiles[5].id,self.tiles[11].id,
+                                  self.tiles[4].number,self.tiles[10].number,self.tiles[4].resource,self.tiles[10].resource,
+                                  self.tiles[4].id,self.tiles[10].id))
 
 
 

@@ -16,8 +16,8 @@ import catan_classes
 
 # need globally accessible list of nodes
 # need globally accessible list of roads
-node_list = catan_classes.init_nodes() # this doesnt work?
-road_list = catan_classes.create_roads(node_list) # this doesnt work?
+#node_list = catan_classes.init_nodes() # this doesnt work?
+#road_list = catan_classes.create_roads(node_list) # this doesnt work?
 
 #this function works, but it needs a node list and alias as a tuple ex. (1,6)
 def get_node_by_alias(node_list, g_alias):
