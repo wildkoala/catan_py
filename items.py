@@ -38,13 +38,13 @@ def get_node_by_id(node_list, n):
 def get_road_by_nodes(node_list, road_list, alias1, alias2):
     n1 = get_node_by_alias(node_list, alias1)
     n2 = get_node_by_alias(node_list, alias2)
-    if n1 < n2:
+    if n1.id < n2.id:
         for r in road_list:
-            if r.start_n == n1 and r.end_n == n2:
+            if r.start_n == n1.id and r.end_n == n2.id:
                 return r
             else:
                 for r in road_list:
-                    if r.start_n == n2 and r.end_n == n1:
+                    if r.start_n == n2.id and r.end_n == n1.id:
                         return r
 
 # player.id this will have to be added to player. it's their icon on the map
@@ -62,14 +62,16 @@ def build_road(a_player, initializing = False, node_list = None, road_list = Non
 
     if initializing:
         placed = False
-        while not settled:
+        while not placed:
             n1 = input("Where do you want to start your road?")#1,6 for example
             n1 = n1.split(",")
+            n1 = [ int(x) for x in n1]
             n1 = tuple(n1)
             n1 = get_node_by_alias(node_list, n1)
 
             n2 = input("Where do you want to end your road?") #1,6 for example
             n2 = n2.split(",")
+            n2 = [ int(x) for x in n2]
             n2 = tuple(n2)
             n2 = get_node_by_alias(node_list, n2)
 
