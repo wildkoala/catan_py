@@ -16,6 +16,8 @@ import random
 import catan_classes
 import items
 
+b = catan_classes.Board()
+
 
 #========================================================
 # FUNCTION DECLARATIONS
@@ -54,6 +56,7 @@ def player_menu():
         6. Trade with a player
         7. Trade with the bank (4 for 1)
         8. Trade using a port
+        9. Display Board
         0. End Turn
 '''
     )
@@ -101,6 +104,9 @@ def player_turn(player, points_to_win):
         elif selection == 8:
             print("Trade using a port")
 
+        elif selection == 9:
+            b.show_board()
+
         if (player.show_victory_pts() >= points_to_win):
             return True
     return False
@@ -139,6 +145,8 @@ C:::::C                   A:::::::::::::::::::::A       T:::::T       A:::::::::
 
     while i < num_players:
         name = input("Please Enter Player " + str((i + 1)) + "'s Name\n")
+        # give player a list of color options
+
         p_color =  color_options.pop(player_choose_color(color_options)-1)
         print("You selected: " + p_color)
         color = p_color[0].lower()
@@ -147,6 +155,11 @@ C:::::C                   A:::::::::::::::::::::A       T:::::T       A:::::::::
 
 # most of this should be wrapped up in a "setup" function
     points_to_win = int(input("Enter the Amount of Points Required to Win\n"))
+
+    b.create_board()
+
+    print("Here is the Board:")
+    b.show_board()
 
     return (player_list, points_to_win)
 

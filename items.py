@@ -113,6 +113,7 @@ def build_settlement(a_player):
 def build_city(a_player):
     have_resources = has_needed_resources("city", a_player)
     if have_resources:
+        print("building a city")
         # check that a player has a settlement at that location
         n1 = input("Where do you want to place your city?") #1,6 for example
         n1 = n1.split(",")
@@ -147,6 +148,8 @@ def build_city(a_player):
 def build_dev_card(a_player):
     have_resources = has_needed_resources("dev_card", a_player)
     if have_resources:
+
+        print("here's a dev card")
         print(a_player.p_name + " bought a development card!")
         a_player.p_hand.remove("O")
         a_player.p_hand.remove("S")
@@ -211,14 +214,14 @@ def give_resources(roll_num, a_board):
                 if not n.is_empty:
                     if n.is_settlement:
                         # need game_players to be accessible
-                        # go through players to find out who has 
-                        for p in game_players: 
+                        # go through players to find out who has
+                        for p in game_players:
                             if n.owns_node == p.color:
                                 p.p_hand.append(t.resource)
                     else:
                         p.p_hand.append(t.resource)
                         p.p_hand.append(t.resource)
-                        
+
 
             # if it's a settlement, give that player 1 of t.resource
             # if it's a city, give that player 2 of t.resource
