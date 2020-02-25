@@ -99,10 +99,7 @@ def build_settlement(a_player):
                 print("There's a player on an adjacent space!!")
                 return #this is a NoneType
 
-<<<<<<< HEAD
-=======
         wanted_node.owns_node = a_player.color
->>>>>>> fc0a76f0e21f332c2ed63366cff2c6b195b5b471
         print(a_player.p_name + "has placed down a road!")
         a_player.p_hand.remove("B")
         a_player.p_hand.remove("L")
@@ -116,9 +113,7 @@ def build_settlement(a_player):
 def build_city(a_player):
     have_resources = has_needed_resources("city", a_player)
     if have_resources:
-<<<<<<< HEAD
         print("building a city")
-=======
         # check that a player has a settlement at that location
         n1 = input("Where do you want to place your city?") #1,6 for example
         n1 = n1.split(",")
@@ -143,7 +138,6 @@ def build_city(a_player):
         else:
             print("You don't have a settlement here...")
 
->>>>>>> fc0a76f0e21f332c2ed63366cff2c6b195b5b471
     else:
         print("Not enough resources to upgrade into a city!!")
 # Have a settlement
@@ -154,17 +148,14 @@ def build_city(a_player):
 def build_dev_card(a_player):
     have_resources = has_needed_resources("dev_card", a_player)
     if have_resources:
-<<<<<<< HEAD
+
         print("here's a dev card")
-=======
         print(a_player.p_name + " bought a development card!")
         a_player.p_hand.remove("O")
         a_player.p_hand.remove("S")
         a_player.p_hand.remove("W")
         # give player a dev card... I need to have dev cards (and shuffled)
 
->>>>>>> fc0a76f0e21f332c2ed63366cff2c6b195b5b471
-    else:
         print("Not enough resources to get dev card!!")
 
 
@@ -202,8 +193,6 @@ def has_needed_resources(item, a_player):
             return True
         else:
             return False
-<<<<<<< HEAD
-=======
 
 
 
@@ -224,15 +213,14 @@ def give_resources(roll_num, a_board):
                 if not n.is_empty:
                     if n.is_settlement:
                         # need game_players to be accessible
-                        # go through players to find out who has 
-                        for p in game_players: 
+                        # go through players to find out who has
+                        for p in game_players:
                             if n.owns_node == p.color:
                                 p.p_hand.append(t.resource)
                     else:
                         p.p_hand.append(t.resource)
                         p.p_hand.append(t.resource)
-                        
+
 
             # if it's a settlement, give that player 1 of t.resource
             # if it's a city, give that player 2 of t.resource
->>>>>>> fc0a76f0e21f332c2ed63366cff2c6b195b5b471
