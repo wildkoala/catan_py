@@ -36,6 +36,7 @@ def get_node_by_id(n):
             return a
 
 #this function works, but it needs the node list, road list and the aliases as tuples (tile,corner)
+
 def get_road_with_aliases(alias1, alias2):
     n1 = get_node_by_alias(config.node_list, alias1)
     n2 = get_node_by_alias(config.node_list, alias2)
@@ -139,6 +140,7 @@ def build_settlement(a_player, initializing = False):
     if initializing:
         settled = False
         while not settled:
+            adj_player = False
             n1 = input("Where do you want to place your settlement?") #1,6 for example
             n1 = n1.split(",")
             n1 = [ int(x) for x in n1]
@@ -152,15 +154,19 @@ def build_settlement(a_player, initializing = False):
             if config.node_list[i].owns_node != "":
                 print(wanted_node.owns_node + " is already on that space!!")
                 continue
-            for n in config.node_list[i].adj_nodes:
+            for n in config.node_list[i].adj_nodes: #list of id's
                 neighbor = get_node_by_id(n)
-                if neighbor.owns_node != "":
+                neighbor_i = config.node_list.index(neighbor)
+                #print(neighbor_i)
+                #print(config.node_list[neighbor_i])
+                #print(config.node_list[neighbor_i].owns_node)
+                if config.node_list[neighbor_i].owns_node != "":
                     print("There's a player on an adjacent space!!")
-                    continue
-
-            config.node_list[i].owns_node = a_player.p_color
-            print(a_player.p_name + " has placed a settlement!!")
-            settled = True
+                    adj_player = True
+            if not adj_player:
+                config.node_list[i].owns_node = a_player.p_color
+                print(a_player.p_name + " has placed a settlement!!")
+                settled = True
 
 
 
