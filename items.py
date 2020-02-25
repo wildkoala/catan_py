@@ -35,14 +35,6 @@ def get_node_by_id(node_list, n):
             return a
 
 #this function works, but it needs the node list, road list and the aliases as tuples (tile,corner)
-<<<<<<< HEAD
-def get_road_by_nodes(node_list, road_list, alias1, alias2):
-    n1 = get_node_by_alias(node_list, alias1.id)
-    n2 = get_node_by_alias(node_list, alias2.id)
-    if n1.id < n2.id:
-        for r in road_list:
-            if r.start_n == n1.id and r.end_n == n2.id:
-=======
 def get_road_with_aliases(node_list, road_list, alias1, alias2):
     n1 = get_node_by_alias(node_list, alias1)
     n2 = get_node_by_alias(node_list, alias2)
@@ -51,7 +43,6 @@ def get_road_with_aliases(node_list, road_list, alias1, alias2):
             return r
         else:
             if r.start_n == n2.id and r.end_n == n1.id:
->>>>>>> 3470353f6f26840ccd5e3b6379cc84819177bae7
                 return r
     print("COULDN'T FIND ROAD")
 
@@ -151,16 +142,11 @@ def build_settlement(a_player, initializing = False, node_list = None):
             n1 = n1.split(",")
             n1 = [ int(x) for x in n1]
             n1 = tuple(n1)
-<<<<<<< HEAD
-=======
-            print(n1)
-
->>>>>>> 3470353f6f26840ccd5e3b6379cc84819177bae7
             wanted_node = get_node_by_alias(node_list, n1)
             # my wanted node is really the node in the global "node_list". Maybe I should get it's index?
             index_in_node_list = node_list.index(wanted_node)
             print(index_in_node_list)
-            
+
             if wanted_node.owns_node != "":
                 print(wanted_node.owns_node + " is already on that space!!")
                 continue
@@ -175,7 +161,7 @@ def build_settlement(a_player, initializing = False, node_list = None):
 
             # want to change the global node_list, not just this local var
             # this should do the job, but I want a cleaner way of doing it.
-            
+
 
 
             print(a_player.p_name + " has placed a settlement!!")

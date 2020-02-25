@@ -1,5 +1,6 @@
 
 import catan_classes
+import config
 
 def get_node_by_alias(node_list, g_alias):
 	for n in node_list:
