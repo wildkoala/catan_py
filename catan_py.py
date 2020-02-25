@@ -67,7 +67,7 @@ def player_turn(player, points_to_win, game_board, game_players):
 
     roll = catan_classes.roll_dice()
     print(str(roll) + " has been rolled")
-    give_resources(roll, game_board, game_players)
+    items.give_resources(roll, game_board, game_players)
 
     #Check to see if robber() should be called
     if roll == 7:
@@ -187,10 +187,10 @@ if __name__ == "__main__":
     b = catan_classes.Board()
 
     # need node list accessible across all modules
-    # config.node_list 
+    # config.node_list
 
     # need road list
-    
+
 
     # need player list accessible across all modules
     # ask players for their name and color choice

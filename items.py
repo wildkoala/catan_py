@@ -36,7 +36,6 @@ def get_node_by_id(n):
             return a
 
 #this function works, but it needs the node list, road list and the aliases as tuples (tile,corner)
-<<<<<<< HEAD
 def get_road_with_aliases(alias1, alias2):
     n1 = get_node_by_alias(config.node_list, alias1)
     n2 = get_node_by_alias(config.node_list, alias2)
@@ -289,27 +288,44 @@ def give_resources(roll_num, a_board, game_players):
                 print("The robber stole your " + t.resource + "!!")
             else:
                 # Check every node for a player
+                n1 = get_node_by_alias((t.id, 1))
+                n2 = get_node_by_alias((t.id, 2))
+                n3 = get_node_by_alias((t.id, 3))
+                n4 = get_node_by_alias((t.id, 4))
+                n5 = get_node_by_alias((t.id, 5))
+                n6 = get_node_by_alias((t.id, 6))
+
+                n1 = config.node_list.index(n1)
+                n2 = config.node_list.index(n2)
+                n3 = config.node_list.index(n3)
+                n4 = config.node_list.index(n4)
+                n5 = config.node_list.index(n5)
+                n6 = config.node_list.index(n6)
+
+
                 corners = []
-                corners.append(get_node_by_alias((t.id, 1)))
-                corners.append(get_node_by_alias((t.id, 2)))
-                corners.append(get_node_by_alias((t.id, 3)))
-                corners.append(get_node_by_alias((t.id, 4)))
-                corners.append(get_node_by_alias((t.id, 5)))
-                corners.append(get_node_by_alias((t.id, 6)))
+                corners.append(config.node_list[n1])
+                corners.append(config.node_list[n2])
+                corners.append(config.node_list[n3])
+                corners.append(config.node_list[n4])
+                corners.append(config.node_list[n5])
+                corners.append(config.node_list[n6])
+
 
                 for n in corners:
-                    if not n.is_empty:
-                        if n.is_settlement:
+                    if not n.is_empty():
+                        if n.is_settlement():
                             # need game_players to be accessible
                             # go through players to find out who has
                             for p in game_players:
-                                if n.owns_node == p.color:
+                                if n.owns_node == p.p_color:
                                     p.p_hand.append(t.resource)
                                     print(p.p_name + " got a " + t.resource)
                         else:
                             p.p_hand.append(t.resource)
                             p.p_hand.append(t.resource)
                             print(p.p_name + " got 2 " + t.resource)
+                    #print(n)
 
 
                 # if it's a settlement, give that player 1 of t.resource

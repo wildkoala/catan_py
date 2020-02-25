@@ -121,8 +121,7 @@ class Tile:
         self.resource = resource
         self.number = number
         self.id = id
-
-
+        self.has_robber = False
 
 #Need to look up proper syntax to create this format in python
 '''
@@ -196,7 +195,7 @@ class Node:
     def add_adj(self, id):
         self.adj_nodes.append(id)
 
-    def is_settlment(self):
+    def is_settlement(self):
         if self.owns_node.islower():
             return True
         else:

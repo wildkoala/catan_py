@@ -1,7 +1,7 @@
 class Node:
 	def __init__(self, id): # Just gonna have every node have an id.
 		self.id = id
-		self.owns_node = "" # player with a settlement or city on this node 
+		self.owns_node = "" # player with a settlement or city on this node
 		self.alias = [] # this is a list of tuples, where the first vvalue is the tile it's on, and the second is the corner that it is.
 		self.can_place = False # basically, this is only true in limited circumstances
 		self.adj_nodes = [] # list of id's for connected nodes
@@ -15,7 +15,7 @@ class Node:
 	def add_adj(self, id):
 		self.adj_nodes.append(id)
 
-	def is_settlment():
+	def is_settlement(self):
 		if self.owns_node.is_lower():
 			return True
 		else:
