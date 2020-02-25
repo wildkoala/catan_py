@@ -76,21 +76,21 @@ class Board:
      /~~~2:1~~~\       /    {}    \       /    {}    \       /~~~2:1~~~\\
     <~~~brick~~*>-----<     {}     >-----<     {}     >-----<*~~~ore~~~~>
      \~~~~~~~~~/       \    {}    /       \    {}    /       \~~~~~~~~~/
-      \~~~~~~*/         \       /         \       /         \*~~~~~~/
-       >-----<     0     >-----<     i     >-----<     e     >-----<
-      /~~~~~~~\         /       \         /       \         /~~~~~~~\\
-     /~~~~~~~~~\       /         \       /         \       /~~~~~~~~~\\
-    <~~~~~~~~~~~>-----<     a     >-----<     o     >-----<~~~~~~~~~~~>
-     \~~~~~~~~~/       \         /       \         /       \~~~~~~~~~/
-      \~~~~~~~/         \       /         \       /         \~~~~~~~/
-       >-----<     a     >-----<     e     >-----<     i     >-----<
-      /~~~~~~*\         /       \         /       \         /*~~~~~~\\
-     /~~~~~~~~~\       /         \       /         \       /~~~~~~~~~\\
-    <~~~~3:1~~~*>-----<     o     >-----<     a     >-----<*~~~3:1~~~~>
-     \~~~~~~~~~/~~~~~~~\         /       \         /~~~~~~~\~~~~~~~~~/
-      \~~~~~~~/~~~~~~~~~\       /         \       /~~~~~~~~~\~~~~~~~/
-       >-----< ~~~~~~~~~~>-----<     e     >-----<~~~~~~~~~~~>-----<
-              \~~~~~~~~~/*~~~~~*\         /*~~~~~*\~~~~~~~~~/
+      \~~~~~~*/    {}    \       /    {}    \       /    {}    \*~~~~~~/
+       >-----<     {}     >-----<     {}     >-----<     {}     >-----<
+      /~~~~~~~\    {}    /       \    {}    /       \    {}    /~~~~~~~\\
+     /~~~~~~~~~\       /    {}    \       /    {}    \       /~~~~~~~~~\\
+    <~~~~~~~~~~~>-----<     {}     >-----<     {}     >-----<~~~~~~~~~~~>
+     \~~~~~~~~~/       \    {}    /       \    {}    /       \~~~~~~~~~/
+      \~~~~~~~/    {}    \       /    {}    \       /    {}    \~~~~~~~/
+       >-----<     {}     >-----<     {}     >-----<     {}     >-----<
+      /~~~~~~*\    {}    /       \    {}    /       \    {}    /*~~~~~~\\
+     /~~~~~~~~~\       /    {}    \       /    {}    \       /~~~~~~~~~\\
+    <~~~~3:1~~~*>-----<     {}     >-----<     {}     >-----<*~~~3:1~~~~>
+     \~~~~~~~~~/~~~~~~~\    {}    /       \    {}    /~~~~~~~\~~~~~~~~~/
+      \~~~~~~~/~~~~~~~~~\       /    {}    \       /~~~~~~~~~\~~~~~~~/
+       >-----< ~~~~~~~~~~>-----<     {}     >-----<~~~~~~~~~~~>-----<
+              \~~~~~~~~~/*~~~~~*\    {}    /*~~~~~*\~~~~~~~~~/
                \~~~~~~~/~~~~~~~~~\       /~~~2:1~~~\~~~~~~~/
                 >-----<~~~~3:1~~~~>-----<~~~grain~~~>-----<
                        \~~~~~~~~~/~~~~~~~\~~~~~~~~~/
@@ -105,8 +105,14 @@ class Board:
                                   ,self.tiles[0].number,self.tiles[5].number,self.tiles[11].number, self.tiles[0].resource,
                                   self.tiles[5].resource,self.tiles[11].resource,self.tiles[0].id,self.tiles[5].id,self.tiles[11].id,
                                   self.tiles[4].number,self.tiles[10].number,self.tiles[4].resource,self.tiles[10].resource,
-                                  self.tiles[4].id,self.tiles[10].id))
-
+                                  self.tiles[4].id,self.tiles[10].id,self.tiles[3].number,self.tiles[9].number,self.tiles[15].number,
+                                  self.tiles[3].resource,self.tiles[9].resource,self.tiles[15].resource,self.tiles[3].id,
+                                  self.tiles[9].id,self.tiles[15].id,self.tiles[8].number,self.tiles[14].number,self.tiles[8].resource
+                                  ,self.tiles[14].resource,self.tiles[8].id,self.tiles[14].id,self.tiles[7].number,self.tiles[13].number
+                                  ,self.tiles[18].number,self.tiles[7].resource,self.tiles[13].resource,self.tiles[18].resource,
+                                  self.tiles[7].id,self.tiles[13].id,self.tiles[18].id,self.tiles[12].number,self.tiles[17].number,
+                                  self.tiles[12].resource,self.tiles[17].resource,self.tiles[12].id,self.tiles[17].id,
+                                  self.tiles[16].number,self.tiles[16].resource,self.tiles[16].id))
 
 
 class Tile:

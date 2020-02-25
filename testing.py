@@ -1,6 +1,6 @@
 
 import catan_classes
-'''
+
 def get_node_by_alias(node_list, g_alias):
 	for n in node_list:
 		#print(n)
@@ -61,7 +61,7 @@ def main():
        >-----<   wood    >-----<   brick   >-----<   sheep   >-----<
       /~~~~~~~\         /       \         /       \         /~~~~~~~\\
      /~~~~~~~~~\       /   12    \       /    2    \       /~~~~~~~~~\\
-    <~~~~~~~~~~~>-----<   grain   >-----<   stone   >-----<~~~~~~~~~~~>  
+    <~~~~~~~~~~~>-----<   grain   >-----<   stone   >-----<~~~~~~~~~~~>
      \~~~~~~~~~/       \         /       \         /       \~~~~~~~~~/
       \~~~~~~~/    6    \       /    4    \       /   12    \~~~~~~~/
        >-----<   grain   >-----<   sheep   >-----<   brick   >-----<
@@ -86,9 +86,9 @@ def main():
 
 
 
-    ''')
+''')
 
-'''
+
     x = create_nodes()
     x[0].alias = [(1,6)]
     x[1].alias = [(1,1)]
@@ -204,11 +204,7 @@ def main():
 
     r = get_road_by_nodes(x, road_list, (2,2), (3,1))
     print(r)
-'''
-<<<<<<< HEAD
 
-=======
->>>>>>> d155f33b660a712b194330a8e7c0c3779d7fa290
 if __name__ == "__main__":
 	b = catan_classes.Board()
 	b.create_board()
