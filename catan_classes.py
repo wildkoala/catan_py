@@ -9,6 +9,7 @@
 
 #/* Requirements and Exports */
 import random
+from catan_py import roll_dice
 
 # need to give players an id, use first letter of not conflicting colors (NOT BLWSO)
 # Red, Yellow, Purple, Green, Cyan, Tan
@@ -39,8 +40,14 @@ class Player:
 
 #Partial implementation
 class Board:
+
     def __init__(self):
-        pass
+        self.tiles = [] #Is a list of tiles
+
+    def create_board(self):
+        for i in range(1,20):
+            randomize = random_tile()
+            self.tiles.append(Tile(randomize[0], randomize[1], i))
 
     def show_board(self):
         print('''
@@ -52,32 +59,32 @@ class Board:
                        /~~~~~~~~~\*~~~~~*/~~~~~~~~~\\
                 >-----<~~~~~~~~~~~>-----<~~~~~~~~~~~>-----<
                /~~~~~~~\~~~~~~~~~/       \~~~~~~~~~/~~~~~~~\\
-              /~~~2:1~~~\~~~~~~~/    8    \~~~~~~~/~~~2:1~~~\\
-       >-----<~~~wood~~~*>-----<   wood    >-----<*~~sheep~~~>-----<
-      /~~~~~~~\~~~~~~~~~/       \         /       \~~~~~~~~~/~~~~~~~\\
-     /~~~~~~~~~\~~~~~~*/   11    \       /    4    \*~~~~~~/~~~~~~~~~\\
-    <~~~~~~~~~~~>-----<   brick   >-----<   brick   >-----<~~~~~~~~~~~>
-     \~~~~~~~~~/       \         /       \         /       \~~~~~~~~~/
-      \~~~~~~~/    3    \       /    9    \       /    9    \~~~~~~~/
-       >-----<   grain   >-----<   wood    >-----<   stone   >-----<
+              /~~~2:1~~~\~~~~~~~/    {}    \~~~~~~~/~~~2:1~~~\\
+       >-----<~~~wood~~~*>-----<     {}     >-----<*~~sheep~~~>-----<
+      /~~~~~~~\~~~~~~~~~/       \    {}    /       \~~~~~~~~~/~~~~~~~\\
+     /~~~~~~~~~\~~~~~~*/    {}    \       /    {}    \*~~~~~~/~~~~~~~~~\\
+    <~~~~~~~~~~~>-----<     {}     >-----<     {}     >-----<~~~~~~~~~~~>
+     \~~~~~~~~~/       \    {}    /       \    {}    /       \~~~~~~~~~/
+      \~~~~~~~/    {}    \       /    {}    \       /    {}    \~~~~~~~/
+       >-----<     a     >-----<     o     >-----<     o     >-----<
       /~~~~~~~\         /       \         /       \         /~~~~~~~\\
-     /~~~2:1~~~\       /    8    \       /         \       /~~~2:1~~~\\
-    <~~~brick~~*>-----<   sheep   >-----<   desert  >-----<*~~~ore~~~~>
-     \~~~~~~~~~/       \         /       \  ROBBER /       \~~~~~~~~~/
-      \~~~~~~*/   10    \       /    6    \       /   10    \*~~~~~~/
-       >-----<   wood    >-----<   brick   >-----<   sheep   >-----<
-      /~~~~~~~\         /       \         /       \         /~~~~~~~\\
-     /~~~~~~~~~\       /   12    \       /    2    \       /~~~~~~~~~\\
-    <~~~~~~~~~~~>-----<   grain   >-----<   stone   >-----<~~~~~~~~~~~>
+     /~~~2:1~~~\       /         \       /         \       /~~~2:1~~~\\
+    <~~~brick~~*>-----<     e     >-----<     s     >-----<*~~~ore~~~~>
      \~~~~~~~~~/       \         /       \         /       \~~~~~~~~~/
-      \~~~~~~~/    6    \       /    4    \       /   12    \~~~~~~~/
-       >-----<   grain   >-----<   sheep   >-----<   brick   >-----<
+      \~~~~~~*/         \       /         \       /         \*~~~~~~/
+       >-----<     0     >-----<     i     >-----<     e     >-----<
+      /~~~~~~~\         /       \         /       \         /~~~~~~~\\
+     /~~~~~~~~~\       /         \       /         \       /~~~~~~~~~\\
+    <~~~~~~~~~~~>-----<     a     >-----<     o     >-----<~~~~~~~~~~~>
+     \~~~~~~~~~/       \         /       \         /       \~~~~~~~~~/
+      \~~~~~~~/         \       /         \       /         \~~~~~~~/
+       >-----<     a     >-----<     e     >-----<     i     >-----<
       /~~~~~~*\         /       \         /       \         /*~~~~~~\\
-     /~~~~~~~~~\       /   11    \       /    5    \       /~~~~~~~~~\\
-    <~~~~3:1~~~*>-----<   wood    >-----<   grain   >-----<*~~~3:1~~~~>
+     /~~~~~~~~~\       /         \       /         \       /~~~~~~~~~\\
+    <~~~~3:1~~~*>-----<     o     >-----<     a     >-----<*~~~3:1~~~~>
      \~~~~~~~~~/~~~~~~~\         /       \         /~~~~~~~\~~~~~~~~~/
-      \~~~~~~~/~~~~~~~~~\       /    5    \       /~~~~~~~~~\~~~~~~~/
-       >-----< ~~~~~~~~~~>-----<   sheep   >-----<~~~~~~~~~~~>-----<
+      \~~~~~~~/~~~~~~~~~\       /         \       /~~~~~~~~~\~~~~~~~/
+       >-----< ~~~~~~~~~~>-----<     e     >-----<~~~~~~~~~~~>-----<
               \~~~~~~~~~/*~~~~~*\         /*~~~~~*\~~~~~~~~~/
                \~~~~~~~/~~~~~~~~~\       /~~~2:1~~~\~~~~~~~/
                 >-----<~~~~3:1~~~~>-----<~~~grain~~~>-----<
@@ -88,20 +95,19 @@ class Board:
                                  \~~~~~~~/
                                   >-----<
 
-                                  ''')
+                                  '''.format(self.tiles[2].number, self.tiles[2].resource, self.tiles[2].id, self.tiles[1].number,
+                                  self.tiles[6].number, self.tiles[1].resource, self.tiles[6].resource,self.tiles[1].id, self.tiles[6].id
+                                  ,self.tiles[0].number, self.tiles[5].number,self.tiles[11].number))
 
 
 
 class Tile:
 
-    def __init__(self, resource, number):
+    def __init__(self, resource, number, id):
         self.resource = resource
         self.number = number
-        self.id
+        self.id = id
 
-
-    #def create_tiles(self):
-        #for i in range(1,20):
 
 
 #Need to look up proper syntax to create this format in python
@@ -116,31 +122,29 @@ class Tile:
 
     return format;
 '''
-
-
-
 def random_tile():
     tile_r = ""
     tile_n = -1
 
     #Determine the resource
-    x = random.randint(1, 6)  #gives random number between 1 and 5
+    x = random.randint(1, 5)  #gives random number between 1 and 5
     if (x == 1):
         tile_r = "O"
-    if (x == 2):
+    elif (x == 2):
         tile_r = "W"
-    if (x == 3):
+    elif (x == 3):
         tile_r = "B"
-    if (x == 4):
+    elif (x == 4):
         tile_r = "L"
-    if (x == 5):
+    elif (x == 5):
         tile_r = "S"
 
 #Determine the number, 7's not allowed
-    tile_n = game.roll_dice()
+    tile_n = roll_dice()
     while(tile_n == 7):
-        tile_n = game.roll_dice()
-        rand_tile = Tile(tile_r, tile_n)
+        tile_n = roll_dice()
+        rand_tile = [tile_r, tile_n]
+    rand_tile = [tile_r, tile_n]
     return rand_tile
 #Need to finish present method in tile class
 #print(rand_tile.present());
