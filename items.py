@@ -171,7 +171,7 @@ def has_needed_resources(item, a_player):
         else:
             return False
 
-    elif item == settlement:
+    elif item == "settlement":
         # Check that they have 1 sheep, wheat, brick, and lumber
         hand = a_player.p_hand
         if (hand.count("S") > 0 and hand.count("L") > 0 and hand.count("W") > 0 and hand.count("B") > 0):
@@ -179,7 +179,7 @@ def has_needed_resources(item, a_player):
         else:
             return False
 
-    elif (item == "city"):
+    elif item == "city":
        # Check that they have 2 wheat, 3 ore
        hand = a_player.p_hand
        if (hand.count("O") > 2 and hand.count("W") > 1):
