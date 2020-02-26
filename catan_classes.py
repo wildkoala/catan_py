@@ -30,10 +30,12 @@ class Player:
 
     def show_dev_cards(self):
         if len(self.p_dev_cards) == 0:
-            print("You have dev no cards")
+            print("You have no development cards")
         else:
+            counter = 1
             for i in self.p_dev_cards:
-                print(i)
+                print("\t" + str(counter) + i) # idk if i is gonna work like That
+                counter += 1
 
     #def add_card(self, new_card):
     #    self.p_hand += new_card

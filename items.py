@@ -174,6 +174,7 @@ def build_road(a_player, initializing = False): # this is not working for having
 
         else:
             print("Not enough resources to build a road!!")
+            return
 
 
 # partially implemented
@@ -184,35 +185,40 @@ def build_settlement(a_player, initializing = False):
     if initializing:
         settled = False
         while not settled:
-            adj_player = False
-            n1 = input("Where do you want to place your settlement?\n> ") #1,6 for example
-            n1 = n1.split(",")
-            n1 = [ int(x) for x in n1]
-            n1 = tuple(n1)
-            if not is_valid_location(n1):
-                continue
+            try:
+                adj_player = False
+                n1 = input("Where do you want to place your settlement?\n> ") #1,6 for example
+                n1 = n1.split(",")
+                n1 = [ int(x) for x in n1]
+                n1 = tuple(n1)
+                if not is_valid_location(n1):
+                    continue
 
-            wanted_node = get_node_by_alias(n1)
+                wanted_node = get_node_by_alias(n1)
 
-            # my wanted node is really the node in the global "node_list". Maybe I should get it's index?
-            i = config.node_list.index(wanted_node)
+                # my wanted node is really the node in the global "node_list". Maybe I should get it's index?
+                i = config.node_list.index(wanted_node)
 
-            if config.node_list[i].owns_node != "":
-                print(wanted_node.owns_node + " is already on that space!!")
-                continue
-            for n in config.node_list[i].adj_nodes: #list of id's
-                neighbor = get_node_by_id(n)
-                neighbor_i = config.node_list.index(neighbor)
-                #print(neighbor_i)
-                #print(config.node_list[neighbor_i])
-                #print(config.node_list[neighbor_i].owns_node)
-                if config.node_list[neighbor_i].owns_node != "":
-                    print("There's a player on an adjacent space!!")
-                    adj_player = True
-            if not adj_player:
-                config.node_list[i].owns_node = a_player.p_color
-                print(a_player.p_name + " has placed a settlement!!")
-                settled = True
+                if config.node_list[i].owns_node != "":
+                    print(wanted_node.owns_node + " is already on that space!!")
+                    continue
+                for n in config.node_list[i].adj_nodes: #list of id's
+                    neighbor = get_node_by_id(n)
+                    neighbor_i = config.node_list.index(neighbor)
+                    #print(neighbor_i)
+                    #print(config.node_list[neighbor_i])
+                    #print(config.node_list[neighbor_i].owns_node)
+                    if config.node_list[neighbor_i].owns_node != "":
+                        print("There's a player on an adjacent space!!")
+                        adj_player = True
+                if not adj_player:
+                    config.node_list[i].owns_node = a_player.p_color
+                    print(a_player.p_name + " has placed a settlement!!")
+                    settled = True
+
+            except ValueError:
+                print("The correct format is tile,corner")
+                print("EXAMPLE: 1,2")
 
 
 

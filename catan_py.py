@@ -196,55 +196,59 @@ def player_turn(player, points_to_win):
     selection = -1
     while selection != 0:
         player_menu()
-        selection = int(input("Please Select One\n> "))
+        try:
+            selection = int(input("Please Select One\n> "))
 
-        if selection == 1:
-            player.show_hand()
+            if selection == 1:
+                player.show_hand()
 
-        elif selection == 2:
-            built = items.build_road(player)
-            while built == None:
-                built = items.build_road(player)
+            elif selection == 2:
+                items.build_road(player)
 
-        elif selection == 3:
-            built = items.build_settlement(player)
-            while built == None:
-                built = items.build_road(player)
+            elif selection == 3:
+                items.build_settlement(player)
 
+            elif selection == 4:
+                items.build_city(player)
 
-        elif selection == 4:
-            built = items.build_city(player)
-            while built == None:
-                built = items.build_city(player)
+            elif selection == 5:
+                items.build_dev_card(player)
 
-        elif selection == 5:
-            built = items.build_dev_card(player)
-            while built == None:
-                built = items.build_dev_card(player)
+            elif selection == 6:
+                print("Trade with Player")
 
-        elif selection == 6:
-            print("Trade with Player")
+            elif selection == 7:
+                print("Trade with bank")
 
-        elif selection == 7:
-            print("Trade with bank")
+            elif selection == 8:
+                print("Trade using a port")
 
-        elif selection == 8:
-            print("Trade using a port")
+            elif selection == 9:
+                config.show_board()
 
-        elif selection == 9:
-            config.show_board()
+            elif selection == 10:
+                player.show_dev_cards()
 
-        elif selection == 10:
-            player.show_dev_cards()
+            elif selection == 11:
+                if player.p_dev_cards == []:
+                    print("You have no development cards!!")
+                    continue
+                print("Please select a dev_card: ")
+                player.show_dev_cards()
+                num = input("> ")
+                play_dev_card(player, player.p_dev_cards[num-1])
 
-        elif selection == 11:
-            print("Please select a dev_card: ")
-            player.show_dev_cards()
-            dev_card = input("> ")
-            play_dev_card(player, dev_card)
+            else:
+                print("You must enter a number corresponding to an option")
 
-        if (player.show_victory_pts() >= points_to_win):
-            return True
+            # I don't know if this check actually works.
+            '''
+            if (player.show_victory_pts() >= points_to_win):
+                return True
+            '''
+        except ValueError:
+            print("You must enter a number corresponding to an option")
+
     return False
 
 #========================================================
