@@ -31,7 +31,7 @@ def play_dev_card(a_player, dev_card):
         knight_placed = False
         while knight_placed == False:
             t = int(input("Which tile will you place the robber on?"))
-            if b.tiles[t-1].has_robber: # can i get the board this way or does it have to be an argument? Maybe just put it in config?
+            if config.b.tiles[t-1].has_robber: # can i get the board this way or does it have to be an argument? Maybe just put it in config?
                 print("You must put the robber on a new tile.")
                 continue
             else:
@@ -147,6 +147,20 @@ def robber():
                 i.p_hand.remove(card)
             print(i.p_name + " this is your new hand: ")
             i.show_hand()
+
+    knight_placed = False
+    while knight_placed == False:
+        t = int(input("Which tile will you place the robber on?"))
+        if config.b.tiles[t-1].has_robber: # can i get the board this way or does it have to be an argument? Maybe just put it in config?
+            print("You must put the robber on a new tile.")
+            continue
+        else:
+            # maybe the tile that the robber is on should be an attribute of the robber, because im going to have to iterate over all the times to "undo" the old robber.
+            if t == config.robber.on_tile:
+                print("The robber is already here... you must move it somewhere else.")
+                continue
+            config.b.tiles[t-1] = True
+            knight_placed = True
 
 
 def increment_player_turn(current_player_turn, num_players):
@@ -312,7 +326,7 @@ def get_player_info():
             color = p_color[0].lower()
             config.player_list.append(catan_classes.Player(name,color))
             i+=1
-        
+
         return True # doesnt matter, as long as it's not None type
 
     except ValueError:
