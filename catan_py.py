@@ -117,7 +117,7 @@ def player_choose_color(color_options):
             choice = int(input("Chose the number of the color you'd like.\n"))
             return choice
         except ValueError:
-            print("You must enter a number.")
+            print("You must enter an integer.")
             choice = player_choose_color(color_options) # I don't want to call this recursively, but im hacking it together.
             return choice
 
@@ -298,30 +298,34 @@ press any key to go back to the main menu
     ''')
 
 def get_player_info():
+    try:
+        num_players = int(input("Please enter the number of players\n"))
+        player_list = [] # this will be a list of Player objects
+        i = 0
+        color_options = ["Red", "Yellow", "Purple", "Green", "Cyan", "Tan"]
 
-    num_players = int(input("Please enter the number of players\n"))
+        while i < num_players:
+            name = input("Please Enter Player " + str((i + 1)) + "'s Name\n")
+            # give player a list of color options
 
-    player_list = [] # this will be a list of Player objects
-    i = 0
-    color_options = ["Red", "Yellow", "Purple", "Green", "Cyan", "Tan"]
+            p_color =  color_options.pop(player_choose_color(color_options)-1)
+            print("You selected: " + p_color)
+            color = p_color[0].lower()
+            player_list.append(catan_classes.Player(name,color))
+            i+=1
+        return player_list
 
-    while i < num_players:
-        name = input("Please Enter Player " + str((i + 1)) + "'s Name\n")
-        # give player a list of color options
-
-        p_color =  color_options.pop(player_choose_color(color_options)-1)
-        print("You selected: " + p_color)
-        color = p_color[0].lower()
-        player_list.append(catan_classes.Player(name,color))
-        i+=1
-    return player_list
+    except ValueError:
+        print("You must enter an integer")
+        return
 
 
 def declare_pts_to_win():
     # most of this should be wrapped up in a "setup" function
-    points_to_win = int(input("Enter the Amount of Points Required to Win\n"))
-
-    return points_to_win
+    try:
+        return int(input("Enter the Amount of Points Required to Win\n"))
+    except ValueError:
+        print("You must provide an integer")
 
 
 if __name__ == "__main__":
@@ -349,9 +353,13 @@ if __name__ == "__main__":
     # need player list accessible across all modules
     # ask players for their name and color choice
     player_list = get_player_info()
+    while player_list == None:
+        get_player_info()
 
     # establish points to win
     points_to_win = declare_pts_to_win()
+    while points_to_win == None:
+        points_to_win = declare_pts_to_win()
 
 
     print("Here is the Board:")
