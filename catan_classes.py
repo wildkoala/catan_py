@@ -32,12 +32,15 @@ class Player:
     def show_hand(self):
         print(''.join(self.p_hand))
 
-    def add_card(self, new_card):
-        self.p_hand += new_card
+    #def add_card(self, new_card):
+    #    self.p_hand += new_card
 
 	#returns how many victory points a player has
     def show_victory_pts(self):
         return self.p_victory_pts
+
+    def remove_cards(self, cards):
+        pass
 
 
 
