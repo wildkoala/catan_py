@@ -24,6 +24,18 @@ import config
 #node_list = catan_classes.init_nodes() # this doesnt work?
 #road_list = catan_classes.create_roads(node_list) # this doesnt work?
 
+def is_valid_location(alias):
+    if alias[0] < 1 or alias[0] > 19:
+        print("You're trying to place a piece on an invalid tile.")
+        print("FORMAT: tile,corner.\nEXAMPLE: 1,2")
+        return False
+    elif alias[1] < 1 or alias[1] > 6:
+        print("You're trying to place a piece on an invalid corner.")
+        print("FORMAT: tile,corner.\nEXAMPLE: 1,2")
+        return False
+    else:
+        return True
+
 #this function works, but it needs a node list and alias as a tuple ex. (1,6)
 def get_node_by_alias(g_alias):
     for n in config.node_list:
@@ -77,6 +89,8 @@ def build_road(a_player, initializing = False):
             n1 = n1.split(",")
             n1 = [ int(x) for x in n1]
             n1 = tuple(n1)
+            if not is_valid_location(n1):
+                continue
 
             n1 = get_node_by_alias(n1)
 
@@ -85,6 +99,8 @@ def build_road(a_player, initializing = False):
             n2 = n2.split(",")
             n2 = [ int(x) for x in n2]
             n2 = tuple(n2)
+            if not is_valid_location(n2):
+                continue
             n2 = get_node_by_alias(n2)
 
             if n1.owns_node == a_player.p_color or n2.owns_node == a_player.p_color:
@@ -109,13 +125,16 @@ def build_road(a_player, initializing = False):
         if have_resources:
             # ask for the two nodes they want to build a road between
             n1 = input("Give the location of the start of the road") #"1,6"
-            n2 = input("Give the location of the end of the road") #"1,5"
-
             n1 = n1.split(",")
             n1 = tuple(n1)
+            if not is_valid_location(n1):
+                return # Since this is in the game loop, just kick them back out to the options menu
 
+            n2 = input("Give the location of the end of the road") #"1,5"
             n2 = n2.split(",")
             n2 = tuple(n2)
+            if not is_valid_location(n2):
+                return # Since this is in the game loop, just kick them back out to the options menu
 
             r = get_road_by_nodes(n1, n2)
             is_open = not r.is_owned # i think this is valid, but not sure
@@ -148,6 +167,8 @@ def build_settlement(a_player, initializing = False):
             n1 = n1.split(",")
             n1 = [ int(x) for x in n1]
             n1 = tuple(n1)
+            if not is_valid_location(n1):
+                continue
 
             wanted_node = get_node_by_alias(n1)
 
@@ -180,6 +201,8 @@ def build_settlement(a_player, initializing = False):
             n1 = input("Where do you want to place your settlement?") #1,6 for example
             n1 = n1.split(",")
             n1 = tuple(n1)
+            if not is_valid_location(n1):
+                return # Since this is in the game loop, just kick them back out to the options menu 
             wanted_node = get_node_by_alias(n1)
 
             if wanted_node.owns_node != "":
@@ -210,6 +233,8 @@ def build_city(a_player):
         n1 = input("Where do you want to place your city?") #1,6 for example
         n1 = n1.split(",")
         n1 = tuple(n1)
+        if not is_valid_location(n1):
+                return # Since this is in the game loop, just kick them back out to the options menu
         wanted_node = get_node_by_alias(n1)
 
         # needs to specifically be a lower case letter.
@@ -240,8 +265,7 @@ def build_city(a_player):
 def build_dev_card(a_player):
     have_resources = has_needed_resources("dev_card", a_player)
     if have_resources:
-
-        print("here's a dev card")
+        #print("here's a dev card")
         print(a_player.p_name + " bought a development card!")
         a_player.p_hand.remove("O")
         a_player.p_hand.remove("S")
