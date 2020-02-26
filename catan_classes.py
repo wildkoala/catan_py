@@ -8,13 +8,6 @@
 # */
 
 #/* Requirements and Exports */
-import random
-import config
-
-def roll_dice():
-    x = random.randint(1, 6)
-    y = random.randint(1, 6)
-    return x + y
 
 # need to give players an id, use first letter of not conflicting colors (NOT BLWSO)
 # Red, Yellow, Purple, Green, Cyan, Tan
@@ -40,14 +33,20 @@ class Player:
         return self.p_victory_pts
 
     def calculate_victory_pts(self):
+<<<<<<< HEAD
         pass # needs to be implemented
+=======
+        pass
+>>>>>>> 3da4862f5003a3ea50e18762cb9730b18a19ae1d
 
 #Partial implementation
-class Board:
 
+class Board:
     def __init__(self):
         self.tiles = [] #Is a list of tiles
 
+<<<<<<< HEAD
+=======
     def create_board(self):
         for i in range(1,20):
             randomize = random_tile()
@@ -115,39 +114,19 @@ class Board:
 
         print(to_print)
 
+>>>>>>> 2cdae5502c90522f56d127b83f310371c3465c7d
 class Tile:
 
     def __init__(self, resource, number, id):
         self.resource = resource
         self.number = number
         self.id = id
-        self.has_robber = False
 
+class Robber:
 
-def random_tile():
-    tile_r = ""
-    tile_n = -1
+    def __init__(self, first_tile):
+        self.on_tile = first_tile
 
-    #Determine the resource
-    x = random.randint(1, 5)  #gives random number between 1 and 5
-    if (x == 1):
-        tile_r = "O"
-    elif (x == 2):
-        tile_r = "W"
-    elif (x == 3):
-        tile_r = "B"
-    elif (x == 4):
-        tile_r = "L"
-    elif (x == 5):
-        tile_r = "S"
-
-#Determine the number, 7's not allowed
-    tile_n = roll_dice()
-    while(tile_n == 7):
-        tile_n = roll_dice()
-        rand_tile = [tile_r, tile_n]
-    rand_tile = [tile_r, tile_n]
-    return rand_tile
 #Need to finish present method in tile class
 #print(rand_tile.present());
 
