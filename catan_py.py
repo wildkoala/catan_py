@@ -134,7 +134,7 @@ def robber():
             num_to_discard = math.ceil(len(i.p_hand)/2)
             discard = ""
             has_cards = False
-            while len(discard != num_to_discard) or has_cards == False:
+            while len(discard) != num_to_discard or has_cards == False:
                 print(i.p_name + " this is your current hand: ")
                 i.show_hand()
                 discard = input(i.p_name + " Please discard " + str(num_to_discard) + " cards (rounding up)")
