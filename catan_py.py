@@ -44,7 +44,6 @@ def play_dev_card(a_player, dev_card):
         move_robber()
         # steal a card from a player.
 
-
     #DONE
     elif dev_card.card_type == "Road Building":
         print(a_player.p_name + " played a development card: ", end='')
