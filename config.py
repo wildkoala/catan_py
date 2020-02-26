@@ -7,26 +7,26 @@ import catan_classes
 def create_nodes():
 	nodes = []
 	for x in range(1,55):
-		nodes.append(catan_classses.Node(x))
+		nodes.append(catan_classes.Node(x))
 	return nodes
 
 def init_dev_cards():
     dev_cards = []
     for i in range(0,25):
         if i<14:
-            new_card = catan_classses.Dev_Card("Knight")
+            new_card = catan_classes.Dev_Card("Knight")
             dev_cards.append(new_card)
         elif i<19:
-            new_card = catan_classses.Dev_Card("Victory Point")
+            new_card = catan_classes.Dev_Card("Victory Point")
             dev_cards.append(new_card)
         elif i<21:
-            new_card = catan_classses.Dev_Card("Year of Plenty")
+            new_card = catan_classes.Dev_Card("Year of Plenty")
             dev_cards.append(new_card)
         elif i<23:
-            new_card = catan_classses.Dev_Card("Road Building")
+            new_card = catan_classes.Dev_Card("Road Building")
             dev_cards.append(new_card)
         else:
-            new_card = catan_classses.Dev_Card("Monopoly")
+            new_card = catan_classes.Dev_Card("Monopoly")
             dev_cards.append(new_card)
     return dev_cards
 
@@ -168,7 +168,7 @@ def init_roads(list_of_nodes):
     for n in list_of_nodes:
         for thing in n.adj_nodes:
             if n.id < thing:
-                new_road = catan_classses.Road(n.id,thing)
+                new_road = catan_classes.Road(n.id,thing)
                 roads.append(new_road)
     return roads
 
