@@ -30,10 +30,21 @@ def init_dev_cards():
     return dev_cards
 
 def shuffle(a_list):
-    size = len(a_list)
-    first = random.randint(0,size-1)
-    second = random.randint(0,size-1)
-    # save the first, write second into first, then saved into second
+    new_l = []
+    max_i = len(a_list)-1
+
+    for i in range(0, len(a_list)):
+        random_index = random.randint(0, max_i)
+        new_l.append(a_list.pop(random_index))
+        max_i -= 1
+        i += 1
+    return new_l
+
+
+def print_dev_cards(cards):
+    for c in cards:
+        print(c)
+
 
 
 def init_nodes():
@@ -163,7 +174,10 @@ def create_roads(list_of_nodes):
 
 class Dev_Card:
     def __init__(self, card_type):
-        pass            # options are Knight Card (14), Road Building(2), Year of Plenty(2), Monopoly(2), Victory Point (5) 
+        self.card_type = card_type            # options are Knight Card (14), Road Building(2), Year of Plenty(2), Monopoly(2), Victory Point (5) 
+    
+    def __str__(self):
+        return "Dev Card: " + self.card_type
 
 class Road:
     def __init__(self, start_n, end_n):
@@ -218,7 +232,8 @@ class Node:
 	def __str__(self):
 		return "Node: " + str(self.id)
 
-#unshuffled = init_dev_cards()
-dev_cards = init_dev_cards()
+unshuffled = init_dev_cards()
+dev_cards = shuffle(init_dev_cards())
+print_dev_cards(dev_cards)
 node_list = init_nodes()
 road_list = create_roads(node_list)
