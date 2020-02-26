@@ -23,7 +23,17 @@ class Player:
         print(self.p_name)
 
     def show_hand(self):
-        print(''.join(self.p_hand))
+        if len(self.p_hand) == 0:
+            print("You have no cards")
+        else:
+            print(''.join(self.p_hand))
+
+    def show_dev_cards(self):
+        if len(self.p_dev_cards) == 0:
+            print("You have dev no cards")
+        else:
+            for i in self.p_dev_cards:
+                print(i)
 
     #def add_card(self, new_card):
     #    self.p_hand += new_card
