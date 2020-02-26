@@ -80,7 +80,7 @@ def road_is_connected(player_color, n1, n2):
         return False
 
 # maybe have is_init set to False by default (a keyword argument)
-def build_road(a_player, initializing = False):
+def build_road(a_player, initializing = False): # this is not working for having a road connected to another road, makes you have a connected settlement rn.
 
     if initializing:
         placed = False

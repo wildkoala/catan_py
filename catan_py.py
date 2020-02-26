@@ -23,6 +23,82 @@ import math
 # FUNCTION DECLARATIONS
 #========================================================
 
+def play_dev_card(a_player, dev_card):
+    # Partially implemented
+    if dev_card.card_type == "Knight":
+        print(a_player.p_name + " played a development card: ", end='')
+        print(dev_card)
+        knight_placed = False
+        t = int(input("Which tile will you place the robber on?"))
+        # if the tile has the robber already
+            # print
+    
+    #DONE
+    elif dev_card.card_type == "Road Building":
+        print(a_player.p_name + " played a development card: ", end='')
+        print(dev_card)
+        a_player.p_hand.append("B")
+        a_player.p_hand.append("L")
+        a_player.p_hand.append("B")
+        a_player.p_hand.append("L")
+
+        # this should force the player to build two roads
+        roads_placed = 0
+        while roads_placed != 2:
+            # have to check they built a valid road. function can return None.
+            if build_road(a_player) == None:
+                continue
+            else:
+                roads_placed += 1
+
+    #DONE
+    elif dev_card.card_type == "Year of Plenty":
+        print(a_player.p_name + " played a development card: ", end='')
+        print(dev_card)
+        
+        added_cards = 0
+        while added_cards != 2: # even if this loo
+            wanted_card = input("What resource would you like? Resource (" + str(added_cards+1) + "/2)" )
+            if wanted_card.upper() in "BLSWO":
+                    a_player.p_hand.append(wanted_card.upper())
+                    added_cards += 1
+            else:
+                print(wanted_card + " is not a valid resource")
+
+    #DONE
+    elif dev_card.card_type == "Monopoly":
+        print(a_player.p_name + " played a development card: ", end='')
+        print(dev_card)
+        got_resources = False
+        while got_resources == False:
+            wanted_card = input("What resource would you like? Resource (" + str(added_cards+1) + "/2)" )
+            if wanted_card.upper() in "BLSWO":
+                
+                num_taken = 0
+                for p in config.player_list: # wait, this actually takes cards from the player using it too, since they're in player list. I guess that's okay if i add them back?
+                    for resource in p.p_hand:
+                        if resource == wanted_card.upper():
+                            p.p_hand.remove(resource)
+                            num_taken += 1
+                
+                for num in range(0, num_taken):
+                    a_player.p_hand.append(wanted_card.upper())
+                
+                print(a_player.p_name + " took all everyone's " + wanted_card.upper())
+                got_resources = True
+
+            else:
+                print(wanted_card + " is not a valid resource")
+
+             
+
+    elif dev_card.card_type == "Victory Point":
+        print(a_player.p_name + " played a development card: ", end='')
+        print(dev_card)
+
+    else:
+        print("Not a known development card type")
+
 def player_choose_color(color_options):
         print("Which color will you be?")
         i = 1
