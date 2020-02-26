@@ -33,12 +33,7 @@ class Player:
         return self.p_victory_pts
 
     def calculate_victory_pts(self):
-<<<<<<< HEAD
         pass # needs to be implemented
-=======
-        pass
->>>>>>> 3da4862f5003a3ea50e18762cb9730b18a19ae1d
-
 #Partial implementation
 
 class Board:
@@ -57,7 +52,63 @@ class Robber:
     def __init__(self, first_tile):
         self.on_tile = first_tile
 
-#Need to finish present method in tile class
-#print(rand_tile.present());
+class Node:
+	def __init__(self, id): # Just gonna have every node have an id.
+		self.id = id
+		self.owns_node = "" # color of player with a settlement or city on this node
+		self.alias = [] # this is a list of tuples, where the first vvalue is the tile it's on, and the second is the corner that it is.
+		self.can_place = False # basically, this is only true in limited circumstances
+		self.adj_nodes = [] # list of id's for connected nodes
 
-#print_roads(roads)
+	def is_empty(self):
+		if self.owns_node == "":
+			return True
+		else:
+			return False
+
+	def add_adj(self, id):
+		self.adj_nodes.append(id)
+
+	def status(self):
+		if self.owns_node == "":
+			return "."
+		else:
+			return self.owns_node
+
+	def is_settlement(self):
+		if self.owns_node.islower():
+			return True
+		else:
+			return False
+
+	def is_city(self):
+		if self.owns_node.isupper():
+			return True
+		else:
+			return False
+
+	def __str__(self):
+		return "Node: " + str(self.id)
+
+
+class Dev_Card:
+    def __init__(self, card_type):
+        self.card_type = card_type            # options are Knight (14), Road Building(2), Year of Plenty(2), Monopoly(2), Victory Point (5) 
+    
+    def __str__(self):
+        return self.card_type
+
+class Road:
+    def __init__(self, start_n, end_n):
+        self.owns_road = ""
+        self.start_n = start_n # id of starting node
+        self.end_n = end_n # id of ending node
+
+    def is_owned(self):
+        if self.owns_node == "":
+            return False
+        else:
+            return True
+
+    def __str__(self):
+        return "Road: " + str(str(self.start_n) + " " +  str(self.end_n))
