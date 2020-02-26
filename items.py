@@ -319,77 +319,48 @@ def has_needed_resources(item, a_player):
 
 
 
+def get_corners(tile_id):
+    corners = []
+    n1 = get_node_by_alias((tile_id, 1))
+    n2 = get_node_by_alias((tile_id, 2))
+    n3 = get_node_by_alias((tile_id, 3))
+    n4 = get_node_by_alias((tile_id, 4))
+    n5 = get_node_by_alias((tile_id, 5))
+    n6 = get_node_by_alias((tile_id, 6))
+
+    corners = []
+    corners.append(n1)
+    corners.append(n2)
+    corners.append(n3)
+    corners.append(n4)
+    corners.append(n5)
+    corners.append(n6)
+    return corners
+
+def give_resources_to_players(corners, resource):
+    for n in corners:
+        if not n.is_empty():
+            if n.is_settlement():
+                for p in config.player_list:
+                    if n.owns_node == p.p_color:
+                        p.p_hand.append(resource) # need to know what tile this is.
+                        print(p.p_name + " got a " + resource) # need to know what tile this is.
+            else:
+                p.p_hand.append(t.resource)
+                p.p_hand.append(t.resource)
+                print(p.p_name + " got 2 " + resource)
+
 # Need  a function for distributing resources
 def give_resources(roll_num, initial = False):
     for t in config.b.tiles:
         if initial:
-            # Check every node for a player
-            n1 = get_node_by_alias((t.id, 1))
-            n2 = get_node_by_alias((t.id, 2))
-            n3 = get_node_by_alias((t.id, 3))
-            n4 = get_node_by_alias((t.id, 4))
-            n5 = get_node_by_alias((t.id, 5))
-            n6 = get_node_by_alias((t.id, 6))
-
-            corners = []
-            corners.append(n1)
-            corners.append(n2)
-            corners.append(n3)
-            corners.append(n4)
-            corners.append(n5)
-            corners.append(n6)
-
-            for n in corners:
-                if not n.is_empty():
-                    if n.is_settlement():
-                        # need game_players to be accessible
-                        # go through players to find out who has
-                        for p in config.player_list:
-                            if n.owns_node == p.p_color:
-                                p.p_hand.append(t.resource)
-                                print(p.p_name + " got a " + t.resource)
-                    else:
-                        p.p_hand.append(t.resource)
-                        p.p_hand.append(t.resource)
-                        print(p.p_name + " got 2 " + t.resource)
-                #print(n)
+            corners = get_corners(t.id)
+            give_resources_to_players(corners,t.resource)
 
         elif t.number == roll_num:
             if t.id == config.robber.on_tile:
                 print("The robber stole your " + t.resource + "!!")
             else:
-                # Check every node for a player
-                n1 = get_node_by_alias((t.id, 1))
-                n2 = get_node_by_alias((t.id, 2))
-                n3 = get_node_by_alias((t.id, 3))
-                n4 = get_node_by_alias((t.id, 4))
-                n5 = get_node_by_alias((t.id, 5))
-                n6 = get_node_by_alias((t.id, 6))
+                corners = get_corners(t.id)
+                give_resources_to_players(corners,t.resource)
 
-                corners = []
-                corners.append(n1)
-                corners.append(n2)
-                corners.append(n3)
-                corners.append(n4)
-                corners.append(n5)
-                corners.append(n6)
-
-                for n in corners:
-                    if not n.is_empty():
-                        if n.is_settlement():
-                            # need game_players to be accessible
-                            # go through players to find out who has
-                            for p in config.player_list:
-                                if n.owns_node == p.p_color:
-                                    p.p_hand.append(t.resource)
-                                    print(p.p_name + " got a " + t.resource)
-                        else:
-                            for p in config.player_list:
-                                p.p_hand.append(t.resource)
-                                p.p_hand.append(t.resource)
-                                print(p.p_name + " got 2 " + t.resource)
-                    #print(n)
-
-
-                # if it's a settlement, give that player 1 of t.resource
-                # if it's a city, give that player 2 of t.resource
