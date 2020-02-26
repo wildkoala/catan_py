@@ -58,37 +58,37 @@ class Board:
                          >-----<~~~~3:1~~~~>-----<
                         /~~~~~~~\~~~~~~~~~/~~~~~~~\\
                        /~~~~~~~~~\*~~~~~*/~~~~~~~~~\\
-                >-----<~~~~~~~~~~~{57}-----<~~~~~~~~~~~>-----<
+                >-----<~~~~~~~~~~~{62}-----{63}~~~~~~~~~~~>-----<
                /~~~~~~~\~~~~~~~~~/       \~~~~~~~~~/~~~~~~~\\
               /~~~2:1~~~\~~~~~~~/    {0}    \~~~~~~~/~~~2:1~~~\\
-       >-----<~~~wood~~~*>-----<     {1}     >-----<*~~sheep~~~>-----<
+       >-----<~~~wood~~~*{60}-----{61}     {1}     {70}-----{71}*~~sheep~~~>-----<
       /~~~~~~~\~~~~~~~~~/       \    {2}    /       \~~~~~~~~~/~~~~~~~\\
      /~~~~~~~~~\~~~~~~*/    {3}    \       /    {4}    \*~~~~~~/~~~~~~~~~\\
-    <~~~~~~~~~~~>-----<     {5}     >-----<     {6}     >-----<~~~~~~~~~~~>
+    <~~~~~~~~~~~{58}-----{59}     {5}     {68}-----{69}     {6}     {81}-----{82}~~~~~~~~~~~>
      \~~~~~~~~~/       \    {7}    /       \    {8}    /       \~~~~~~~~~/
       \~~~~~~~/    {9}    \       /    {10}    \       /    {11}    \~~~~~~~/
-       >-----<     {12}     >-----<     {13}     >-----<     {14}     >-----<
+       >-----{57}     {12}     {66}-----{67}     {13}     {79}-----{80}     {14}     {94}-----<
       /~~~~~~~\    {15}    /       \    {16}    /       \    {17}    /~~~~~~~\\
      /~~~2:1~~~\       /    {18}    \       /    {19}    \       /~~~2:1~~~\\
-    <~~~brick~~*>-----<     {20}     >-----<     {21}     >-----<*~~~ore~~~~>
+    <~~~brick~~*{64}-----{65}     {20}     {77}-----{78}     {21}     {92}-----{93}*~~~ore~~~~>
      \~~~~~~~~~/       \    {22}    /       \    {23}    /       \~~~~~~~~~/
       \~~~~~~*/    {24}    \       /    {25}    \       /    {26}    \*~~~~~~/
-       >-----<     {27}     >-----<     {28}     >-----<     {29}     >-----<
+       >-----{72}     {27}     {75}-----{76}     {28}     {90}-----{91}     {29}     {103}-----<
       /~~~~~~~\    {30}    /       \    {31}    /       \    {32}    /~~~~~~~\\
      /~~~~~~~~~\       /    {33}    \       /    {34}    \       /~~~~~~~~~\\
-    <~~~~~~~~~~~>-----<     {35}     >-----<     {36}     >-----<~~~~~~~~~~~>
+    <~~~~~~~~~~~{73}-----{74}     {35}     {88}-----{89}     {36}     {101}-----{102}~~~~~~~~~~~>
      \~~~~~~~~~/       \    {37}    /       \    {38}    /       \~~~~~~~~~/
       \~~~~~~~/    {39}    \       /    {40}    \       /    {41}    \~~~~~~~/
-       >-----<     {42}     >-----<     {43}     >-----<     {44}     >-----<
+       >-----{83}     {42}     {86}-----{87}     {43}     {99}-----{100}     {44}     {110}-----<
       /~~~~~~*\    {45}    /       \    {46}    /       \    {47}    /*~~~~~~\\
      /~~~~~~~~~\       /    {48}    \       /    {49}    \       /~~~~~~~~~\\
-    <~~~~3:1~~~*>-----<     {50}     >-----<     {51}     >-----<*~~~3:1~~~~>
+    <~~~~3:1~~~*{84}-----{85}     {50}     {97}-----{98}     {51}     {108}-----{109}*~~~3:1~~~~>
      \~~~~~~~~~/~~~~~~~\    {52}    /       \    {53}    /~~~~~~~\~~~~~~~~~/
       \~~~~~~~/~~~~~~~~~\       /    {54}    \       /~~~~~~~~~\~~~~~~~/
-       >-----< ~~~~~~~~~~>-----<     {55}     >-----<~~~~~~~~~~~>-----<
+       >-----< ~~~~~~~~~~{95}-----{96}     {55}     {106}-----{107}~~~~~~~~~~~>-----<
               \~~~~~~~~~/*~~~~~*\    {56}    /*~~~~~*\~~~~~~~~~/
                \~~~~~~~/~~~~~~~~~\       /~~~2:1~~~\~~~~~~~/
-                >-----<~~~~3:1~~~~>-----<~~~grain~~~>-----<
+                >-----<~~~~3:1~~~~{104}-----{105}~~~grain~~~>-----<
                        \~~~~~~~~~/~~~~~~~\~~~~~~~~~/
                         \~~~~~~~/~~~~~~~~~\~~~~~~~/
                          >-----<~~~~~~~~~~~>-----<
@@ -108,7 +108,25 @@ class Board:
                                   ,self.tiles[18].number,self.tiles[7].resource,self.tiles[13].resource,self.tiles[18].resource,
                                   self.tiles[7].id,self.tiles[13].id,self.tiles[18].id,self.tiles[12].number,self.tiles[17].number,
                                   self.tiles[12].resource,self.tiles[17].resource,self.tiles[12].id,self.tiles[17].id,
-                                  self.tiles[16].number,self.tiles[16].resource,self.tiles[16].id,config.node_list[5].owns_node)
+                                  self.tiles[16].number,self.tiles[16].resource,self.tiles[16].id,config.node_list[0].status(),
+                                  config.node_list[1].status(),config.node_list[2].status(),config.node_list[3].status(),
+                                  config.node_list[4].status(),config.node_list[5].status(),config.node_list[6].status(),
+                                  config.node_list[7].status(),config.node_list[8].status(),config.node_list[9].status(),
+                                  config.node_list[10].status(),config.node_list[11].status(),config.node_list[12].status(),
+                                  config.node_list[13].status(),config.node_list[14].status(),config.node_list[15].status(),
+                                  config.node_list[16].status(),config.node_list[17].status(),config.node_list[18].status(),
+                                  config.node_list[19].status(),config.node_list[20].status(),config.node_list[21].status(),
+                                  config.node_list[22].status(),config.node_list[23].status(),config.node_list[24].status(),
+                                  config.node_list[25].status(),config.node_list[26].status(),config.node_list[27].status(),
+                                  config.node_list[28].status(),config.node_list[29].status(),config.node_list[30].status(),
+                                  config.node_list[31].status(),config.node_list[32].status(),config.node_list[33].status(),
+                                  config.node_list[34].status(),config.node_list[35].status(),config.node_list[36].status(),
+                                  config.node_list[37].status(),config.node_list[38].status(),config.node_list[39].status(),
+                                  config.node_list[40].status(),config.node_list[41].status(),config.node_list[42].status(),
+                                  config.node_list[43].status(),config.node_list[44].status(),config.node_list[45].status(),
+                                  config.node_list[46].status(),config.node_list[47].status(),config.node_list[48].status(),
+                                  config.node_list[49].status(),config.node_list[50].status(),config.node_list[51].status(),
+                                  config.node_list[52].status(),config.node_list[53].status())
 
         print(to_print)
 
