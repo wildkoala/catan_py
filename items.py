@@ -102,7 +102,7 @@ def build_road(a_player, initializing = False): # this is not working for having
     if initializing:
         placed = False
         while not placed:
-            n1 = input("Where do you want to start your road?")#1,6 for example
+            n1 = input("Where do you want to start your road?\n> ")#1,6 for example
             n1 = n1.split(",")
             n1 = [ int(x) for x in n1]
             n1 = tuple(n1)
@@ -112,7 +112,7 @@ def build_road(a_player, initializing = False): # this is not working for having
             n1 = get_node_by_alias(n1)
 
 
-            n2 = input("Where do you want to end your road?") #1,6 for example
+            n2 = input("Where do you want to end your road?\n> ") #1,6 for example
             n2 = n2.split(",")
             n2 = [ int(x) for x in n2]
             n2 = tuple(n2)
@@ -120,7 +120,7 @@ def build_road(a_player, initializing = False): # this is not working for having
                 continue
             n2 = get_node_by_alias(n2)
 
-            
+
             if n1.owns_node == a_player.p_color or n2.owns_node == a_player.p_color:
 
                 wanted_road = get_road_with_nodes(n1, n2)
@@ -142,7 +142,7 @@ def build_road(a_player, initializing = False): # this is not working for having
         have_resources = has_needed_resources("road", a_player)
         if have_resources:
             # ask for the two nodes they want to build a road between
-            n1 = input("Give the location of the start of the road") #"1,6"
+            n1 = input("Give the location of the start of the road\n> ") #"1,6"
             n1 = n1.split(",")
             n1 = [ int(x) for x in n1]
             n1 = tuple(n1)
@@ -150,7 +150,7 @@ def build_road(a_player, initializing = False): # this is not working for having
                 return # Since this is in the game loop, just kick them back out to the options menu
             n1 = get_node_by_alias(n1)
 
-            n2 = input("Give the location of the end of the road") #"1,5"
+            n2 = input("Give the location of the end of the road\n> ") #"1,5"
             n2 = n2.split(",")
             n2 = [ int(x) for x in n2]
             n2 = tuple(n2)
@@ -185,7 +185,7 @@ def build_settlement(a_player, initializing = False):
         settled = False
         while not settled:
             adj_player = False
-            n1 = input("Where do you want to place your settlement?") #1,6 for example
+            n1 = input("Where do you want to place your settlement?\n> ") #1,6 for example
             n1 = n1.split(",")
             n1 = [ int(x) for x in n1]
             n1 = tuple(n1)
@@ -220,7 +220,7 @@ def build_settlement(a_player, initializing = False):
         have_resources = has_needed_resources("settlement", a_player)
         if have_resources:
             # check if that settlement is open
-            n1 = input("Where do you want to place your settlement?") #1,6 for example
+            n1 = input("Where do you want to place your settlement?\n> ") #1,6 for example
             n1 = n1.split(",")
             n1 = [ int(x) for x in n1]
             n1 = tuple(n1)
@@ -253,7 +253,7 @@ def build_city(a_player):
     if have_resources:
         print("building a city")
         # check that a player has a settlement at that location
-        n1 = input("Where do you want to place your city?") #1,6 for example
+        n1 = input("Where do you want to place your city?\n> ") #1,6 for example
         n1 = n1.split(",")
         n1 = [ int(x) for x in n1]
         n1 = tuple(n1)
@@ -381,16 +381,3 @@ def give_resources(roll_num, initial = False):
             else:
                 corners = get_corners(t.id)
                 give_resources_to_players(corners,t.resource)
-
-
-
-
-
-
-
-
-
-
-
-
-
