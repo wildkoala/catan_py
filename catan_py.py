@@ -116,7 +116,7 @@ def player_choose_color(color_options):
             print("\t" + str(i) + ". " + c)
             i += 1
         try:
-            choice = int(input("Chose the number of the color you'd like.\n"))
+            choice = int(input("Chose the number of the color you'd like.\n> "))
             return choice
         except ValueError:
             print("You must enter an integer.")
@@ -137,7 +137,7 @@ def robber():
             while len(discard) != num_to_discard or has_cards == False:
                 print(i.p_name + " this is your current hand: ")
                 i.show_hand()
-                discard = input(i.p_name + " Please discard " + str(num_to_discard) + " cards (rounding up)")
+                discard = input(i.p_name + " Please discard " + str(num_to_discard) + " cards\n> ")
                 if len(discard) > num_to_discard:
                     print("You have discarded more cards than necessary.")
 
@@ -196,7 +196,7 @@ def player_turn(player, points_to_win):
     selection = -1
     while selection != 0:
         player_menu()
-        selection = int(input("Please Select One\n"))
+        selection = int(input("Please Select One\n> "))
 
         if selection == 1:
             player.show_hand()
@@ -210,7 +210,7 @@ def player_turn(player, points_to_win):
             built = items.build_settlement(player)
             while built == None:
                 built = items.build_road(player)
-            
+
 
         elif selection == 4:
             built = items.build_city(player)
@@ -240,7 +240,7 @@ def player_turn(player, points_to_win):
         elif selection == 11:
             print("Please select a dev_card: ")
             player.show_dev_cards()
-            dev_card = input()
+            dev_card = input("> ")
             play_dev_card(player, dev_card)
 
         if (player.show_victory_pts() >= points_to_win):
@@ -255,13 +255,17 @@ def place_initial():
     for i in config.player_list:
         print(i.p_name + " is placing their first settlement")
         items.build_settlement(i, True)
+        config.show_board()
         print(i.p_name + " is placing their first road")
         items.build_road(i, True)
+        config.show_board()
     for i in reversed(config.player_list):
         print(i.p_name + " is placing their second settlement")
         items.build_settlement(i, True)
+        config.show_board()
         print(i.p_name + " is placing their second road")
         items.build_road(i, True)
+        config.show_board()
 
 def display_main_menu():
     selection = input('''
@@ -290,7 +294,7 @@ C:::::C                   A:::::::::::::::::::::A       T:::::T       A:::::::::
         3. Credits
 
 
-        ''')
+> ''')
     try:
         val = int(selection)
         pass
@@ -327,12 +331,12 @@ press any key to go back to the main menu
 
 def get_player_info():
     try:
-        num_players = int(input("Please enter the number of players\n"))
+        num_players = int(input("Please enter the number of players\n> "))
         i = 0
         color_options = ["Red", "Yellow", "Purple", "Green", "Cyan", "Tan"]
 
         while i < num_players:
-            name = input("Please Enter Player " + str((i + 1)) + "'s Name\n")
+            name = input("Please Enter Player " + str((i + 1)) + "'s Name\n> ")
             # give player a list of color options
 
             p_color =  color_options.pop(player_choose_color(color_options)-1)
@@ -354,7 +358,7 @@ def get_player_info():
 def declare_pts_to_win():
     # most of this should be wrapped up in a "setup" function
     try:
-        return int(input("Enter the Amount of Points Required to Win\n"))
+        return int(input("Enter the Amount of Points Required to Win\n> "))
     except ValueError:
         print("You must provide an integer")
 
