@@ -27,15 +27,12 @@ def move_robber():
     knight_placed = False
     while knight_placed == False:
         t = int(input("Which tile will you place the robber on?"))
-        if b.tiles[t-1].has_robber: # can i get the board this way or does it have to be an argument? Maybe just put it in config?
+        if t == config.robber.on_tile: # can i get the board this way or does it have to be an argument? Maybe just put it in config?
             print("You must put the robber on a new tile.")
             continue
         else:
             # maybe the tile that the robber is on should be an attribute of the robber, because im going to have to iterate over all the times to "undo" the old robber.
-            if t == config.robber.on_tile:
-                print("The robber is already here... you must move it somewhere else.")
-                continue
-            config.b.tiles[t-1] = True
+            config.robber.on_tile = t
             knight_placed = True
 
 
@@ -144,13 +141,8 @@ def robber():
                 discard = input(i.p_name + " Please discard " + str(num_to_discard) + " cards (rounding up)")
                 if len(discard) > num_to_discard:
                     print("You have discarded more cards than necessary.")
-<<<<<<< HEAD
 
-                elif len(discard) < num_to_discard):
-=======
-                    
                 elif len(discard) < num_to_discard:
->>>>>>> b6224491e7cdd84ce196f4a7b21683a12d8f937e
                     print("You didn't discard enough cards... try again.")
 
                 if i.p_hand.count("O") >= list(discard).count("O") and i.p_hand.count("B") >= list(discard).count("B") and i.p_hand.count("S") >= list(discard).count("S") and i.p_hand.count("W") >= list(discard).count("W") and i.p_hand.count("L") >= list(discard).count("L"):
