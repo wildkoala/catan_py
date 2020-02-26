@@ -320,8 +320,8 @@ def has_needed_resources(item, a_player):
 
 
 # Need  a function for distributing resources
-def give_resources(roll_num, a_board, game_players, initial = False):
-    for t in a_board.tiles:
+def give_resources(roll_num, initial = False):
+    for t in config.b.tiles:
         if initial:
             # Check every node for a player
             n1 = get_node_by_alias((t.id, 1))
@@ -344,7 +344,7 @@ def give_resources(roll_num, a_board, game_players, initial = False):
                     if n.is_settlement():
                         # need game_players to be accessible
                         # go through players to find out who has
-                        for p in game_players:
+                        for p in config.player_list:
                             if n.owns_node == p.p_color:
                                 p.p_hand.append(t.resource)
                                 print(p.p_name + " got a " + t.resource)
@@ -355,7 +355,7 @@ def give_resources(roll_num, a_board, game_players, initial = False):
                 #print(n)
 
         elif t.number == roll_num:
-            if t.has_robber:
+            if t.id == config.robber.on_tile:
                 print("The robber stole your " + t.resource + "!!")
             else:
                 # Check every node for a player
@@ -379,12 +379,12 @@ def give_resources(roll_num, a_board, game_players, initial = False):
                         if n.is_settlement():
                             # need game_players to be accessible
                             # go through players to find out who has
-                            for p in game_players:
+                            for p in config.player_list:
                                 if n.owns_node == p.p_color:
                                     p.p_hand.append(t.resource)
                                     print(p.p_name + " got a " + t.resource)
                         else:
-                            for p in game_players:
+                            for p in config.player_list:
                                 p.p_hand.append(t.resource)
                                 p.p_hand.append(t.resource)
                                 print(p.p_name + " got 2 " + t.resource)
