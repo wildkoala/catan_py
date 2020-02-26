@@ -41,7 +41,7 @@ def play_dev_card(a_player, dev_card):
                     continue
                 config.b.tiles[t-1] = True
                 knight_placed = True
-    
+
     #DONE
     elif dev_card.card_type == "Road Building":
         print(a_player.p_name + " played a development card: ", end='')
@@ -64,7 +64,7 @@ def play_dev_card(a_player, dev_card):
     elif dev_card.card_type == "Year of Plenty":
         print(a_player.p_name + " played a development card: ", end='')
         print(dev_card)
-        
+
         added_cards = 0
         while added_cards != 2: # even if this loo
             wanted_card = input("What resource would you like? Resource (" + str(added_cards+1) + "/2)" )
@@ -82,24 +82,24 @@ def play_dev_card(a_player, dev_card):
         while got_resources == False:
             wanted_card = input("What resource would you like? Resource (" + str(added_cards+1) + "/2)" )
             if wanted_card.upper() in "BLSWO":
-                
+
                 num_taken = 0
                 for p in config.player_list: # wait, this actually takes cards from the player using it too, since they're in player list. I guess that's okay if i add them back?
                     for resource in p.p_hand:
                         if resource == wanted_card.upper():
                             p.p_hand.remove(resource)
                             num_taken += 1
-                
+
                 for num in range(0, num_taken):
                     a_player.p_hand.append(wanted_card.upper())
-                
+
                 print(a_player.p_name + " took all everyone's " + wanted_card.upper())
                 got_resources = True
 
             else:
                 print(wanted_card + " is not a valid resource")
 
-             
+
     #DONE
     elif dev_card.card_type == "Victory Point":
         a_player.p_victory_pts += 1 # I don't want to tell anyone else that this was played.
@@ -345,7 +345,6 @@ if __name__ == "__main__":
     # assume they chose 1.
 
     #Setup the game and return player_list and amount of points to win
-    b = catan_classes.Board()
 
     # need player list accessible across all modules
     # ask players for their name and color choice
@@ -354,10 +353,9 @@ if __name__ == "__main__":
     # establish points to win
     points_to_win = declare_pts_to_win()
 
-    b.create_board()
 
     print("Here is the Board:")
-    b.show_board()
+    config.show_board()
 
     #Store player_list and points to win in variables
     curr_player_turn = 0

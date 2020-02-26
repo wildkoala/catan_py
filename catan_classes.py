@@ -33,11 +33,7 @@ class Player:
         return self.p_victory_pts
 
     def calculate_victory_pts(self):
-<<<<<<< HEAD
-        pass # needs to be implemented
-=======
         pass
->>>>>>> 3da4862f5003a3ea50e18762cb9730b18a19ae1d
 
 #Partial implementation
 
