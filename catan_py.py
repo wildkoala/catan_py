@@ -16,6 +16,7 @@ import random
 import catan_classes
 import items
 import config
+import math
 
 
 #========================================================
@@ -32,12 +33,31 @@ def player_choose_color(color_options):
         return choice
 
 def robber():
-    print("Robber has been called")
+    print("ROBBER HAS BEEN ROLLED")
 
     # Loop checks to see if any players have 7 or more cards
     for i in player_list:
         if len(i.p_hand) >= 7:
-            print(i.p_name + " Please discard half your cards")
+            discard = ""
+            has_cards = False
+            while (len(discard) != math.ceil(len(i.p_hand)/2)) or (has_cards == False):
+                print(i.p_name + " this is your current hand: ")
+                i.show_hand()
+                discard = input(i.p_name + " Please discard half your cards (rounding up)")
+                if len(discard) > math.ceil(len(i.p_hand)/2):
+                    print("You have discarded more cards than necessary.")
+                elif len(discard) < math.ceil(len(i.p_hand)/2):
+                    print("You must discard half your cards (ROUNDING UP)")
+                if all(elem in i.p_hand for elem in list(discard)):
+                    has_cards = True
+                    print("You have those cards")
+                else:
+                    has_cards = False
+                    print("You do not have those cards")
+            for card in discard:
+                i.p_hand.remove(card)
+            print(i.p_name + " this is your new hand: ")
+            i.show_hand()
 
 
 def increment_player_turn(current_player_turn, num_players):
