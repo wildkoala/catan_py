@@ -46,7 +46,6 @@ def play_dev_card(a_player, dev_card):
         print(dev_card)
         move_robber()
         # steal a card from a player.
-        
 
     #DONE
     elif dev_card.card_type == "Road Building":
