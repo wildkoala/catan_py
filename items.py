@@ -55,7 +55,7 @@ def get_road_with_nodes(node1, node2):
         else:
             if r.start_n == node2.id and r.end_n == node1.id:
                 return r
-    print("COULDN'T FIND ROAD")
+    #print("COULDN'T FIND ROAD")
 
 # player.id this will have to be added to player. it's their icon on the map
 def road_is_connected(player_color, n1, n2):
@@ -90,7 +90,10 @@ def build_road(a_player, initializing = False):
             if n1.owns_node == a_player.p_color or n2.owns_node == a_player.p_color:
 
                 wanted_road = get_road_with_nodes(n1, n2)
-                if wanted_road.owns_road != "":
+                if wanted_road is None:
+                    print("That's not a valid road segment... Try again.")
+                    continue
+                elif wanted_road.owns_road != "":
                     print(wanted_road.owns_road + " is already on that space!!")
                     continue
                 else:
