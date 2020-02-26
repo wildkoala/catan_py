@@ -44,25 +44,9 @@ def play_dev_card(a_player, dev_card):
     if dev_card.card_type == "Knight":
         print(a_player.p_name + " played a development card: ", end='')
         print(dev_card)
-<<<<<<< HEAD
-        knight_placed = False
-        while knight_placed == False:
-            t = int(input("Which tile will you place the robber on?"))
-            if config.b.tiles[t-1].has_robber: # can i get the board this way or does it have to be an argument? Maybe just put it in config?
-                print("You must put the robber on a new tile.")
-                continue
-            else:
-                # maybe the tile that the robber is on should be an attribute of the robber, because im going to have to iterate over all the times to "undo" the old robber.
-                if t == config.robber.on_tile:
-                    print("The robber is already here... you must move it somewhere else.")
-                    continue
-                config.b.tiles[t-1] = True
-                knight_placed = True
-=======
         move_robber()
         # steal a card from a player.
         
->>>>>>> 3f2bf6bb8af8cf25403e286cb98c93c9cfb607f0
 
     #DONE
     elif dev_card.card_type == "Road Building":
@@ -175,24 +159,7 @@ def robber():
             print(i.p_name + " this is your new hand: ")
             i.show_hand()
 
-<<<<<<< HEAD
-    knight_placed = False
-    while knight_placed == False:
-        t = int(input("Which tile will you place the robber on?"))
-        if config.b.tiles[t-1].has_robber: # can i get the board this way or does it have to be an argument? Maybe just put it in config?
-            print("You must put the robber on a new tile.")
-            continue
-        else:
-            # maybe the tile that the robber is on should be an attribute of the robber, because im going to have to iterate over all the times to "undo" the old robber.
-            if t == config.robber.on_tile:
-                print("The robber is already here... you must move it somewhere else.")
-                continue
-            config.b.tiles[t-1] = True
-            knight_placed = True
-
-=======
     move_robber()
->>>>>>> 3f2bf6bb8af8cf25403e286cb98c93c9cfb607f0
 
 def increment_player_turn(current_player_turn, num_players):
     return (current_player_turn + 1) % num_players
