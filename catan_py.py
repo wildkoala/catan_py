@@ -251,12 +251,6 @@ if __name__ == "__main__":
         else:
             print("Please enter an appropriate value")
 
-
-    # main menu
-    # 1. Play Catan
-    # 2. Explain Rules
-    # 3. Credits
-    #
     # Players Connected: _#_
 
     # assume they chose 1.

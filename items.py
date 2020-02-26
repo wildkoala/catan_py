@@ -75,7 +75,7 @@ def road_is_connected(player_color, n1, n2):
         return True
     else:
         for adj in n1.adj_nodes:
-            if get_road_by_nodes(n1,n2).owns_road == player_color:
+            if get_road_with_nodes(n1,n2).owns_road == player_color:
                 return True
         return False
 
@@ -126,19 +126,23 @@ def build_road(a_player, initializing = False):
             # ask for the two nodes they want to build a road between
             n1 = input("Give the location of the start of the road") #"1,6"
             n1 = n1.split(",")
+            n1 = [ int(x) for x in n1]
             n1 = tuple(n1)
             if not is_valid_location(n1):
                 return # Since this is in the game loop, just kick them back out to the options menu
+            n1 = get_node_by_alias(n1)
 
             n2 = input("Give the location of the end of the road") #"1,5"
             n2 = n2.split(",")
+            n2 = [ int(x) for x in n2]
             n2 = tuple(n2)
             if not is_valid_location(n2):
                 return # Since this is in the game loop, just kick them back out to the options menu
+            n2 = get_node_by_alias(n2)
 
-            r = get_road_by_nodes(n1, n2)
+            r = get_road_with_nodes(n1, n2)
             is_open = not r.is_owned # i think this is valid, but not sure
-            is_connected = road_is_connected(a_player.player_color, n1, n2)
+            is_connected = road_is_connected(a_player.p_color, n1, n2)
 
             if is_open and is_connected:
                 r.owns_node = a_player.id
@@ -200,9 +204,10 @@ def build_settlement(a_player, initializing = False):
             # check if that settlement is open
             n1 = input("Where do you want to place your settlement?") #1,6 for example
             n1 = n1.split(",")
+            n1 = [ int(x) for x in n1]
             n1 = tuple(n1)
             if not is_valid_location(n1):
-                return # Since this is in the game loop, just kick them back out to the options menu 
+                return # Since this is in the game loop, just kick them back out to the options menu
             wanted_node = get_node_by_alias(n1)
 
             if wanted_node.owns_node != "":
@@ -214,7 +219,7 @@ def build_settlement(a_player, initializing = False):
                     print("There's a player on an adjacent space!!")
                     return #this is a NoneType
 
-            wanted_node.owns_node = a_player.color
+            wanted_node.owns_node = a_player.p_color
             print(a_player.p_name + "has placed down a road!")
             a_player.p_hand.remove("B")
             a_player.p_hand.remove("L")
@@ -232,23 +237,24 @@ def build_city(a_player):
         # check that a player has a settlement at that location
         n1 = input("Where do you want to place your city?") #1,6 for example
         n1 = n1.split(",")
+        n1 = [ int(x) for x in n1]
         n1 = tuple(n1)
         if not is_valid_location(n1):
                 return # Since this is in the game loop, just kick them back out to the options menu
         wanted_node = get_node_by_alias(n1)
 
         # needs to specifically be a lower case letter.
-        if wanted_node.owns_node == a_player.color:
+        if wanted_node.owns_node == a_player.p_color:
             print("building a city")
             print(a_player.p_name + "has placed down a city!")
-            wanted_node.owns_node = a_player.color.upper()
+            wanted_node.owns_node = a_player.p_color.upper()
             a_player.p_hand.remove("O")
             a_player.p_hand.remove("O")
             a_player.p_hand.remove("O")
             a_player.p_hand.remove("W")
             a_player.p_hand.remove("W")
 
-        elif wanted_node.owns_node == a_player.color.upper():
+        elif wanted_node.owns_node == a_player.p_color.upper():
             print("That's already a city!")
         elif wanted_node.owns_node != "":
             print(wanted_node.owns_node + " is already on that space!!")
@@ -378,9 +384,10 @@ def give_resources(roll_num, a_board, game_players, initial = False):
                                     p.p_hand.append(t.resource)
                                     print(p.p_name + " got a " + t.resource)
                         else:
-                            p.p_hand.append(t.resource)
-                            p.p_hand.append(t.resource)
-                            print(p.p_name + " got 2 " + t.resource)
+                            for p in game_players:
+                                p.p_hand.append(t.resource)
+                                p.p_hand.append(t.resource)
+                                print(p.p_name + " got 2 " + t.resource)
                     #print(n)
 
 
