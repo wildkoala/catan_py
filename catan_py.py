@@ -169,14 +169,14 @@ def player_menu():
 '''
     )
 
-def player_turn(player, points_to_win, game_board, game_players):
+def player_turn(player, points_to_win):
     print(player.p_name + " it is your turn")
 
     user_input = input("Press Enter to Roll Die")
 
     roll = catan_classes.roll_dice()
     print(str(roll) + " has been rolled")
-    items.give_resources(roll, game_board, game_players)
+    items.give_resources(roll)
 
     #Check to see if robber() should be called
     if roll == 7:
@@ -213,7 +213,7 @@ def player_turn(player, points_to_win, game_board, game_players):
             print("Trade using a port")
 
         elif selection == 9:
-            b.show_board()
+            config.show_board()
 
         if (player.show_victory_pts() >= points_to_win):
             return True
@@ -223,13 +223,13 @@ def player_turn(player, points_to_win, game_board, game_players):
 # START OF GAME
 #========================================================
 
-def place_initial(player_list):
-    for i in player_list:
+def place_initial():
+    for i in config.player_list:
         print(i.p_name + " is placing their first settlement")
         items.build_settlement(i, True)
         print(i.p_name + " is placing their first road")
         items.build_road(i, True)
-    for i in reversed(player_list):
+    for i in reversed(config.player_list):
         print(i.p_name + " is placing their second settlement")
         items.build_settlement(i, True)
         print(i.p_name + " is placing their second road")
@@ -375,7 +375,7 @@ if __name__ == "__main__":
             # get resources
             # place roads
         # once through list, go in reverse order placing second settlement
-    place_initial(player_list)
+    place_initial()
 
 
     # once every player has their settlements down
@@ -383,14 +383,14 @@ if __name__ == "__main__":
     # GAME LOOP
 
     #Give players their initial resources
-    items.give_resources(0, b, player_list, True)
+    items.give_resources(0, True)
 
     winner = False
     while winner != True:
 
         #Declare whos turn it is in the game
-        winner = player_turn(player_list[curr_player_turn], points_to_win, b, player_list)
-        curr_player_turn = increment_player_turn(curr_player_turn, len(player_list))
+        winner = player_turn(config.player_list[curr_player_turn], points_to_win)
+        curr_player_turn = increment_player_turn(curr_player_turn, len(config.player_list))
 
 
   # accept connections

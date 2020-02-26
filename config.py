@@ -307,3 +307,4 @@ b = init_board()
 robber = init_robber(random.randint(1, 20))
 node_list = init_nodes()
 road_list = init_roads(node_list)
+player_list = []
