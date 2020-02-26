@@ -125,7 +125,7 @@ def robber():
     print("ROBBER HAS BEEN ROLLED")
 
     # Loop checks to see if any players have 7 or more cards
-    for i in player_list:
+    for i in config.player_list:
         if len(i.p_hand) >= 7:
             discard = ""
             has_cards = False
@@ -300,7 +300,6 @@ press any key to go back to the main menu
 def get_player_info():
     try:
         num_players = int(input("Please enter the number of players\n"))
-        player_list = [] # this will be a list of Player objects
         i = 0
         color_options = ["Red", "Yellow", "Purple", "Green", "Cyan", "Tan"]
 
@@ -311,14 +310,17 @@ def get_player_info():
             p_color =  color_options.pop(player_choose_color(color_options)-1)
             print("You selected: " + p_color)
             color = p_color[0].lower()
-            player_list.append(catan_classes.Player(name,color))
+            config.player_list.append(catan_classes.Player(name,color))
             i+=1
-        return player_list
+            return True # doesnt matter, as long as it's not None type
 
     except ValueError:
         print("You must enter an integer")
         return
 
+    except IndexError:
+        print("You must enter one of the provided options")
+        return
 
 def declare_pts_to_win():
     # most of this should be wrapped up in a "setup" function
@@ -352,8 +354,8 @@ if __name__ == "__main__":
 
     # need player list accessible across all modules
     # ask players for their name and color choice
-    player_list = get_player_info()
-    while player_list == None:
+    result = get_player_info()
+    while result == None:
         get_player_info()
 
     # establish points to win
