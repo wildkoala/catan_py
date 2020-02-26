@@ -175,10 +175,10 @@ def create_roads(list_of_nodes):
 
 class Dev_Card:
     def __init__(self, card_type):
-        self.card_type = card_type            # options are Knight Card (14), Road Building(2), Year of Plenty(2), Monopoly(2), Victory Point (5)
-
+        self.card_type = card_type            # options are Knight (14), Road Building(2), Year of Plenty(2), Monopoly(2), Victory Point (5) 
+    
     def __str__(self):
-        return "Dev Card: " + self.card_type
+        return self.card_type
 
 class Road:
     def __init__(self, start_n, end_n):
