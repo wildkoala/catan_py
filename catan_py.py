@@ -48,7 +48,7 @@ def robber():
                     print("You have discarded more cards than necessary.")
                 elif len(discard) < math.ceil(len(i.p_hand)/2):
                     print("You must discard half your cards (ROUNDING UP)")
-                if all(elem in i.p_hand for elem in list(discard)):
+                if i.p_hand.count("O") >= list(discard).count("O") and i.p_hand.count("B") >= list(discard).count("B") and i.p_hand.count("S") >= list(discard).count("S") and i.p_hand.count("W") >= list(discard).count("W") and i.p_hand.count("L") >= list(discard).count("L"):
                     has_cards = True
                     print("You have those cards")
                 else:
