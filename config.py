@@ -7,26 +7,26 @@ import catan_classes
 def create_nodes():
 	nodes = []
 	for x in range(1,55):
-		nodes.append(Node(x))
+		nodes.append(catan_classses.Node(x))
 	return nodes
 
 def init_dev_cards():
     dev_cards = []
     for i in range(0,25):
         if i<14:
-            new_card = Dev_Card("Knight")
+            new_card = catan_classses.Dev_Card("Knight")
             dev_cards.append(new_card)
         elif i<19:
-            new_card = Dev_Card("Victory Point")
+            new_card = catan_classses.Dev_Card("Victory Point")
             dev_cards.append(new_card)
         elif i<21:
-            new_card = Dev_Card("Year of Plenty")
+            new_card = catan_classses.Dev_Card("Year of Plenty")
             dev_cards.append(new_card)
         elif i<23:
-            new_card = Dev_Card("Road Building")
+            new_card = catan_classses.Dev_Card("Road Building")
             dev_cards.append(new_card)
         else:
-            new_card = Dev_Card("Monopoly")
+            new_card = catan_classses.Dev_Card("Monopoly")
             dev_cards.append(new_card)
     return dev_cards
 
@@ -163,75 +163,19 @@ def init_nodes():
     return x
 
 
-def create_roads(list_of_nodes):
+def init_roads(list_of_nodes):
     roads =[]
     for n in list_of_nodes:
         for thing in n.adj_nodes:
             if n.id < thing:
-                new_road = Road(n.id,thing)
+                new_road = catan_classses.Road(n.id,thing)
                 roads.append(new_road)
     return roads
 
 
-class Dev_Card:
-    def __init__(self, card_type):
-        self.card_type = card_type            # options are Knight (14), Road Building(2), Year of Plenty(2), Monopoly(2), Victory Point (5)
 
-    def __str__(self):
-        return self.card_type
 
-class Road:
-    def __init__(self, start_n, end_n):
-        self.owns_road = ""
-        self.start_n = start_n # id of starting node
-        self.end_n = end_n # id of ending node
 
-    def is_owned(self):
-        if self.owns_node == "":
-            return False
-        else:
-            return True
-
-    def __str__(self):
-        return "Road: " + str(str(self.start_n) + " " +  str(self.end_n))
-
-class Node:
-	def __init__(self, id): # Just gonna have every node have an id.
-		self.id = id
-		self.owns_node = "" # color of player with a settlement or city on this node
-		self.alias = [] # this is a list of tuples, where the first vvalue is the tile it's on, and the second is the corner that it is.
-		self.can_place = False # basically, this is only true in limited circumstances
-		self.adj_nodes = [] # list of id's for connected nodes
-
-	def is_empty(self):
-		if self.owns_node == "":
-			return True
-		else:
-			return False
-
-	def add_adj(self, id):
-		self.adj_nodes.append(id)
-
-	def status(self):
-		if self.owns_node == "":
-			return "."
-		else:
-			return self.owns_node
-
-	def is_settlement(self):
-		if self.owns_node.islower():
-			return True
-		else:
-			return False
-
-	def is_city(self):
-		if self.owns_node.isupper():
-			return True
-		else:
-			return False
-
-	def __str__(self):
-		return "Node: " + str(self.id)
 
 def show_board():
 	to_print = '''
@@ -344,7 +288,7 @@ def random_tile(id):
     return rand_tile
 
 
-def create_board():
+def init_board():
 	b = catan_classes.Board()
 	for i in range(1,20):
 		b.tiles.append(random_tile(i))
@@ -356,10 +300,10 @@ def init_robber(tile_id):
 	return r
 
 
-unshuffled = init_dev_cards()
-dev_cards = shuffle(init_dev_cards())
-b = create_board()
-robber = init_robber(random.randint(1, 20))
 
+# GLOBALLY ACCESSIBLE VARIABLES
+dev_cards = shuffle(init_dev_cards())
+b = init_board()
+robber = init_robber(random.randint(1, 20))
 node_list = init_nodes()
-road_list = create_roads(node_list)
+road_list = init_roads(node_list)
