@@ -222,10 +222,8 @@ def place_initial(player_list):
         print(i.p_name + " is placing their second road")
         items.build_road(i, True)
 
-
-def setup():
-
-    print('''
+def display_main_menu():
+    selection = input('''
         CCCCCCCCCCCCC               AAA         TTTTTTTTTTTTTTTTTTTTTTT         AAA               NNNNNNNN        NNNNNNNN
      CCC::::::::::::C              A:::A        T:::::::::::::::::::::T        A:::A              N:::::::N       N::::::N
    CC:::::::::::::::C             A:::::A       T:::::::::::::::::::::T       A:::::A             N::::::::N      N::::::N
@@ -242,7 +240,51 @@ C:::::C                   A:::::::::::::::::::::A       T:::::T       A:::::::::
    CC:::::::::::::::C  A:::::A               A:::::A  T:::::::::T  A:::::A               A:::::A  N::::::N       N:::::::N
      CCC::::::::::::C A:::::A                 A:::::A T:::::::::T A:::::A                 A:::::A N::::::N        N::::::N
         CCCCCCCCCCCCCAAAAAAA                   AAAAAAATTTTTTTTTTTAAAAAAA                   AAAAAAANNNNNNNN         NNNNNNN
-''')
+
+
+            MAIN MENU: Please Select and Option
+
+        1. Play Catan
+        2. Explain Rules
+        3. Credits
+
+
+        ''')
+    try:
+        val = int(selection)
+        pass
+    except ValueError:
+        selection = -1
+        print("Please select the corresponding number. Do not enter a word/phrase")
+    return selection
+
+def explain_rules():
+    input('''
+    Here are the rules for Catan:
+
+
+    Please Press any key to go back to the main menu
+
+    ''')
+
+def display_credits():
+    input('''
+    Game Created by:
+        Grayson "Twiggy" Gordon
+        Anthony Walton
+
+    Graphics:
+        Grayson "Twiggy" Gordon
+        Anthony Walton
+
+    All Rights are owned by the creators of this game
+    IF YOU STEAL THIS I WILL GET HANGRY
+
+
+press any key to go back to the main menu
+    ''')
+
+def get_player_info():
 
     num_players = int(input("Please enter the number of players\n"))
 
@@ -259,26 +301,32 @@ C:::::C                   A:::::::::::::::::::::A       T:::::T       A:::::::::
         color = p_color[0].lower()
         player_list.append(catan_classes.Player(name,color))
         i+=1
+    return player_list
 
-# most of this should be wrapped up in a "setup" function
+
+def declare_pts_to_win():
+    # most of this should be wrapped up in a "setup" function
     points_to_win = int(input("Enter the Amount of Points Required to Win\n"))
 
-    b.create_board()
-
-    print("Here is the Board:")
-    b.show_board()
-
-    return (player_list, points_to_win)
+    return points_to_win
 
 
 if __name__ == "__main__":
 
     # Display CATAN name
-    # main menu
-    # 1. Play Catan
-    # 2. Explain Rules
-    # 3. Credits
-    #
+    selection = -1
+    while selection != 1:
+        selection = int(display_main_menu())
+
+        if selection == 2:
+            explain_rules()
+        elif selection == 3:
+            display_credits()
+        elif selection == 1:
+            pass
+        else:
+            print("Please enter an appropriate value")
+
     # Players Connected: _#_
 
     # assume they chose 1.
@@ -286,40 +334,34 @@ if __name__ == "__main__":
     #Setup the game and return player_list and amount of points to win
     b = catan_classes.Board()
 
-    # need node list accessible across all modules
-    # config.node_list
-
-    # need road list
-
-
     # need player list accessible across all modules
     # ask players for their name and color choice
-    game_specifications = setup()
-
-
-    #catan_classes.create_nodes()
-
+    player_list = get_player_info()
 
     # establish points to win
+    points_to_win = declare_pts_to_win()
+
+    b.create_board()
+
+    print("Here is the Board:")
+    b.show_board()
+
+    #Store player_list and points to win in variables
+    curr_player_turn = 0
+
 
     # Everyone rolls for who goes first
-        # highest goes first
+        # highest goes first (still need to incorporate this)
             # place settlement
             # get resources
             # place roads
         # once through list, go in reverse order placing second settlement
+    place_initial(player_list)
 
 
     # once every player has their settlements down
 
     # GAME LOOP
-
-    #Store player_list and points to win in variables
-    player_list = game_specifications[0]
-    points_to_win = game_specifications[1]
-    curr_player_turn = 0
-
-    place_initial(player_list)
 
     #Give players their initial resources
     items.give_resources(0, b, player_list, True)

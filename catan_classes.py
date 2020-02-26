@@ -39,6 +39,8 @@ class Player:
     def show_victory_pts(self):
         return self.p_victory_pts
 
+    def calculate_victory_pts(self):
+
 #Partial implementation
 class Board:
 
