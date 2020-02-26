@@ -24,14 +24,23 @@ import math
 #========================================================
 
 def play_dev_card(a_player, dev_card):
-    # Partially implemented
+    # DONE
     if dev_card.card_type == "Knight":
         print(a_player.p_name + " played a development card: ", end='')
         print(dev_card)
         knight_placed = False
-        t = int(input("Which tile will you place the robber on?"))
-        # if the tile has the robber already
-            # print
+        while knight_placed == False:
+            t = int(input("Which tile will you place the robber on?"))
+            if b.tiles[t-1].has_robber: # can i get the board this way or does it have to be an argument? Maybe just put it in config?
+                print("You must put the robber on a new tile.")
+                continue
+            else:
+                # maybe the tile that the robber is on should be an attribute of the robber, because im going to have to iterate over all the times to "undo" the old robber.
+                if t == config.robber.on_tile:
+                    print("The robber is already here... you must move it somewhere else.")
+                    continue
+                config.b.tiles[t-1] = True
+                knight_placed = True
     
     #DONE
     elif dev_card.card_type == "Road Building":
@@ -91,10 +100,9 @@ def play_dev_card(a_player, dev_card):
                 print(wanted_card + " is not a valid resource")
 
              
-
+    #DONE
     elif dev_card.card_type == "Victory Point":
-        print(a_player.p_name + " played a development card: ", end='')
-        print(dev_card)
+        a_player.p_victory_pts += 1 # I don't want to tell anyone else that this was played.
 
     else:
         print("Not a known development card type")
@@ -105,8 +113,13 @@ def player_choose_color(color_options):
         for c in color_options:
             print("\t" + str(i) + ". " + c)
             i += 1
-        choice = int(input("Chose the number of the color you'd like?\n"))
-        return choice
+        try:
+            choice = int(input("Chose the number of the color you'd like.\n"))
+            return choice
+        except ValueError:
+            print("You must enter a number.")
+            choice = player_choose_color(color_options) # I don't want to call this recursively, but im hacking it together.
+            return choice
 
 def robber():
     print("ROBBER HAS BEEN ROLLED")

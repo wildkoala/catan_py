@@ -40,6 +40,7 @@ class Player:
         return self.p_victory_pts
 
     def calculate_victory_pts(self):
+        pass # needs to be implemented
 
 #Partial implementation
 class Board:
