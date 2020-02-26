@@ -276,7 +276,7 @@ def build_dev_card(a_player):
         a_player.p_hand.remove("O")
         a_player.p_hand.remove("S")
         a_player.p_hand.remove("W")
-        # give player a dev card... I need to have dev cards (and shuffled)
+        a_player.p_dev_cards.append(config.dev_cards.pop())
 
     else:
         print("Not enough resources to get dev card!!")
@@ -288,7 +288,7 @@ def has_needed_resources(item, a_player):
     if item == "road":
         # Check that they have 1 brick and lumber
         hand = a_player.p_hand
-        if (hand.count("B") > 0 and hand.count("L") > 0):
+        if hand.count("B") > 0 and hand.count("L") > 0:
             return True
         else:
             return False
@@ -296,7 +296,7 @@ def has_needed_resources(item, a_player):
     elif item == "settlement":
         # Check that they have 1 sheep, wheat, brick, and lumber
         hand = a_player.p_hand
-        if (hand.count("S") > 0 and hand.count("L") > 0 and hand.count("W") > 0 and hand.count("B") > 0):
+        if hand.count("S") > 0 and hand.count("L") > 0 and hand.count("W") > 0 and hand.count("B") > 0:
             return True
         else:
             return False
@@ -304,15 +304,15 @@ def has_needed_resources(item, a_player):
     elif item == "city":
        # Check that they have 2 wheat, 3 ore
        hand = a_player.p_hand
-       if (hand.count("O") > 2 and hand.count("W") > 1):
+       if hand.count("O") > 2 and hand.count("W") > 1:
            return True
        else:
            return False
 
     elif (item == "dev_card"):
-    # Check they have 1 sheep, ore and wheat
+        # Check they have 1 sheep, ore and wheat
         hand = a_player.p_hand
-        if (hand.count("O") > 0 and hand.count("W") > 0 and hand.count("S") > 0):
+        if hand.count("O") > 0 and hand.count("W") > 0 and hand.count("S") > 0:
             return True
         else:
             return False
