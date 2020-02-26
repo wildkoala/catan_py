@@ -135,17 +135,17 @@ def robber():
     # Loop checks to see if any players have 7 or more cards
     for i in config.player_list:
         if len(i.p_hand) >= 7:
-            num_to_discard = math.ceil(len(i.p_hand)/2
+            num_to_discard = math.ceil(len(i.p_hand)/2)
             discard = ""
             has_cards = False
             while len(discard != num_to_discard) or has_cards == False:
                 print(i.p_name + " this is your current hand: ")
                 i.show_hand()
                 discard = input(i.p_name + " Please discard " + str(num_to_discard) + " cards (rounding up)")
-                if len(discard) > num_to_discard):
+                if len(discard) > num_to_discard:
                     print("You have discarded more cards than necessary.")
                     
-                elif len(discard) < num_to_discard):
+                elif len(discard) < num_to_discard:
                     print("You didn't discard enough cards... try again.")
 
                 if i.p_hand.count("O") >= list(discard).count("O") and i.p_hand.count("B") >= list(discard).count("B") and i.p_hand.count("S") >= list(discard).count("S") and i.p_hand.count("W") >= list(discard).count("W") and i.p_hand.count("L") >= list(discard).count("L"):
