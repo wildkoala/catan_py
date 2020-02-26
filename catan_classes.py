@@ -52,6 +52,12 @@ class Robber:
     def __init__(self, first_tile):
         self.on_tile = first_tile
 
+    def is_on_tile(self, tile_num):
+        if self.on_tile == tile_num:
+            return "!"
+        else:
+            return " "
+
 class Node:
 	def __init__(self, id): # Just gonna have every node have an id.
 		self.id = id
