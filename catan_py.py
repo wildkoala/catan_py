@@ -312,7 +312,8 @@ def get_player_info():
             color = p_color[0].lower()
             config.player_list.append(catan_classes.Player(name,color))
             i+=1
-            return True # doesnt matter, as long as it's not None type
+        
+        return True # doesnt matter, as long as it's not None type
 
     except ValueError:
         print("You must enter an integer")
