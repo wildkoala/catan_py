@@ -200,16 +200,25 @@ def player_turn(player, points_to_win):
             player.show_hand()
 
         elif selection == 2:
-            items.build_road(player)
+            built = items.build_road(player)
+            while built == None:
+                built = items.build_road(player)
 
         elif selection == 3:
-            items.build_settlement(player)
+            built = items.build_settlement(player)
+            while built == None:
+                built = items.build_road(player)
+            
 
         elif selection == 4:
-            items.build_city(player)
+            built = items.build_city(player)
+            while built == None:
+                built = items.build_city(player)
 
         elif selection == 5:
-            items.build_dev_card(player)
+            built = items.build_dev_card(player)
+            while built == None:
+                built = items.build_dev_card(player)
 
         elif selection == 6:
             print("Trade with Player")

@@ -93,6 +93,12 @@ class Node:
 		else:
 			return False
 
+    def connected_roads(self):
+        roads = [] # a list of connected roads.
+        for adj in self.adj_nodes:
+            roads.append(get_road_with_nodes(self.id, adj))
+        return roads
+
 	def __str__(self):
 		return "Node: " + str(self.id)
 

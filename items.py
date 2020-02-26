@@ -69,15 +69,32 @@ def get_road_with_nodes(node1, node2):
                 return r
     #print("COULDN'T FIND ROAD")
 
-# player.id this will have to be added to player. it's their icon on the map
+# NEEDS TESTING FOR ADJACENT ROADS
 def road_is_connected(player_color, n1, n2):
+    print("IN ROAD IS CONNECTED FUNCTION")
     if n1.owns_node.lower() == player_color: # lower makes sure that a city counts too.
         return True
-    else:
-        for adj in n1.adj_nodes:
-            if get_road_with_nodes(n1,n2).owns_road == player_color:
+    else: # this is the part of the code that needs to check for an adj road.
+        for r in n1.connected_roads():
+            if r.owns_road == player_color:
+                return True
+        for r in n2.connected_roads():
+            if r.owns_road == player_color:
                 return True
         return False
+'''
+how to determine if a road is connected:
+
+get the desired road.
+    from the start_node of desired road, get all the roads coming off of it
+    if any of those roads are owned by the player, it IS connected.
+
+    now check the end_node:
+        get all of the roads that come off of it.
+            if any of them are owned by the player, it's connected.
+
+'''
+
 
 # maybe have is_init set to False by default (a keyword argument)
 def build_road(a_player, initializing = False): # this is not working for having a road connected to another road, makes you have a connected settlement rn.
@@ -103,6 +120,7 @@ def build_road(a_player, initializing = False): # this is not working for having
                 continue
             n2 = get_node_by_alias(n2)
 
+            
             if n1.owns_node == a_player.p_color or n2.owns_node == a_player.p_color:
 
                 wanted_road = get_road_with_nodes(n1, n2)
@@ -363,4 +381,16 @@ def give_resources(roll_num, initial = False):
             else:
                 corners = get_corners(t.id)
                 give_resources_to_players(corners,t.resource)
+
+
+
+
+
+
+
+
+
+
+
+
 
