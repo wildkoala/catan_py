@@ -354,10 +354,9 @@ if __name__ == "__main__":
     # establish points to win
     points_to_win = declare_pts_to_win()
 
-    b.create_board()
 
     print("Here is the Board:")
-    b.show_board()
+    config.show_board()
 
     #Store player_list and points to win in variables
     curr_player_turn = 0
