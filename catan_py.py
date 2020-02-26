@@ -173,6 +173,8 @@ def player_menu():
         7. Trade with the bank (4 for 1)
         8. Trade using a port
         9. Display Board
+        10. View Development cards
+        11. Play Development Card
         0. End Turn
 '''
     )
@@ -222,6 +224,15 @@ def player_turn(player, points_to_win):
 
         elif selection == 9:
             config.show_board()
+
+        elif selection == 10:
+            player.show_dev_cards()
+
+        elif selection == 11:
+            print("Please select a dev_card: ")
+            player.show_dev_cards()
+            dev_card = input()
+            play_dev_card(player, dev_card)
 
         if (player.show_victory_pts() >= points_to_win):
             return True
