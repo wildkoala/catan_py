@@ -1,3 +1,6 @@
+import random
+
+
 # include all the globably needed stuff in here.
 
 def create_nodes():
@@ -5,6 +8,33 @@ def create_nodes():
 	for x in range(1,55):
 		nodes.append(Node(x))
 	return nodes
+
+def init_dev_cards():
+    dev_cards = []
+    for i in range(0,25):
+        if i<14:
+            new_card = Dev_Card("Knight")
+            dev_cards.append(new_card)
+        elif i<19:
+            new_card = Dev_Card("Victory Point")
+            dev_cards.append(new_card)
+        elif i<21:
+            new_card = Dev_Card("Year of Plenty")
+            dev_cards.append(new_card)
+        elif i<23:
+            new_card = Dev_Card("Road Building")
+            dev_cards.append(new_card)
+        else:
+            new_card = Dev_Card("Monopoly")
+            dev_cards.append(new_card)
+    return dev_cards
+
+def shuffle(a_list):
+    size = len(a_list)
+    first = random.randint(0,size-1)
+    second = random.randint(0,size-1)
+    # save the first, write second into first, then saved into second
+
 
 def init_nodes():
     x = create_nodes()
@@ -131,6 +161,10 @@ def create_roads(list_of_nodes):
     return roads
 
 
+class Dev_Card:
+    def __init__(self, card_type):
+        pass            # options are Knight Card (14), Road Building(2), Year of Plenty(2), Monopoly(2), Victory Point (5) 
+
 class Road:
     def __init__(self, start_n, end_n):
         self.owns_road = ""
@@ -178,5 +212,7 @@ class Node:
     def __str__(self):
         return "Node: " + str(self.id)
 
+#unshuffled = init_dev_cards()
+dev_cards = init_dev_cards()
 node_list = init_nodes()
 road_list = create_roads(node_list)
