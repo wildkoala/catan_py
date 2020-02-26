@@ -181,36 +181,42 @@ class Road:
         return "Road: " + str(str(self.start_n) + " " +  str(self.end_n))
 
 class Node:
-    def __init__(self, id): # Just gonna have every node have an id.
-        self.id = id
-        self.owns_node = "" # color of player with a settlement or city on this node
-        self.alias = [] # this is a list of tuples, where the first vvalue is the tile it's on, and the second is the corner that it is.
-        self.can_place = False # basically, this is only true in limited circumstances
-        self.adj_nodes = [] # list of id's for connected nodes
+	def __init__(self, id): # Just gonna have every node have an id.
+		self.id = id
+		self.owns_node = "" # color of player with a settlement or city on this node
+		self.alias = [] # this is a list of tuples, where the first vvalue is the tile it's on, and the second is the corner that it is.
+		self.can_place = False # basically, this is only true in limited circumstances
+		self.adj_nodes = [] # list of id's for connected nodes
 
-    def is_empty(self):
-        if self.owns_node == "":
-            return True
-        else:
-            return False
+	def is_empty(self):
+		if self.owns_node == "":
+			return True
+		else:
+			return False
 
-    def add_adj(self, id):
-        self.adj_nodes.append(id)
+	def add_adj(self, id):
+		self.adj_nodes.append(id)
 
-    def is_settlement(self):
-        if self.owns_node.islower():
-            return True
-        else:
-            return False
+	def status(self):
+		if self.owns_node == "":
+			return "."
+		else:
+			return self.owns_node
 
-    def is_city(self):
-        if self.owns_node.isupper():
-            return True
-        else:
-            return False
+	def is_settlement(self):
+		if self.owns_node.islower():
+			return True
+		else:
+			return False
 
-    def __str__(self):
-        return "Node: " + str(self.id)
+	def is_city(self):
+		if self.owns_node.isupper():
+			return True
+		else:
+			return False
+
+	def __str__(self):
+		return "Node: " + str(self.id)
 
 #unshuffled = init_dev_cards()
 dev_cards = init_dev_cards()
