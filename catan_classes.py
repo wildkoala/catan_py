@@ -39,13 +39,6 @@ class Player:
     def show_victory_pts(self):
         return self.p_victory_pts
 
-    def remove_cards(self, cards):
-        pass
-
-
-
-
-
 #Partial implementation
 class Board:
 
