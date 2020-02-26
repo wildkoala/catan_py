@@ -253,7 +253,6 @@ if __name__ == "__main__":
 
         #Declare whos turn it is in the game
         winner = player_turn(player_list[curr_player_turn], points_to_win, b, player_list)
-
         curr_player_turn = increment_player_turn(curr_player_turn, len(player_list))
 
 
