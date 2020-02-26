@@ -174,7 +174,7 @@ def player_turn(player, points_to_win):
 
     user_input = input("Press Enter to Roll Die")
 
-    roll = catan_classes.roll_dice()
+    roll = config.roll_dice()
     print(str(roll) + " has been rolled")
     items.give_resources(roll)
 
