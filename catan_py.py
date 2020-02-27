@@ -423,6 +423,8 @@ def declare_pts_to_win():
 
 if __name__ == "__main__":
 
+    for i in config.road_list:
+        print(i)
     # Display CATAN name
     selection = -1
     while selection != 1:
