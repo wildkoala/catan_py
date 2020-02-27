@@ -124,16 +124,23 @@ class Dev_Card:
         return self.card_type
 
 class Road:
-    def __init__(self, start_n, end_n):
+    def __init__(self, start_n, end_n, id):
+        self.id = id
         self.owns_road = ""
         self.start_n = start_n # id of starting node
         self.end_n = end_n # id of ending node
 
     def is_owned(self):
-        if self.owns_node == "":
+        if self.owns_road == "":
             return False
         else:
             return True
 
+    def show_road(self):
+        if self.owns_road == "":
+            return "."
+        else:
+            return self.owns_road
+
     def __str__(self):
-        return "Road: " + str(str(self.start_n) + " " +  str(self.end_n))
+        return "Road: " + str(str(self.start_n) + " " +  str(self.end_n) + " " + str(self.id))

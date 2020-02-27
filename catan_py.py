@@ -452,7 +452,6 @@ def declare_pts_to_win():
 
 
 if __name__ == "__main__":
-
     # Display CATAN name
     selection = -1
     while selection != 1:
