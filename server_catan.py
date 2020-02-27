@@ -36,7 +36,7 @@ def catan_client(conn):
    print("Gracefully closed connection to client")
 
 def display_main_menu():
-    selection = '''
+    template = '''
         CCCCCCCCCCCCC               AAA         TTTTTTTTTTTTTTTTTTTTTTT         AAA               NNNNNNNN        NNNNNNNN
      CCC::::::::::::C              A:::A        T:::::::::::::::::::::T        A:::A              N:::::::N       N::::::N
    CC:::::::::::::::C             A:::::A       T:::::::::::::::::::::T       A:::::A             N::::::::N      N::::::N
@@ -61,7 +61,7 @@ C:::::C                   A:::::::::::::::::::::A       T:::::T       A:::::::::
         2. Explain Rules
         3. Credits
 '''
-    return selection
+    return template
 
 connections = 0
 while True:
