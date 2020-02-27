@@ -224,7 +224,7 @@ def player_turn(player, points_to_win):
     while selection != 0:
         player_menu()
         try:
-            selection = int(input("Please Select One\n> "))
+            selection = int(input("Please Select One\n"+ player.p_name + "> "))
 
             if selection == 1:
                 player.show_hand()
@@ -292,14 +292,17 @@ def player_turn(player, points_to_win):
                 num = input("> ")
                 play_dev_card(player, player.p_dev_cards[num-1])
 
+            elif selection == 0:
+                pass
+
             else:
                 print("You must enter a number corresponding to an option")
 
             # I don't know if this check actually works.
-            '''
+
             if (player.show_victory_pts() >= points_to_win):
                 return True
-            '''
+
         except ValueError:
             print("You must enter a number corresponding to an option")
 
@@ -483,7 +486,11 @@ if __name__ == "__main__":
 
         #Declare whos turn it is in the game
         winner = player_turn(config.player_list[curr_player_turn], points_to_win)
+        if winner:
+            break
         curr_player_turn = increment_player_turn(curr_player_turn, len(config.player_list))
+
+    print("WINNER: " + config.player_list[curr_player_turn].p_name)
 
 
   # accept connections
