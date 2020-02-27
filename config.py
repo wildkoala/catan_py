@@ -187,33 +187,33 @@ def show_board():
                    /~~~~~~~~~\*~~~~~*/~~~~~~~~~\\
             >-----<~~~~~~~~~~~{62}-----{63}~~~~~~~~~~~>-----<
            /~~~~~~~\~~~~~~~~~/       \~~~~~~~~~/~~~~~~~\\
-          /~~~2:1~~~\~~~~~~~/    {0}\~~~~~~~/~~~2:1~~~\\
-   >-----<~~~wood~~~*{60}-----{61}    {111}{1}{70}-----{71}*~~sheep~~~>-----<
-  /~~~~~~~\~~~~~~~~~/       \    {2}/       \~~~~~~~~~/~~~~~~~\\
- /~~~~~~~~~\~~~~~~*/    {3}\       /    {4}\*~~~~~~/~~~~~~~~~\\
-<~~~~~~~~~~~{58}-----{59}    {112}{5}{68}-----{69}    {113}{6}{81}-----{82}~~~~~~~~~~~>
- \~~~~~~~~~/       \    {7}/       \    {8}/       \~~~~~~~~~/
-  \~~~~~~~/    {9}\       /    {10}\       /    {11}\~~~~~~~/
-   >-----{57}    {114}{12}{66}-----{67}    {115}{13}{79}-----{80}    {116}{14}{94}-----<
-  /~~~~~~~\    {15}/       \    {16}/       \    {17}/~~~~~~~\\
- /~~~2:1~~~\       /    {18}\       /    {19}\       /~~~2:1~~~\\
-<~~~brick~~*{64}-----{65}    {117}{20}{77}-----{78}    {118}{21}{92}-----{93}*~~~ore~~~~>
- \~~~~~~~~~/       \    {22}/       \    {23}/       \~~~~~~~~~/
-  \~~~~~~*/    {24}\       /    {25}\       /    {26}\*~~~~~~/
-   >-----{72}    {119}{27}{75}-----{76}    {120}{28}{90}-----{91}    {121}{29}{103}-----<
-  /~~~~~~~\    {30}/       \    {31}/       \    {32}/~~~~~~~\\
- /~~~~~~~~~\       /    {33}\       /    {34}\       /~~~~~~~~~\\
-<~~~~~~~~~~~{73}-----{74}    {122}{35}{88}-----{89}    {123}{36}{101}-----{102}~~~~~~~~~~~>
- \~~~~~~~~~/       \    {37}/       \    {38}/       \~~~~~~~~~/
-  \~~~~~~~/    {39}\       /    {40}\       /    {41}\~~~~~~~/
-   >-----{83}    {124}{42}{86}-----{87}    {125}{43}{99}-----{100}    {126}{44}{110}-----<
-  /~~~~~~*\    {45}/       \    {46}/       \    {47}/*~~~~~~\\
- /~~~~~~~~~\       /    {48}\       /    {49}\       /~~~~~~~~~\\
-<~~~~3:1~~~*{84}-----{85}    {127}{50}{97}-----{98}    {128}{51}{108}-----{109}*~~~3:1~~~~>
- \~~~~~~~~~/~~~~~~~\    {52}/       \    {53}/~~~~~~~\~~~~~~~~~/
-  \~~~~~~~/~~~~~~~~~\       /    {54}\       /~~~~~~~~~\~~~~~~~/
-   >-----< ~~~~~~~~~~{95}-----{96}    {129}{55}{106}-----{107}~~~~~~~~~~~>-----<
-          \~~~~~~~~~/*~~~~~*\    {56}/*~~~~~*\~~~~~~~~~/
+          /~~~2:1~~~\~~~~~~~/    {0}   \~~~~~~~/~~~2:1~~~\\
+   >-----<~~~wood~~~*{60}-----{61}    {111}{1}    {70}-----{71}*~~sheep~~~>-----<
+  /~~~~~~~\~~~~~~~~~/       \    {2}   /       \~~~~~~~~~/~~~~~~~\\
+ /~~~~~~~~~\~~~~~~*/    {3}   \       /    {4}   \*~~~~~~/~~~~~~~~~\\
+<~~~~~~~~~~~{58}-----{59}    {112}{5}     {68}-----{69}    {113}{6}     {81}-----{82}~~~~~~~~~~~>
+ \~~~~~~~~~/       \    {7}   /       \    {8}   /       \~~~~~~~~~/
+  \~~~~~~~/    {9}   \       /    {10}   \       /    {11}   \~~~~~~~/
+   >-----{57}    {114}{12}     {66}-----{67}    {115}{13}     {79}-----{80}    {116}{14}     {94}-----<
+  /~~~~~~~\    {15}   /       \    {16}   /       \    {17}   /~~~~~~~\\
+ /~~~2:1~~~\       /    {18}   \       /    {19}   \       /~~~2:1~~~\\
+<~~~brick~~*{64}-----{65}    {117}{20}     {77}-----{78}    {118}{21}     {92}-----{93}*~~~ore~~~~>
+ \~~~~~~~~~/       \    {22}   /       \    {23}   /       \~~~~~~~~~/
+  \~~~~~~*/    {24}   \       /    {25}   \       /    {26}   \*~~~~~~/
+   >-----{72}    {119}{27}     {75}-----{76}    {120}{28}     {90}-----{91}    {121}{29}     {103}-----<
+  /~~~~~~~\    {30}   /       \    {31}   /       \    {32}   /~~~~~~~\\
+ /~~~~~~~~~\       /    {33}   \       /    {34}   \       /~~~~~~~~~\\
+<~~~~~~~~~~~{73}-----{74}    {122}{35}     {88}-----{89}    {123}{36}     {101}-----{102}~~~~~~~~~~~>
+ \~~~~~~~~~/       \    {37}   /       \    {38}   /       \~~~~~~~~~/
+  \~~~~~~~/    {39}   \       /    {40}   \       /    {41}   \~~~~~~~/
+   >-----{83}    {124}{42}     {86}-----{87}    {125}{43}     {99}-----{100}    {126}{44}     {110}-----<
+  /~~~~~~*\    {45}   /       \    {46}   /       \    {47}   /*~~~~~~\\
+ /~~~~~~~~~\       /    {48}   \       /    {49}   \       /~~~~~~~~~\\
+<~~~~3:1~~~*{84}-----{85}    {127}{50}     {97}-----{98}    {128}{51}     {108}-----{109}*~~~3:1~~~~>
+ \~~~~~~~~~/~~~~~~~\    {52}   /       \    {53}   /~~~~~~~\~~~~~~~~~/
+  \~~~~~~~/~~~~~~~~~\       /    {54}   \       /~~~~~~~~~\~~~~~~~/
+   >-----< ~~~~~~~~~~{95}-----{96}    {129}{55}     {106}-----{107}~~~~~~~~~~~>-----<
+          \~~~~~~~~~/*~~~~~*\    {56}   /*~~~~~*\~~~~~~~~~/
            \~~~~~~~/~~~~~~~~~\       /~~~2:1~~~\~~~~~~~/
             >-----<~~~~3:1~~~~{104}-----{105}~~~grain~~~>-----<
                    \~~~~~~~~~/~~~~~~~\~~~~~~~~~/
@@ -223,19 +223,19 @@ def show_board():
                              \~~~~~~~/
                               >-----<
 
-							  '''.format(str(b.tiles[2].number).ljust(5, ' '),str(b.tiles[2].resource).ljust(6, ' '),str(b.tiles[2].id).ljust(5, ' '),str(b.tiles[1].number).ljust(5, ' '),
-							  str(b.tiles[6].number).ljust(5, ' '),str(b.tiles[1].resource).ljust(6, ' '),str(b.tiles[6].resource).ljust(6, ' '),str(b.tiles[1].id).ljust(5, ' '), str(b.tiles[6].id).ljust(5, ' ')
-							  ,str(b.tiles[0].number).ljust(5, ' ').ljust(5, ' '),str(b.tiles[5].number).ljust(5, ' '),str(b.tiles[11].number).ljust(5, ' '), str(b.tiles[0].resource).ljust(6, ' '),
-							  str(b.tiles[5].resource),str(b.tiles[11].resource).ljust(6, ' '),str(b.tiles[0].id).ljust(5, ' '),str(b.tiles[5].id).ljust(5, ' '),str(b.tiles[11].id).ljust(5, ' '),
-							  str(b.tiles[4].number).ljust(5, ' '),str(b.tiles[10].number).ljust(5, ' '),str(b.tiles[4].resource).ljust(6, ' '),str(b.tiles[10].resource).ljust(6, ' '),
-							  str(b.tiles[4].id).ljust(5, ' '),str(b.tiles[10].id).ljust(5, ' '),str(b.tiles[3].number).ljust(5, ' '),str(b.tiles[9].number).ljust(5, ' '),str(b.tiles[15].number).ljust(5, ' '),
-							  str(b.tiles[3].resource).ljust(6, ' '),str(b.tiles[9].resource).ljust(6, ' '),str(b.tiles[15].resource).ljust(6, ' '),str(b.tiles[3].id).ljust(5, ' '),
-							  str(b.tiles[9].id).ljust(5, ' '),str(b.tiles[15].id).ljust(5, ' '),str(b.tiles[8].number).ljust(5, ' '),str(b.tiles[14].number).ljust(5, ' '),str(b.tiles[8].resource).ljust(6, ' ')
-							  ,str(b.tiles[14].resource).ljust(6, ' '),str(b.tiles[8].id).ljust(5, ' '),str(b.tiles[14].id).ljust(5, ' '),str(b.tiles[7].number).ljust(5, ' '),str(b.tiles[13].number).ljust(5, ' ')
-							  ,str(b.tiles[18].number).ljust(5, ' '),str(b.tiles[7].resource).ljust(6, ' '),str(b.tiles[13].resource).ljust(6, ' '),str(b.tiles[18].resource).ljust(6, ' '),
-							  str(b.tiles[7].id).ljust(5, ' '),str(b.tiles[13].id).ljust(5, ' '),str(b.tiles[18].id).ljust(5, ' '),str(b.tiles[12].number).ljust(5, ' '),str(b.tiles[17].number).ljust(5, ' '),
-							  str(b.tiles[12].resource).ljust(6, ' '),str(b.tiles[17].resource).ljust(6, ' '),str(b.tiles[12].id).ljust(5, ' '),str(b.tiles[17].id).ljust(5, ' '),
-							  str(b.tiles[16].number).ljust(5, ' '),str(b.tiles[16].resource).ljust(6, ' '),str(b.tiles[16].id).ljust(5, ' '), node_list[0].status(),
+							  '''.format(str(b.tiles[2].number).ljust(2, ' '),str(b.tiles[2].resource),str(b.tiles[2].id).ljust(2, ' '),str(b.tiles[1].number).ljust(2, ' '),
+							  str(b.tiles[6].number).ljust(2, ' '),str(b.tiles[1].resource),str(b.tiles[6].resource),str(b.tiles[1].id).ljust(2, ' '), str(b.tiles[6].id).ljust(2, ' ')
+							  ,str(b.tiles[0].number).ljust(2, ' '),str(b.tiles[5].number).ljust(2, ' '),str(b.tiles[11].number).ljust(2, ' '), str(b.tiles[0].resource),
+							  str(b.tiles[5].resource),str(b.tiles[11].resource),str(b.tiles[0].id).ljust(2, ' '),str(b.tiles[5].id).ljust(2, ' '),str(b.tiles[11].id).ljust(2, ' '),
+							  str(b.tiles[4].number).ljust(2, ' '),str(b.tiles[10].number).ljust(2, ' '),str(b.tiles[4].resource),str(b.tiles[10].resource),
+							  str(b.tiles[4].id).ljust(2, ' '),str(b.tiles[10].id).ljust(2, ' '),str(b.tiles[3].number).ljust(2, ' '),str(b.tiles[9].number).ljust(2, ' '),str(b.tiles[15].number).ljust(2, ' '),
+							  str(b.tiles[3].resource),str(b.tiles[9].resource),str(b.tiles[15].resource),str(b.tiles[3].id).ljust(2, ' '),
+							  str(b.tiles[9].id).ljust(2, ' '),str(b.tiles[15].id).ljust(2, ' '),str(b.tiles[8].number).ljust(2, ' '),str(b.tiles[14].number).ljust(2, ' '),str(b.tiles[8].resource)
+							  ,str(b.tiles[14].resource),str(b.tiles[8].id).ljust(2, ' '),str(b.tiles[14].id).ljust(2, ' '),str(b.tiles[7].number).ljust(2, ' '),str(b.tiles[13].number).ljust(2, ' ')
+							  ,str(b.tiles[18].number).ljust(2, ' '),str(b.tiles[7].resource),str(b.tiles[13].resource),str(b.tiles[18].resource),
+							  str(b.tiles[7].id).ljust(2, ' '),str(b.tiles[13].id).ljust(2, ' '),str(b.tiles[18].id).ljust(2, ' '),str(b.tiles[12].number).ljust(2, ' '),str(b.tiles[17].number).ljust(2, ' '),
+							  str(b.tiles[12].resource),str(b.tiles[17].resource),str(b.tiles[12].id).ljust(2, ' '),str(b.tiles[17].id).ljust(2, ' '),
+							  str(b.tiles[16].number).ljust(2, ' '),str(b.tiles[16].resource),str(b.tiles[16].id).ljust(2, ' '), node_list[0].status(),
 							   node_list[1].status(),node_list[2].status(),node_list[3].status(),
 							   node_list[4].status(),node_list[5].status(),node_list[6].status(),
 							   node_list[7].status(),node_list[8].status(),node_list[9].status(),
@@ -262,6 +262,8 @@ def show_board():
 #.ljust(5, ' ') should work for padding. but it only applies to strings, so we have to turn them into strings first. Robber not accounted for
 # 5, and 6 i took out 6 instead of 6
 # all of the b.tile stuff now needs the padding, i took the spaces out of the template.  The resource ones need 6.
+# should always be three spaces in the format, and 2 characters of padding for all the numbers (id and number)
+# 1 space for resource character, and 5 spaces in format template
 	print(to_print)
 
 def roll_dice():
