@@ -225,6 +225,11 @@ def build_settlement(a_player, initializing = False):
                     config.node_list[i].owns_node = a_player.p_color
                     print(a_player.p_name + " has placed a settlement!!")
                     a_player.p_victory_pts += 1
+                    #Assign player to the port if needed
+                    for port in config.port_list:
+                        for node in port.location:
+                            if node.id == wanted_node.id:
+                                port.player_on = a_player.p_color
                     settled = True
 
             except ValueError:
@@ -261,6 +266,10 @@ def build_settlement(a_player, initializing = False):
             a_player.p_hand.remove("S")
             a_player.p_hand.remove("W")
             a_player.p_victory_pts += 1
+            for port in config.port_list:
+                for node in port.location:
+                    if node.id == wanted_node.id:
+                        port.player_on = a_player.p_color
 
         else:
             print("Not enough resources to build a settlement!!")

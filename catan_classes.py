@@ -144,3 +144,15 @@ class Road:
 
     def __str__(self):
         return "Road: " + str(str(self.start_n) + " " +  str(self.end_n) + " " + str(self.id))
+
+class Port:
+    def __init__(self, type, location):
+        self.type = type
+        self.location = location #List of nodes identify where it is
+        self.player_on = ""
+
+    def is_player_on(self, player):
+        if self.player_on == player.p_color:
+            return True
+        else:
+            return False

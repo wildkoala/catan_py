@@ -188,6 +188,46 @@ def trade_resources(player, trade_to, want, offer):
         player.p_hand.append(r)
         trade_to.p_hand.remove(r)
 
+def trade_using_port(player):
+    port = False
+    player_ports = []
+    for i in config.port_list:
+        if i.is_player_on(player):
+            print(player.p_name + ", you are on a(n): " + i.type + " port")
+            player_ports.append(i)
+            port = True
+    if port:
+        selection = -1
+        while selection < 0 or selection > len(player_ports):
+            print("Please select a port to trade with: ")
+            count = 1
+            for i in player_ports:
+                print(str(count) + "   " + i.type + " Port")
+                count+=1
+            selection = int(input())
+
+        want = input("What resource would you like?\n> ")
+        if player_ports[selection-1].type == "3":
+            give = input("What resource will you be trading 3 of?\n> ")
+            r = give*3
+            if player.has_resources(r):
+                player.p_hand.remove(give)
+                player.p_hand.remove(give)
+                player.p_hand.remove(give)
+                player.p_hand.append(want)
+            else:
+                print("You do not have enough resources")
+        else:
+            r = player_ports[selection-1].type*2
+            if player.has_resources(r):
+                player.p_hand.remove(player_ports[selection-1].type)
+                player.p_hand.remove(player_ports[selection-1].type)
+                player.p_hand.append(want)
+            else:
+                print("You do not have enough resources")
+
+
+
 def trade_accepted(player, trade_to, want, offer):
     print(trade_to.p_name + ", " + player.p_name + " has offered you:" )
     print(offer)
@@ -306,6 +346,7 @@ def player_turn(player, points_to_win):
 
         elif selection == 8:
             print("Trade using a port")
+            trade_using_port(player)
 
         elif selection == 9:
             config.show_board()

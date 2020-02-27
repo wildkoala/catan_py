@@ -334,6 +334,18 @@ def init_robber(tile_id):
 	r = catan_classes.Robber(tile_id)
 	return r
 
+def init_ports():
+	ports = []
+	ports.append(catan_classes.Port("W", (node_list[49],node_list[50])))
+	ports.append(catan_classes.Port("O", (node_list[36],node_list[46])))
+	ports.append(catan_classes.Port("S", (node_list[14],node_list[24])))
+	ports.append(catan_classes.Port("L", (node_list[2],node_list[3])))
+	ports.append(catan_classes.Port("B", (node_list[7],node_list[15])))
+	ports.append(catan_classes.Port("3", (node_list[5],node_list[6])))
+	ports.append(catan_classes.Port("3", (node_list[26],node_list[27])))
+	ports.append(catan_classes.Port("3", (node_list[39],node_list[38])))
+	ports.append(catan_classes.Port("3", (node_list[52],node_list[53])))
+	return ports
 
 
 # GLOBALLY ACCESSIBLE VARIABLES
@@ -342,4 +354,5 @@ b = init_board()
 robber = init_robber(random.randint(1, 20))
 node_list = init_nodes()
 road_list = init_roads(node_list)
+port_list = init_ports()
 player_list = []
