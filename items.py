@@ -106,14 +106,19 @@ get the desired road.
 #Checks to see if a node is a valid location for a road
 #Condenses code
 def valid_road_location(n):
-    n = n.split(",")
-    n = [ int(x) for x in n]
-    n = tuple(n)
-    if not is_valid_location(n):
-        return False
+    try:
+        n = n.split(",")
+        n = [ int(x) for x in n]
+        n = tuple(n)
+        if not is_valid_location(n):
+            print("input not valid")
+            return False
 
-    n = get_node_by_alias(n)
-    return n
+        n = get_node_by_alias(n)
+        return n
+    except:
+        print("input not valid")
+        return False
 
 
 # maybe have is_init set to False by default (a keyword argument)

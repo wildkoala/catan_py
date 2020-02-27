@@ -193,38 +193,46 @@ def trade_using_port(player):
     player_ports = []
     for i in config.port_list:
         if i.is_player_on(player):
-            print(player.p_name + ", you are on a(n): " + i.type + " port")
             player_ports.append(i)
             port = True
     if port:
-        selection = -1
-        while selection < 0 or selection > len(player_ports):
-            print("Please select a port to trade with: ")
-            count = 1
-            for i in player_ports:
-                print(str(count) + "   " + i.type + " Port")
-                count+=1
-            selection = int(input())
+        try:
+            selection = -1
+            while selection < 0 or selection > len(player_ports):
+                print('''
+Please select a port to trade with:
+0   to go back to main menu''')
+                count = 1
+                for i in player_ports:
+                    print(str(count) + "   " + i.type + " Port")
+                    count+=1
+                    selection = int(input())
+                if selection == 0:
+                    return
 
-        want = input("What resource would you like?\n> ")
-        if player_ports[selection-1].type == "3":
-            give = input("What resource will you be trading 3 of?\n> ")
-            r = give*3
-            if player.has_resources(r):
-                player.p_hand.remove(give)
-                player.p_hand.remove(give)
-                player.p_hand.remove(give)
-                player.p_hand.append(want)
+            want = input("What resource would you like?\n> ")
+            if player_ports[selection-1].type == "3":
+                give = input("What resource will you be trading 3 of?\n> ")
+                r = give*3
+                if player.has_resources(r):
+                    player.p_hand.remove(give)
+                    player.p_hand.remove(give)
+                    player.p_hand.remove(give)
+                    player.p_hand.append(want)
+                else:
+                    print("You do not have enough resources")
             else:
-                print("You do not have enough resources")
-        else:
-            r = player_ports[selection-1].type*2
-            if player.has_resources(r):
-                player.p_hand.remove(player_ports[selection-1].type)
-                player.p_hand.remove(player_ports[selection-1].type)
-                player.p_hand.append(want)
-            else:
-                print("You do not have enough resources")
+                r = player_ports[selection-1].type*2
+                if player.has_resources(r):
+                    player.p_hand.remove(player_ports[selection-1].type)
+                    player.p_hand.remove(player_ports[selection-1].type)
+                    player.p_hand.append(want)
+                else:
+                    print("You do not have enough resources")
+        except:
+            print("An error has occurred please try again")
+    else:
+        print("You are not on any ports")
 
 
 
@@ -310,10 +318,6 @@ def player_turn(player, points_to_win):
             else:
                 print("Invalid option")
 
-
-
-
-
         elif selection == 7:
             want = input("What resource would you like?\n> ")
             give = input("What resource will you be trading 4 of?\n> ")
@@ -371,8 +375,6 @@ def player_turn(player, points_to_win):
 
         if (player.show_victory_pts() >= points_to_win):
             return True
-
-
 
     return False
 
