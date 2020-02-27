@@ -224,84 +224,114 @@ def player_turn(player, points_to_win):
     while selection != 0:
         player_menu()
         try:
-            selection = int(input("Please Select One\n> "))
-
-            if selection == 1:
-                player.show_hand()
-
-            elif selection == 2:
-                items.build_road(player)
-
-            elif selection == 3:
-                items.build_settlement(player)
-
-            elif selection == 4:
-                items.build_city(player)
-
-            elif selection == 5:
-                items.build_dev_card(player)
-
-            # Partially implemented
-            elif selection == 6:
-                print("Players:")
-                counter  = 1
-                for p in config.player_list:
-                    print("\t" + str(counter) + ". " + p.p_name)
-                    counter += 1
-                print("\t" + str(counter) + ". Offer trade to everyone")
-                option = int(input("Who do you want to trade with?")) # gonna have to do error checking on this too...
-                trade_to = config.player_list[option-1]
-                want = input("What resource(s) do you want?")
-                offer = input("What resource(s) are you offering in exchange?\n> ").upper()
-
-                if option <= len(config.player_list):
-                    if player.has_resources(offer):
-                        want_to_trade = trade_accepted(player, trade_to, want, offer)
-                        they_have_resources = trade_to.has_resources(want)
-                        if want_to_trade and they_have_resources:
-                            trade_resources(player, trade_to, want, offer)
-                    else:
-                        print("You don't have those resources to offer...")
-                elif trade_to == len(player_list) + 1:
-                    print("Trade to all players is coming soon")
-                else:
-                    print("Invalid option")
-
-
-
-
-
-            elif selection == 7:
-                print("Trade with bank")
-
-            elif selection == 8:
-                print("Trade using a port")
-
-            elif selection == 9:
-                config.show_board()
-
-            elif selection == 10:
-                player.show_dev_cards()
-
-            elif selection == 11:
-                if player.p_dev_cards == []:
-                    print("You have no development cards!!")
-                    continue
-                print("Please select a dev_card: ")
-                player.show_dev_cards()
-                num = input("> ")
-                play_dev_card(player, player.p_dev_cards[num-1])
-
-            else:
-                print("You must enter a number corresponding to an option")
-
-            # I don't know if this check actually works.
-            '''
-            if (player.show_victory_pts() >= points_to_win):
-                return True
-            '''
+            selection = int(input("Please Select One\n"+ player.p_name + "> "))
         except ValueError:
             print("You must enter a number corresponding to an option")
+            selection = -1
+
+        if selection == 1:
+            player.show_hand()
+
+        elif selection == 2:
+            items.build_road(player)
+
+        elif selection == 3:
+            items.build_settlement(player)
+
+        elif selection == 4:
+            items.build_city(player)
+
+        elif selection == 5:
+            items.build_dev_card(player)
+
+        # Partially implemented
+        elif selection == 6:
+            print("Players:")
+            counter  = 1
+            for p in config.player_list:
+                print("\t" + str(counter) + ". " + p.p_name)
+                counter += 1
+            print("\t" + str(counter) + ". Offer trade to everyone")
+            option = int(input("Who do you want to trade with?")) # gonna have to do error checking on this too...
+            trade_to = config.player_list[option-1]
+            want = input("What resource(s) do you want?")
+            offer = input("What resource(s) are you offering in exchange?\n> ").upper()
+
+            if option <= len(config.player_list):
+                if player.has_resources(offer):
+                    want_to_trade = trade_accepted(player, trade_to, want, offer)
+                    they_have_resources = trade_to.has_resources(want)
+                    if want_to_trade and they_have_resources:
+                        trade_resources(player, trade_to, want, offer)
+                else:
+                    print("You don't have those resources to offer...")
+            elif trade_to == len(player_list) + 1:
+                print("Trade to all players is coming soon")
+            else:
+                print("Invalid option")
+
+
+
+
+
+        elif selection == 7:
+            want = input("What resource would you like?\n> ")
+            give = input("What resource will you be trading 4 of?\n> ")
+            r = give*4
+            if player.has_resources(r):
+                player.p_hand.remove(give)
+                player.p_hand.remove(give)
+                player.p_hand.remove(give)
+                player.p_hand.remove(give)
+                player.p_hand.append(want)
+                print("You traded with the bank!")
+
+                '''
+                for p in config.player_list: # for some reason
+                    print("global p_name: " + p.p_name + " local player: " + player.p_name)
+
+                    if p.p_name == player.p_name:
+
+                        p.p_hand.remove(give)
+                        p.p_hand.remove(give)
+                        p.p_hand.remove(give)
+                        p.p_hand.remove(give)
+                        p.p_hand.append(want)
+                        print("You traded with the bank!")
+                    else:
+                        print("p_names didn't match?")
+                '''
+            else:
+                print("You don't have enough of that resource to trade...")
+
+        elif selection == 8:
+            print("Trade using a port")
+
+        elif selection == 9:
+            config.show_board()
+
+        elif selection == 10:
+            player.show_dev_cards()
+
+        elif selection == 11:
+            if player.p_dev_cards == []:
+                print("You have no development cards!!")
+                continue
+            print("Please select a dev_card: ")
+            player.show_dev_cards()
+            num = input("> ")
+            play_dev_card(player, player.p_dev_cards[num-1])
+
+        elif selection == 0:
+            pass
+
+
+        # I don't know if this check actually works.
+
+        if (player.show_victory_pts() >= points_to_win):
+            return True
+
+
 
     return False
 
@@ -485,7 +515,11 @@ if __name__ == "__main__":
 
         #Declare whos turn it is in the game
         winner = player_turn(config.player_list[curr_player_turn], points_to_win)
+        if winner:
+            break
         curr_player_turn = increment_player_turn(curr_player_turn, len(config.player_list))
+
+    print("WINNER: " + config.player_list[curr_player_turn].p_name)
 
 
   # accept connections
