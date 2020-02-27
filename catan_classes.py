@@ -11,6 +11,7 @@
 
 # need to give players an id, use first letter of not conflicting colors (NOT BLWSO)
 # Red, Yellow, Purple, Green, Cyan, Tan
+
 class Player:
     def __init__(self, name, color):
         self.p_name = name
@@ -104,12 +105,6 @@ class Node:
             return True
         else:
             return False
-
-    def connected_roads(self):
-        roads = [] # a list of connected roads.
-        for adj in self.adj_nodes:
-            roads.append(get_road_with_nodes(self.id, adj))
-        return roads
 
     def __str__(self):
         return "Node: " + str(self.id)

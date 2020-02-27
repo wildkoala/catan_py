@@ -61,7 +61,9 @@ def get_road_with_aliases(alias1, alias2):
     print("COULDN'T FIND ROAD")
 
 def get_road_with_nodes(node1, node2):
+    #print("Here to debug 1")
     for r in config.road_list:
+        #print("Here to debug 2")
         if r.start_n == node1.id and r.end_n == node2.id:
             return r
         else:
@@ -69,16 +71,22 @@ def get_road_with_nodes(node1, node2):
                 return r
     #print("COULDN'T FIND ROAD")
 
+def connected_roads(node):
+    roads = [] # a list of connected roads.
+    for adj in node.adj_nodes:
+        roads.append(get_road_with_nodes(node, config.node_list[adj-1]))
+    return roads
+
 # NEEDS TESTING FOR ADJACENT ROADS
 def road_is_connected(player_color, n1, n2):
     print("IN ROAD IS CONNECTED FUNCTION")
     if n1.owns_node.lower() == player_color: # lower makes sure that a city counts too.
         return True
     else: # this is the part of the code that needs to check for an adj road.
-        for r in n1.connected_roads():
+        for r in connected_roads(n1):
             if r.owns_road == player_color:
                 return True
-        for r in n2.connected_roads():
+        for r in connected_roads(n2):
             if r.owns_road == player_color:
                 return True
         return False
@@ -95,6 +103,18 @@ get the desired road.
 
 '''
 
+#Checks to see if a node is a valid location for a road
+#Condenses code
+def valid_road_location(n):
+    n = n.split(",")
+    n = [ int(x) for x in n]
+    n = tuple(n)
+    if not is_valid_location(n):
+        return False
+
+    n = get_node_by_alias(n)
+    return n
+
 
 # maybe have is_init set to False by default (a keyword argument)
 def build_road(a_player, initializing = False): # this is not working for having a road connected to another road, makes you have a connected settlement rn.
@@ -103,23 +123,14 @@ def build_road(a_player, initializing = False): # this is not working for having
         placed = False
         while not placed:
             n1 = input("Where do you want to start your road?\n> ")#1,6 for example
-            n1 = n1.split(",")
-            n1 = [ int(x) for x in n1]
-            n1 = tuple(n1)
-            if not is_valid_location(n1):
+            n1 = valid_road_location(n1)
+            if (n1 == False):
                 continue
-
-            n1 = get_node_by_alias(n1)
-
 
             n2 = input("Where do you want to end your road?\n> ") #1,6 for example
-            n2 = n2.split(",")
-            n2 = [ int(x) for x in n2]
-            n2 = tuple(n2)
-            if not is_valid_location(n2):
+            n2 = valid_road_location(n2)
+            if (n2 == False):
                 continue
-            n2 = get_node_by_alias(n2)
-
 
             if n1.owns_node == a_player.p_color or n2.owns_node == a_player.p_color:
 
@@ -143,35 +154,34 @@ def build_road(a_player, initializing = False): # this is not working for having
         if have_resources:
             # ask for the two nodes they want to build a road between
             n1 = input("Give the location of the start of the road\n> ") #"1,6"
-            n1 = n1.split(",")
-            n1 = [ int(x) for x in n1]
-            n1 = tuple(n1)
-            if not is_valid_location(n1):
-                return # Since this is in the game loop, just kick them back out to the options menu
-            n1 = get_node_by_alias(n1)
+            n1 = valid_road_location(n1)
+            if (n1 == False):
+                return
 
             n2 = input("Give the location of the end of the road\n> ") #"1,5"
-            n2 = n2.split(",")
-            n2 = [ int(x) for x in n2]
-            n2 = tuple(n2)
-            if not is_valid_location(n2):
-                return # Since this is in the game loop, just kick them back out to the options menu
-            n2 = get_node_by_alias(n2)
+            n2 = valid_road_location(n2)
+            if (n2 == False):
+                return
 
-            r = get_road_with_nodes(n1, n2)
-            is_open = not r.is_owned # i think this is valid, but not sure
             is_connected = road_is_connected(a_player.p_color, n1, n2)
+            wanted_road = get_road_with_nodes(n1, n2)
+            if n1.owns_node == a_player.p_color or n2.owns_node == a_player.p_color or is_connected:
 
-            if is_open and is_connected:
-                r.owns_node = a_player.id
-                print(a_player.p_name + "has placed down a road!")
-                #remove the cards that the player spent
-                a_player.p_hand.remove("B")
-                a_player.p_hand.remove("L")
+                if wanted_road is None:
+                    print("That's not a valid road segment... Try again.")
+                    return
+                elif wanted_road.owns_road != "":
+                    print(wanted_road.owns_road + " is already on that space!!")
+                    return
+                else:
+                    wanted_road.owns_road = a_player.p_color
+                    print(a_player.p_name + " has placed a road!!")
+                    a_player.p_hand.remove("B")
+                    a_player.p_hand.remove("L")
+                    placed = True
 
             else:
-                print("That space is already taken, or you're not connected to that road")
-
+                print("Your road must be connected to one of your settlements or roads")
         else:
             print("Not enough resources to build a road!!")
             return
@@ -214,6 +224,7 @@ def build_settlement(a_player, initializing = False):
                 if not adj_player:
                     config.node_list[i].owns_node = a_player.p_color
                     print(a_player.p_name + " has placed a settlement!!")
+                    a_player.p_victory_pts += 1
                     settled = True
 
             except ValueError:
@@ -244,11 +255,12 @@ def build_settlement(a_player, initializing = False):
                     return #this is a NoneType
 
             wanted_node.owns_node = a_player.p_color
-            print(a_player.p_name + "has placed down a road!")
+            print(a_player.p_name + "has placed down a Settlement!")
             a_player.p_hand.remove("B")
             a_player.p_hand.remove("L")
             a_player.p_hand.remove("S")
             a_player.p_hand.remove("W")
+            a_player.p_victory_pts += 1
 
         else:
             print("Not enough resources to build a settlement!!")
@@ -277,6 +289,7 @@ def build_city(a_player):
             a_player.p_hand.remove("O")
             a_player.p_hand.remove("W")
             a_player.p_hand.remove("W")
+            a_player.p_victory_pts += 1
 
         elif wanted_node.owns_node == a_player.p_color.upper():
             print("That's already a city!")
