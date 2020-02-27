@@ -250,7 +250,7 @@ def build_settlement(a_player, initializing = False):
                 return #this is a NoneType
 
             for n in wanted_node.adj_nodes:
-                if n.owns_node != "":
+                if config.node_list[n-1].owns_node != "":
                     print("There's a player on an adjacent space!!")
                     return #this is a NoneType
 
