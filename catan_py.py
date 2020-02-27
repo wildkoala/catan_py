@@ -519,7 +519,7 @@ if __name__ == "__main__":
     # ask players for their name and color choice
     result = get_player_info()
     while result == None:
-        get_player_info()
+        result = get_player_info()
 
     # establish points to win
     points_to_win = declare_pts_to_win()
