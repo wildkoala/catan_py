@@ -1,4 +1,16 @@
+#===============================================
+# NOTES
+#===============================================
+'''
+So the trouble with this is that it will wait for every
+client to complete what it's doing before addressing any other
+clients. What I want to do is be able to talk to each client
+seperately. NEED THREADS
+'''
+
+
 import socket
+from _thread import *
 
 # create a socket object
 serversocket = socket.socket(
@@ -7,13 +19,21 @@ serversocket = socket.socket(
 # get local machine name
 host = socket.gethostname()
 
-port = 4042
+port = 4043
 
 # bind to the port
 serversocket.bind((host, port))
 
 # queue up to 5 requests
 serversocket.listen(5)
+
+def catan_client(conn):
+   msg = display_main_menu().encode('ascii')
+   conn.send(msg)
+   choice = conn.recv(1024)
+   print("Client choice: " + choice.decode('ascii'))
+   conn.close()
+   print("Gracefully closed connection to client")
 
 def display_main_menu():
     selection = '''
@@ -43,17 +63,14 @@ C:::::C                   A:::::::::::::::::::::A       T:::::T       A:::::::::
 '''
     return selection
 
+connections = 0
 while True:
    # establish a connection
-   print("Waiting for connections!")
-   clientsocket,addr = serversocket.accept()
+   print("Waiting for connection")
+   client_conn,addr = serversocket.accept()
 
    print("Got a connection from %s" % str(addr))
-
-   msg = display_main_menu().encode('ascii')
-   clientsocket.send(msg)
-   choice = clientsocket.recv(1024)
-   print(choice.decode('ascii'))
-   clientsocket.close()
-   break
+   thread_id = start_new_thread(catan_client, (client_conn,))
+   connections += 1
+   print(str(connections))
 serversocket.close() # will this exit too soon?

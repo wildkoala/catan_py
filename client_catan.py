@@ -6,7 +6,7 @@ s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 # get local machine name
 host = socket.gethostname()
 
-port = 4042
+port = 4043
 
 # connection to hostname on the port.
 s.connect((host, port))
