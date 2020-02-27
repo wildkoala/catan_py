@@ -24,6 +24,7 @@ import math
 #========================================================
 
 def move_robber():
+    config.show_board()
     knight_placed = False
     while knight_placed == False:
         t = int(input("Which tile will you place the robber on?\n> "))
@@ -42,6 +43,8 @@ def play_dev_card(a_player, dev_card):
         print(a_player.p_name + " played a development card: ", end='')
         print(dev_card)
         move_robber()
+        a_player.p_played_dev_cards.append(dev_card)
+        a_player.p_dev_cards.remove(dev_card)
         # steal a card from a player.
 
     #DONE
@@ -57,10 +60,13 @@ def play_dev_card(a_player, dev_card):
         roads_placed = 0
         while roads_placed != 2:
             # have to check they built a valid road. function can return None.
-            if build_road(a_player) == None:
+            if items.build_road(a_player) == None:
                 continue
             else:
                 roads_placed += 1
+
+        a_player.p_played_dev_cards.append(dev_card)
+        a_player.p_dev_cards.remove(dev_card)
 
     #DONE
     elif dev_card.card_type == "Year of Plenty":
@@ -75,6 +81,9 @@ def play_dev_card(a_player, dev_card):
                     added_cards += 1
             else:
                 print(wanted_card + " is not a valid resource")
+
+        a_player.p_played_dev_cards.append(dev_card)
+        a_player.p_dev_cards.remove(dev_card)
 
     #DONE
     elif dev_card.card_type == "Monopoly":
@@ -101,10 +110,15 @@ def play_dev_card(a_player, dev_card):
             else:
                 print(wanted_card + " is not a valid resource")
 
+        a_player.p_played_dev_cards.append(dev_card)
+        a_player.p_dev_cards.remove(dev_card)
+
 
     #DONE
     elif dev_card.card_type == "Victory Point":
         a_player.p_victory_pts += 1 # I don't want to tell anyone else that this was played.
+        a_player.p_played_dev_cards.append(dev_card)
+        a_player.p_dev_cards.remove(dev_card)
 
     else:
         print("Not a known development card type")
@@ -356,7 +370,10 @@ def player_turn(player, points_to_win):
             config.show_board()
 
         elif selection == 10:
+            print("Here are your dev cards:")
             player.show_dev_cards()
+            print("Here are your played dev cards:")
+            player.show_played_dev_cards()
 
         elif selection == 11:
             if player.p_dev_cards == []:
@@ -364,7 +381,7 @@ def player_turn(player, points_to_win):
                 continue
             print("Please select a dev_card: ")
             player.show_dev_cards()
-            num = input("> ")
+            num = int(input("> "))
             play_dev_card(player, player.p_dev_cards[num-1])
 
         elif selection == 0:
@@ -493,6 +510,20 @@ def declare_pts_to_win():
     except ValueError:
         print("You must provide an integer")
 
+def player_order():
+    for player in config.player_list:
+        input(player.p_name + " please roll to see order to place settlements")
+        player.p_order = config.roll_dice()
+        print("You rolled a: " + str(player.p_order))
+    config.player_list = sorted(config.player_list, key=lambda x: x.p_order, reverse = True)
+
+    print("The order of players is:")
+    for i in config.player_list:
+        i.present()
+    return
+
+
+
 
 if __name__ == "__main__":
     # Display CATAN name
@@ -520,6 +551,8 @@ if __name__ == "__main__":
     result = get_player_info()
     while result == None:
         result = get_player_info()
+
+    player_order()
 
     # establish points to win
     points_to_win = declare_pts_to_win()

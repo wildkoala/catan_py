@@ -19,6 +19,8 @@ class Player:
         self.p_color = color # Red, Yellow, Purple, Green, Cyan, Tan
         self.p_victory_pts = 0
         self.p_dev_cards = []
+        self.p_played_dev_cards = []
+        self.p_order = -1
 
     def present(self):
         print(self.p_name)
@@ -35,7 +37,16 @@ class Player:
         else:
             counter = 1
             for i in self.p_dev_cards:
-                print("\t" + str(counter) + i) # idk if i is gonna work like That
+                print(str(counter) + "\t" + str(i)) # idk if i is gonna work like That
+                counter += 1
+
+    def show_played_dev_cards(self):
+        if len(self.p_played_dev_cards) == 0:
+            print("You have no played development cards")
+        else:
+            counter = 1
+            for i in self.p_played_dev_cards:
+                print("\t" + str(i)) # idk if i is gonna work like That
                 counter += 1
 
     def has_resources(self, resources_str):
