@@ -37,6 +37,12 @@ class Player:
                 print("\t" + str(counter) + i) # idk if i is gonna work like That
                 counter += 1
 
+    def has_resources(self, resources_str):
+        resource_list = ["B","L","W","S","O"]
+        for r in resource_list:
+            if resources_str.count(r) > self.p_hand.count(r):
+                return False
+        return True
     #def add_card(self, new_card):
     #    self.p_hand += new_card
 

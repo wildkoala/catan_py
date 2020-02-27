@@ -26,7 +26,7 @@ import math
 def move_robber():
     knight_placed = False
     while knight_placed == False:
-        t = int(input("Which tile will you place the robber on?"))
+        t = int(input("Which tile will you place the robber on?\n> "))
         if t == config.robber.on_tile: # can i get the board this way or does it have to be an argument? Maybe just put it in config?
             print("You must put the robber on a new tile.")
             continue
@@ -179,6 +179,33 @@ def player_menu():
 '''
     )
 
+def trade_resources(player, trade_to, want, offer):
+    for r in offer:
+        player.p_hand.remove(r)
+        trade_to.p_hand.append(r)
+
+    for r in want:
+        player.p_hand.append(r)
+        trade_to.p_hand.remove(r)
+
+def trade_accepted(player, trade_to, want, offer):
+    print(trade_to.p_name + ", " + player.p_name + " has offered you:" )
+    print(offer)
+    print("In exchange for:")
+    print(want)
+    choice = ""
+    while choice == "":
+        choice = input("Do you want to accept this trade? (y/n)\n> ")
+        if choice not in "yn":
+            print("You must enter 'y' or 'n'")
+            choice = ""
+            continue
+
+    if choice == "y":
+        return True
+    elif choice == "n":
+        return False
+
 def player_turn(player, points_to_win):
     print(player.p_name + " it is your turn")
 
@@ -214,8 +241,35 @@ def player_turn(player, points_to_win):
             elif selection == 5:
                 items.build_dev_card(player)
 
+            # Partially implemented
             elif selection == 6:
-                print("Trade with Player")
+                print("Players:")
+                counter  = 1
+                for p in config.player_list:
+                    print("\t" + str(counter) + ". " + p.p_name)
+                    counter += 1
+                print("\t" + str(counter) + ". Offer trade to everyone")
+                option = int(input("Who do you want to trade with?")) # gonna have to do error checking on this too...
+                trade_to = config.player_list[option-1]
+                want = input("What resource(s) do you want?")
+                offer = input("What resource(s) are you offering in exchange?\n> ").upper()
+
+                if option <= len(config.player_list):
+                    if player.has_resources(offer):
+                        want_to_trade = trade_accepted(player, trade_to, want, offer)
+                        they_have_resources = trade_to.has_resources(want)
+                        if want_to_trade and they_have_resources:
+                            trade_resources(player, trade_to, want, offer)
+                    else:
+                        print("You don't have those resources to offer...")
+                elif trade_to == len(player_list) + 1:
+                    print("Trade to all players is coming soon")
+                else:
+                    print("Invalid option")
+
+
+
+
 
             elif selection == 7:
                 print("Trade with bank")
