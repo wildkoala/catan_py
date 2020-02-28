@@ -121,7 +121,7 @@ def init_nodes():
     x[12].adj_nodes = [12,14,23]
     x[13].adj_nodes = [7,13,15]
     x[14].adj_nodes = [14,25]
-    x[15].adj_nodes = [6,17]
+    x[15].adj_nodes = [8,17]
     x[16].adj_nodes = [16,18,27]
     x[17].adj_nodes = [17,19,30]
     x[18].adj_nodes = [9,18,20]

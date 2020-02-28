@@ -588,6 +588,8 @@ if __name__ == "__main__":
         else:
             print("Please enter an appropriate value")
 
+    for i in config.road_list:
+        print(i)
     # Players Connected: _#_
 
     # assume they chose 1.

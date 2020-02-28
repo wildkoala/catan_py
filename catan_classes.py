@@ -22,6 +22,8 @@ class Player:
         self.p_played_dev_cards = []
         self.p_order = -1
         self.has_largest_army = False
+        self.has_longest_road = False
+        self.road_chains = []
 
     def present(self):
         print(self.p_name)

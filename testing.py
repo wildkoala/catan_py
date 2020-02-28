@@ -1,6 +1,7 @@
 
 import catan_classes
 import config
+import items
 
 def get_node_by_alias(node_list, g_alias):
 	for n in node_list:
@@ -207,4 +208,15 @@ def main():
     print(r)
 
 if __name__ == "__main__":
-	main()
+	roads = config.road_list
+	seen_roads = []
+    #Take a node
+	for i in config.node_list:
+		count_adj_roads = 0
+        #get the adjacent nodes
+		adj = items.connected_roads(i)
+        #with your node and with adj nodes determine if somebody owns the road
+		for adjacent in adj:
+			if adjacent.owns_road != "":
+				print(adjacent)
+		print("New adjacencies")

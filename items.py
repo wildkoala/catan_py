@@ -14,6 +14,7 @@
 #========================================================
 import catan_classes
 import config
+import itertools
 
 #========================================================
 # FUNCTION DEFINITIONS
@@ -71,6 +72,52 @@ def get_road_with_nodes(node1, node2):
                 return r
     #print("COULDN'T FIND ROAD")
 
+def get_road_by_id(id):
+    for r in config.road_list:
+        if id == r.id:
+            return r
+
+def get_nodes_by_road(road):
+    n1 = config.node_list[road.start_n]
+    n2 = config.node_list[road.end_n]
+    return [n1,n2]
+
+def merge_chain(a_player):
+    print("entered merge chain")
+    if len(a_player.road_chains) >= 2:
+        print("do i reach here?")
+        for i in range(0,(len(a_player.road_chains)-1)):
+            print("entered outer loop")
+            complist = a_player.road_chains[i]
+            for j in range(i+1,len(a_player.road_chains)):
+                print("entered inner loop")
+                complist2 = a_player.road_chains[j]
+                if are_connected_roads(complist, complist2):
+                    print(a_player.road_chains)
+                    a_player.road_chains.append(a_player.road_chains[i] + a_player.road_chains[j])
+                    print(a_player.road_chains)
+                    a_player.road_chains.remove(complist)
+                    print(a_player.road_chains)
+                    a_player.road_chains.remove(complist2)
+                    return True
+    print(a_player.road_chains)
+    return False
+
+def are_connected_roads(list1, list2):
+    for r1 in list1:
+        for r2 in list2:
+            n1 = get_nodes_by_road(get_road_by_id(r1))
+            n2 = get_nodes_by_road(get_road_by_id(r2))
+    for node1 in n1:
+        for node2 in n2:
+            if node1.id == node2.id:
+                print(n1)
+                print(n2)
+                print("they connect")
+                return True
+    print("they dont connect")
+    return False
+
 def connected_roads(node):
     roads = [] # a list of connected roads.
     for adj in node.adj_nodes:
@@ -90,6 +137,7 @@ def road_is_connected(player_color, n1, n2):
             if r.owns_road == player_color:
                 return True
         return False
+
 '''
 how to determine if a road is connected:
 
@@ -149,6 +197,13 @@ def build_road(a_player, initializing = False): # this is not working for having
                 else:
                     wanted_road.owns_road = a_player.p_color
                     print(a_player.p_name + " has placed a road!!")
+
+                    a_player.road_chains.append([wanted_road.id])
+                    print(a_player.road_chains)
+                    val = merge_chain(a_player)
+                    if val:
+                        val = merge_chain(a_player)
+
                     placed = True
 
             else:
@@ -184,6 +239,11 @@ def build_road(a_player, initializing = False): # this is not working for having
                     a_player.p_hand.remove("B")
                     a_player.p_hand.remove("L")
                     placed = True
+                    a_player.road_chains.append([wanted_road.id])
+                    print(a_player.road_chains)
+                    val = merge_chain(a_player)
+                    if val:
+                        val = merge_chain(a_player)
 
             else:
                 print("Your road must be connected to one of your settlements or roads")
