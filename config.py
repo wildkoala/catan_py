@@ -225,6 +225,7 @@ def show_board():
                              \~~~~~~~/
                               >-----<
 
+
 							  '''.format(str(b.tiles[2].number).ljust(2, ' '),str(b.tiles[2].resource),str(b.tiles[2].id).ljust(2, ' '),str(b.tiles[1].number).ljust(2, ' '),
 							  str(b.tiles[6].number).ljust(2, ' '),str(b.tiles[1].resource),str(b.tiles[6].resource),str(b.tiles[1].id).ljust(2, ' '), str(b.tiles[6].id).ljust(2, ' ')
 							  ,str(b.tiles[0].number).ljust(2, ' '),str(b.tiles[5].number).ljust(2, ' '),str(b.tiles[11].number).ljust(2, ' '), str(b.tiles[0].resource),

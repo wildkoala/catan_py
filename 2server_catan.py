@@ -34,7 +34,7 @@ def catan_read(conn, size=1024):
     return s
 
 def catan_client(conn):
-    msg = display_main_menu().encode('ascii')
+    msg = display_main_menu() # returns string
     catan_print(conn, msg)
 
     # THIS WORKS
@@ -44,11 +44,10 @@ def catan_client(conn):
 
     while selection != 1:
         if selection == 2:
+            # this will cause an infinite loop for now.
             explain_rules(conn)
         elif selection == 3:
             display_credits(conn)
-        elif selection == 1:
-            pass
         else:
             catan_print(conn, "Please enter an appropriate value")
 
@@ -186,7 +185,7 @@ def player_choose_color(conn, color_options):
             catan_print(conn, color_format)
             i += 1
         try:
-            catan_print(conn, "Chose the number of the color you'd like.")
+            catan_print(conn, "Chose the number of the color you'd like.\n> ")
             choice = int(catan_read(conn))
             return choice
 
@@ -422,17 +421,17 @@ def player_turn(conn, player, points_to_win):
 
 def place_initial(conn):
     for i in config.player_list:
-        catan_print(conn, i.p_name + " is placing their first settlement")
+        catan_print(conn, i.p_name.strip() + " is placing their first settlement")
         items.build_settlement(i, True)
         config.show_board(conn)
-        catan_print(conn, i.p_name + " is placing their first road")
+        catan_print(conn, i.p_name.strip() + " is placing their first road")
         items.build_road(i, True)
         config.show_board(conn)
     for i in reversed(config.player_list):
-        catan_print(conn, i.p_name + " is placing their second settlement")
+        catan_print(conn, i.p_name.strip() + " is placing their second settlement")
         items.build_settlement(i, True)
         config.show_board(conn)
-        catan_print(conn, i.p_name + " is placing their second road")
+        catan_print(conn, i.p_name.strip() + " is placing their second road")
         items.build_road(i, True)
         config.show_board(conn)
 
@@ -461,7 +460,7 @@ C:::::C                   A:::::::::::::::::::::A       T:::::T       A:::::::::
         1. Play Catan
         2. Explain Rules
         3. Credits
-'''
+> '''
     return template
 
 def welcome():
@@ -532,7 +531,7 @@ def get_player_info(conn):
             # give player a list of color options
 
             p_color =  color_options.pop(player_choose_color(conn, color_options)-1)
-            catan_print(conn, "You selected: " + p_color)
+            catan_print(conn, "You selected: " + p_color + "\n")
             color = p_color[0].lower()
             config.player_list.append(catan_classes.Player(name,color))
             i+=1
@@ -562,7 +561,7 @@ if __name__ == "__main__":
 
     # create a socket object
     serversocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    port = 4042
+    port = 4444
 
     # bind to the port
     serversocket.bind(('', port))
