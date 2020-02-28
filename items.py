@@ -19,24 +19,15 @@ import config
 # FUNCTION DEFINITIONS
 #========================================================
 
-# need globally accessible list of nodes
-# need globally accessible list of roads
-#node_list = catan_classes.init_nodes() # this doesnt work?
-#road_list = catan_classes.create_roads(node_list) # this doesnt work?
-
 def is_valid_location(alias):
     if alias[0] < 1 or alias[0] > 19:
-        print("You're trying to place a piece on an invalid tile.")
-        print("FORMAT: tile,corner.\nEXAMPLE: 1,2")
         return False
     elif alias[1] < 1 or alias[1] > 6:
-        print("You're trying to place a piece on an invalid corner.")
-        print("FORMAT: tile,corner.\nEXAMPLE: 1,2")
         return False
     else:
         return True
 
-#this function works, but it needs a node list and alias as a tuple ex. (1,6)
+#this function works, takes a node list and alias as a tuple ex. (1,6)
 def get_node_by_alias(g_alias):
     for n in config.node_list:
         if g_alias in n.alias:
@@ -47,8 +38,7 @@ def get_node_by_id(n):
         if a.id == n:
             return a
 
-#this function works, but it needs the node list, road list and the aliases as tuples (tile,corner)
-
+#this function works, takes a node list and alias as a tuple ex. (1,6)
 def get_road_with_aliases(alias1, alias2):
     n1 = get_node_by_alias(config.node_list, alias1)
     n2 = get_node_by_alias(config.node_list, alias2)
@@ -103,51 +93,49 @@ get the desired road.
 
 '''
 
-#Checks to see if a node is a valid location for a road
-#Condenses code
+
+# Whats the point of this function?? Just use is_valid_location.
 def valid_road_location(n):
-    n = n.split(",")
-    n = [ int(x) for x in n]
-    n = tuple(n)
+    n = convert_input_to_format(n)
+    if isinstance(n, int):
+        return -4
     if not is_valid_location(n):
         return False
-
-    n = get_node_by_alias(n)
-    return n
+    return True
 
 
 # maybe have is_init set to False by default (a keyword argument)
-def build_road(a_player, initializing = False): # this is not working for having a road connected to another road, makes you have a connected settlement rn.
-
+# need to always return an int on the build_ functions because of the error handling after.
+def build_road(a_player, n1, n2, initializing = False): # this is not working for having a road connected to another road, makes you have a connected settlement rn.
     if initializing:
-        placed = False
-        while not placed:
-            n1 = input("Where do you want to start your road?\n> ")#1,6 for example
-            n1 = valid_road_location(n1)
-            if (n1 == False):
-                continue
 
-            n2 = input("Where do you want to end your road?\n> ") #1,6 for example
-            n2 = valid_road_location(n2)
-            if (n2 == False):
-                continue
+        alias1 = convert_input_to_format(n1) # n1 and n2 are strings
+        alias2 = convert_input_to_format(n2)
 
-            if n1.owns_node == a_player.p_color or n2.owns_node == a_player.p_color:
+        if isinstance(alias1, int) or isinstance(alias2, int):
+            return -1
 
-                wanted_road = get_road_with_nodes(n1, n2)
-                if wanted_road is None:
-                    print("That's not a valid road segment... Try again.")
-                    continue
-                elif wanted_road.owns_road != "":
-                    print(wanted_road.owns_road + " is already on that space!!")
-                    continue
-                else:
-                    wanted_road.owns_road = a_player.p_color
-                    print(a_player.p_name + " has placed a road!!")
-                    placed = True
+        if is_valid_location(alias1) == False:
+            return -1
+        n1 = get_node_by_alias(alias1)
+
+        if is_valid_location(alias2) == False:
+            return -1
+        n2 = get_node_by_alias(alias2)
+
+        if n1.owns_node == a_player.p_color or n2.owns_node == a_player.p_color:
+            wanted_road = get_road_with_nodes(n1, n2)
+            if wanted_road is None:
+                return -1
+            elif wanted_road.owns_road != "":
+                return -2
 
             else:
-                print("Your road must be connected to one of your settlements")
+                wanted_road.owns_road = a_player.p_color
+                return 0
+
+        else:
+            return -5
 
     else:
         have_resources = has_needed_resources("road", a_player)
@@ -168,11 +156,11 @@ def build_road(a_player, initializing = False): # this is not working for having
             if n1.owns_node == a_player.p_color or n2.owns_node == a_player.p_color or is_connected:
 
                 if wanted_road is None:
-                    print("That's not a valid road segment... Try again.")
-                    return
+                    #print("That's not a valid road segment... Try again.")
+                    return -1
                 elif wanted_road.owns_road != "":
-                    print(wanted_road.owns_road + " is already on that space!!")
-                    return
+                    #print(wanted_road.owns_road + " is already on that space!!")
+                    return -2
                 else:
                     wanted_road.owns_road = a_player.p_color
                     print(a_player.p_name + " has placed a road!!")
@@ -187,50 +175,50 @@ def build_road(a_player, initializing = False): # this is not working for having
             return
 
 
+def convert_input_to_format(given_input): # takes string, returns tuple of ints
+    try:
+        output = given_input.split(",")
+        output = [ int(x) for x in output]
+        output = tuple(output)
+        return output
+    except ValueError:
+        return -4
+
+
 # partially implemented
-# the intial setup will probably not work with this function.
-# is build settlement only getting a copy of the list? maybe return node_list, and replace the global one in main file?
-def build_settlement(a_player, initializing = False):
+# needs to always return an int so that error handling doesn't get thrown of trying to compare a Nonetype
+def build_settlement(a_player, location, initializing = False):
 
     if initializing:
-        settled = False
-        while not settled:
-            try:
-                adj_player = False
-                n1 = input("Where do you want to place your settlement?\n> ") #1,6 for example
-                n1 = n1.split(",")
-                n1 = [ int(x) for x in n1]
-                n1 = tuple(n1)
-                if not is_valid_location(n1):
-                    continue
+        try:
+            # Is that a legit location on the map?
+            n1 = convert_input_to_format(location)
+            if isinstance(n1, int):
+                return n1
+            if not is_valid_location(n1):
+                return -1
 
-                wanted_node = get_node_by_alias(n1)
+            wanted_node = get_node_by_alias(n1)
+            i = config.node_list.index(wanted_node)
 
-                # my wanted node is really the node in the global "node_list". Maybe I should get it's index?
-                i = config.node_list.index(wanted_node)
+            # Is this already taken?
+            if config.node_list[i].owns_node != "":
+                return -2
 
-                if config.node_list[i].owns_node != "":
-                    print(wanted_node.owns_node + " is already on that space!!")
-                    continue
-                for n in config.node_list[i].adj_nodes: #list of id's
-                    neighbor = get_node_by_id(n)
-                    neighbor_i = config.node_list.index(neighbor)
-                    #print(neighbor_i)
-                    #print(config.node_list[neighbor_i])
-                    #print(config.node_list[neighbor_i].owns_node)
-                    if config.node_list[neighbor_i].owns_node != "":
-                        print("There's a player on an adjacent space!!")
-                        adj_player = True
-                if not adj_player:
-                    config.node_list[i].owns_node = a_player.p_color
-                    print(a_player.p_name + " has placed a settlement!!")
-                    a_player.p_victory_pts += 1
-                    settled = True
+            # Are there any settlements adjacent to this?
+            for n in config.node_list[i].adj_nodes: #list of id's
+                neighbor = get_node_by_id(n)
+                neighbor_i = config.node_list.index(neighbor)
+                if config.node_list[neighbor_i].owns_node != "":
+                    return -3
 
-            except ValueError:
-                print("The correct format is tile,corner")
-                print("EXAMPLE: 1,2")
+            # Okay, you're able to put down a settlement.
+            config.node_list[i].owns_node = a_player.p_color
+            a_player.p_victory_pts += 1
+            return 0
 
+        except ValueError:
+            return -4
 
 
     else:

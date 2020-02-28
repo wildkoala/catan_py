@@ -23,14 +23,12 @@ from _thread import *
 #========================================================
 # FUNCTION DECLARATIONS
 #========================================================
-
-
 def catan_print(conn, given_str):
     conn.send(given_str.encode('ascii'))
     return
 
 def catan_read(conn, size=1024):
-    s = conn.recv(size).decode('ascii')
+    s = conn.recv(size).decode('ascii').strip()
     return s
 
 def catan_client(conn):
@@ -54,20 +52,19 @@ def catan_client(conn):
     # ask players for their name and color choice
     result = get_player_info(conn)
     while result == None:
-        get_player_info(conn)
+        result = get_player_info(conn)
 
     # establish points to win
     points_to_win = declare_pts_to_win(conn)
     while points_to_win == None:
         points_to_win = declare_pts_to_win(conn)
 
-
-    catan_print(conn, "Here is the Board:")
     catan_print(conn, config.show_board()) # show_board returns the board as a string
 
     curr_player_turn = 0
 
     place_initial(conn)
+    print("OUT OF PLACE INITIAL!! YES!!")
     items.give_resources(0, True)
 
     winner = False
@@ -280,13 +277,13 @@ def trade_accepted(conn, player, trade_to, want, offer):
         return False
 
 def player_turn(conn, player, points_to_win):
-    catan_print(conn, player.p_name + " it is your turn")
+    catan_print(conn, "\n" + player.p_name + " it is your turn\n")
 
     catan_print(conn, "Press Enter to Roll Die")
     user_input = catan_read(conn)
 
     roll = config.roll_dice()
-    catan_print(conn, str(roll) + " has been rolled")
+    catan_print(conn, "\n" + str(roll) + " has been rolled\n")
     items.give_resources(roll)
 
     #Check to see if robber() should be called
@@ -419,21 +416,105 @@ def player_turn(conn, player, points_to_win):
 # START OF GAME
 #========================================================
 
+def handle_errors(conn, result):
+    if result == -1:
+        catan_print(conn, "That's an invalid location\n")
+    elif result == -2:
+        catan_print(conn, "Someone is already on that space!!\n")
+    elif result == -3:
+        catan_print(conn, "Someone is on an adjacent space!!\n")
+    elif result == -4:
+        catan_print(conn, "The correct format is tile,corner\n")
+        catan_print(conn, "EXAMPLE: 1,2\n")
+    elif result == -5:
+        catan_print(conn, "Your road must be connected to one of your settlements\n")
+
+    elif result == 99:
+        catan_print(conn, "Invalid input... Please try again.\n")
+    else:
+        catan_print(conn, "That caused some unknown error, please try to not do that again :)\n")
+
+
+def server_build_item(conn, a_player, item, init = False):
+
+    # There's a way to get this down into one thing. More DRY, but i can't figure it out rn.
+    # PARTIALLY IMPLEMENTED
+    if item == "settlement":
+        if init:
+            settled = False
+            while settled == False:
+                catan_print(conn, "Where do you want to place your settlement?\n" + a_player.p_name.strip() + "> ")
+                location = catan_read(conn)
+                result = items.build_settlement(a_player, location, True)
+                if result < 0:
+                    handle_errors(conn, result)
+                    continue
+                else:
+                    catan_print(conn, a_player.p_name + " has placed a settlement!!\n")
+                    return
+
+        else: # NOT IMPLEMENTED: WHAT TO DO IF NOT INIT.
+            settled = False
+            while settled == False:
+                catan_print(conn, "Where do you want to place your settlement?\n> ")
+                location = catan_read(conn)
+                result = items.build_settlement(a_player, location)
+                if result < 0:
+                    handle_errors(conn, result)
+                    continue
+                else:
+                    catan_print(conn, a_player.p_name + " has placed a settlement!!\n")
+                    return
+
+    elif item == "road": # not yet written for anything other than initial setup
+        if init:
+            first_road = False
+            while first_road == False:
+                catan_print(conn, "Where do you want to start your road?\n> ")
+                n1 = catan_read(conn)
+                catan_print(conn, "Where do you want to end your road?\n> ")
+                n2 = catan_read(conn)
+                result = items.build_road(a_player, n1, n2, True)
+                if result < 0:
+                    handle_errors(conn, result)
+                    continue
+                else:
+                    catan_print(conn, a_player.p_name + " has placed a road!!")
+                    return
+        else:
+            print("Building roads after init setup is not yet implemented.")
+
+
 def place_initial(conn):
-    for i in config.player_list:
-        catan_print(conn, i.p_name.strip() + " is placing their first settlement")
-        items.build_settlement(i, True)
-        config.show_board(conn)
-        catan_print(conn, i.p_name.strip() + " is placing their first road")
-        items.build_road(i, True)
-        config.show_board(conn)
-    for i in reversed(config.player_list):
-        catan_print(conn, i.p_name.strip() + " is placing their second settlement")
-        items.build_settlement(i, True)
-        config.show_board(conn)
-        catan_print(conn, i.p_name.strip() + " is placing their second road")
-        items.build_road(i, True)
-        config.show_board(conn)
+    for p in config.player_list:
+        catan_print(conn, "\n" + p.p_name.strip() + " is placing their first settlement\n")
+
+        # FIRST SETTLEMENT
+        server_build_item(conn, p, "settlement", True)
+        catan_print(conn, config.show_board())
+        p.p_victory_pts += 1
+
+
+        # FIRST ROAD
+        catan_print(conn, "\n" + p.p_name.strip() + " is placing their first road\n")
+        server_build_item(conn, p, "road", True)
+        catan_print(conn, config.show_board())
+
+
+    for p in reversed(config.player_list):
+
+        # SECOND SETTLEMENT
+        catan_print(conn, "\n" + p.p_name + " is placing their second settlement\n")
+        server_build_item(conn, p, "settlement", True)
+        catan_print(conn, config.show_board())
+        p.p_victory_pts += 1
+
+        # SECOND ROAD
+        catan_print(conn, "\n" + p.p_name.strip() + " is placing their second road\n")
+        server_build_item(conn, p, "road", True)
+        catan_print(conn, config.show_board())
+
+
 
 def display_main_menu():
     template = '''
@@ -533,7 +614,7 @@ def get_player_info(conn):
             p_color =  color_options.pop(player_choose_color(conn, color_options)-1)
             catan_print(conn, "You selected: " + p_color + "\n")
             color = p_color[0].lower()
-            config.player_list.append(catan_classes.Player(name,color))
+            config.player_list.append(catan_classes.Player(name.strip(),color))
             i+=1
 
         return True # doesnt matter, as long as it's not None type
@@ -581,13 +662,10 @@ if __name__ == "__main__":
     serversocket.close()
 
 
+'''
+UNIVERSAL ERROR CODES:
 
-  # accept connections
-  # first menu
-  # set options
-  # create board
-  # create players
-
-  # while winner != 1:
-    #player_turn
-    #check_win
+-1 : Invalid location. Location does not exist on the map
+-2: Occupied space. Another player is located here
+-3: Adjacent Player. A player is on an adjacent object.
+'''
