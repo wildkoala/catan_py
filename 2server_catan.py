@@ -34,7 +34,7 @@ def catan_read(conn, size=1024):
     return s
 
 def catan_client(conn):
-    msg = display_main_menu().encode('ascii')
+    msg = display_main_menu() # returns string
     catan_print(conn, msg)
 
     # THIS WORKS
@@ -43,15 +43,13 @@ def catan_client(conn):
     print("Client selected: " + str(selection))
 
     while selection != 1:
-        selection = int(display_main_menu())
         if selection == 2:
-            explain_rules()
+            # this will cause an infinite loop for now.
+            explain_rules(conn)
         elif selection == 3:
-            display_credits()
-        elif selection == 1:
-            pass
+            display_credits(conn)
         else:
-            print("Please enter an appropriate value")
+            catan_print(conn, "Please enter an appropriate value")
 
     # ask players for their name and color choice
     result = get_player_info(conn)
@@ -65,22 +63,23 @@ def catan_client(conn):
 
 
     catan_print(conn, "Here is the Board:")
-    config.show_board()
+    catan_print(conn, config.show_board()) # show_board returns the board as a string
 
     curr_player_turn = 0
 
-    place_initial()
+    place_initial(conn)
     items.give_resources(0, True)
 
     winner = False
     while winner != True:
         #Declare whos turn it is in the game
-        winner = player_turn(config.player_list[curr_player_turn], points_to_win)
+        winner = player_turn(conn, config.player_list[curr_player_turn], points_to_win)
         if winner:
             break
         curr_player_turn = increment_player_turn(curr_player_turn, len(config.player_list))
 
-    print("WINNER: " + config.player_list[curr_player_turn].p_name)
+    # send winner
+    catan_print(conn, "WINNER: " + config.player_list[curr_player_turn].p_name)
 
     conn.close()
     print("Gracefully closed connection to client")
@@ -88,12 +87,13 @@ def catan_client(conn):
 
 
 
-def move_robber():
+def move_robber(conn):
     knight_placed = False
     while knight_placed == False:
-        t = int(input("Which tile will you place the robber on?\n> "))
+        catan_print(conn, "Which tile will you place the robber on?\n> ")
+        t = catan_read(conn)
         if t == config.robber.on_tile: # can i get the board this way or does it have to be an argument? Maybe just put it in config?
-            print("You must put the robber on a new tile.")
+            catan_print(conn, "You must put the robber on a new tile.")
             continue
         else:
             # maybe the tile that the robber is on should be an attribute of the robber, because im going to have to iterate over all the times to "undo" the old robber.
@@ -101,18 +101,18 @@ def move_robber():
             knight_placed = True
 
 
-def play_dev_card(a_player, dev_card):
+def play_dev_card(conn, a_player, dev_card):
     # Partially Implemented
     if dev_card.card_type == "Knight":
-        print(a_player.p_name + " played a development card: ", end='')
-        print(dev_card)
-        move_robber()
+        catan_print(conn, a_player.p_name + " played a development card: ")
+        catan_print(conn, dev_card.card_type) # this might break, need to pass a string
+        move_robber(conn)
         # steal a card from a player.
 
     #DONE
     elif dev_card.card_type == "Road Building":
-        print(a_player.p_name + " played a development card: ", end='')
-        print(dev_card)
+        catan_print(conn, a_player.p_name + " played a development card: ")
+        catan_print(conn, dev_card.card_type)
         a_player.p_hand.append("B")
         a_player.p_hand.append("L")
         a_player.p_hand.append("B")
@@ -129,27 +129,28 @@ def play_dev_card(a_player, dev_card):
 
     #DONE
     elif dev_card.card_type == "Year of Plenty":
-        print(a_player.p_name + " played a development card: ", end='')
-        print(dev_card)
+        catan_print(conn, a_player.p_name + " played a development card: ", end='')
+        catan_print(conn, dev_card.card_type)
 
         added_cards = 0
         while added_cards != 2: # even if this loo
-            wanted_card = input("What resource would you like? Resource (" + str(added_cards+1) + "/2)" )
+            catan_print(conn, "What resource would you like? Resource (" + str(added_cards+1) + "/2)")
+            wanted_card = catan_read(conn)
             if wanted_card.upper() in "BLSWO":
                     a_player.p_hand.append(wanted_card.upper())
                     added_cards += 1
             else:
-                print(wanted_card + " is not a valid resource")
+                catan_print(conn, wanted_card + " is not a valid resource")
 
     #DONE
     elif dev_card.card_type == "Monopoly":
-        print(a_player.p_name + " played a development card: ", end='')
-        print(dev_card)
+        catan_print(conn, a_player.p_name + " played a development card: ")
+        catan_print(conn, dev_card.card_type)
         got_resources = False
         while got_resources == False:
-            wanted_card = input("What resource would you like? Resource (" + str(added_cards+1) + "/2)" )
+            catan_print(conn, "What resource would you like? Resource (" + str(added_cards+1) + "/2)")
+            wanted_card = catan_read(conn)
             if wanted_card.upper() in "BLSWO":
-
                 num_taken = 0
                 for p in config.player_list: # wait, this actually takes cards from the player using it too, since they're in player list. I guess that's okay if i add them back?
                     for resource in p.p_hand:
@@ -160,11 +161,11 @@ def play_dev_card(a_player, dev_card):
                 for num in range(0, num_taken):
                     a_player.p_hand.append(wanted_card.upper())
 
-                print(a_player.p_name + " took all everyone's " + wanted_card.upper())
+                catan_print(conn, a_player.p_name + " took all everyone's " + wanted_card.upper())
                 got_resources = True
 
             else:
-                print(wanted_card + " is not a valid resource")
+                catan_print(conn, wanted_card + " is not a valid resource")
 
 
     #DONE
@@ -172,7 +173,7 @@ def play_dev_card(a_player, dev_card):
         a_player.p_victory_pts += 1 # I don't want to tell anyone else that this was played.
 
     else:
-        print("Not a known development card type")
+        catan_print(conn, "Not a known development card type")
 
 
 
@@ -184,7 +185,7 @@ def player_choose_color(conn, color_options):
             catan_print(conn, color_format)
             i += 1
         try:
-            catan_print(conn, "Chose the number of the color you'd like.")
+            catan_print(conn, "Chose the number of the color you'd like.\n> ")
             choice = int(catan_read(conn))
             return choice
 
@@ -195,8 +196,8 @@ def player_choose_color(conn, color_options):
 
 #def valid_discard(a_string, player_hand):
 
-def robber():
-    print("ROBBER HAS BEEN ROLLED")
+def robber(conn):
+    catan_print(conn, "ROBBER HAS BEEN ROLLED")
 
     # Loop checks to see if any players have 7 or more cards
     for i in config.player_list:
@@ -205,34 +206,35 @@ def robber():
             discard = ""
             has_cards = False
             while len(discard) != num_to_discard or has_cards == False:
-                print(i.p_name + " this is your current hand: ")
+                catan_print(conn, i.p_name + " this is your current hand: ")
                 i.show_hand()
-                discard = input(i.p_name + " Please discard " + str(num_to_discard) + " cards\n> ")
+                catan_print(conn, i.p_name + " Please discard " + str(num_to_discard) + " cards\n> ")
+                discard = catan_read(conn)
                 if len(discard) > num_to_discard:
-                    print("You have discarded more cards than necessary.")
+                    catan_print(conn, "You have discarded more cards than necessary.")
 
                 elif len(discard) < num_to_discard:
-                    print("You didn't discard enough cards... try again.")
+                    catan_print(conn, "You didn't discard enough cards... try again.")
 
                 if i.p_hand.count("O") >= list(discard).count("O") and i.p_hand.count("B") >= list(discard).count("B") and i.p_hand.count("S") >= list(discard).count("S") and i.p_hand.count("W") >= list(discard).count("W") and i.p_hand.count("L") >= list(discard).count("L"):
                     has_cards = True
-                    print("You have those cards")
+                    catan_print(conn, "You have those cards")
                 else:
                     has_cards = False
-                    print("You do not have those cards")
+                    catan_print(conn, "You do not have those cards")
             for card in discard:
                 i.p_hand.remove(card)
-            print(i.p_name + " this is your new hand: ")
+            catan_print(conn, i.p_name + " this is your new hand: ")
             i.show_hand()
 
-    move_robber()
+    move_robber(conn)
 
 def increment_player_turn(current_player_turn, num_players):
     return (current_player_turn + 1) % num_players
 
 
-def player_menu():
-    print(
+def player_menu(conn):
+    catan_print(conn,
 '''
         1. View your hand
         2. Buy a road
@@ -258,16 +260,17 @@ def trade_resources(player, trade_to, want, offer):
         player.p_hand.append(r)
         trade_to.p_hand.remove(r)
 
-def trade_accepted(player, trade_to, want, offer):
-    print(trade_to.p_name + ", " + player.p_name + " has offered you:" )
-    print(offer)
-    print("In exchange for:")
-    print(want)
+def trade_accepted(conn, player, trade_to, want, offer):
+    catan_print(conn, trade_to.p_name + ", " + player.p_name + " has offered you:" )
+    catan_print(conn, offer)
+    catan_print(conn, "In exchange for:")
+    catan_print(conn, want)
     choice = ""
     while choice == "":
-        choice = input("Do you want to accept this trade? (y/n)\n> ")
+        catan_print(conn, "Do you want to accept this trade? (y/n)\n> ")
+        choice = catan_read(conn)
         if choice not in "yn":
-            print("You must enter 'y' or 'n'")
+            catan_print(conn, "You must enter 'y' or 'n'")
             choice = ""
             continue
 
@@ -276,23 +279,24 @@ def trade_accepted(player, trade_to, want, offer):
     elif choice == "n":
         return False
 
-def player_turn(player, points_to_win):
-    print(player.p_name + " it is your turn")
+def player_turn(conn, player, points_to_win):
+    catan_print(conn, player.p_name + " it is your turn")
 
-    user_input = input("Press Enter to Roll Die")
+    catan_print(conn, "Press Enter to Roll Die")
+    user_input = catan_read(conn)
 
     roll = config.roll_dice()
-    print(str(roll) + " has been rolled")
+    catan_print(conn, str(roll) + " has been rolled")
     items.give_resources(roll)
 
     #Check to see if robber() should be called
     if roll == 7:
-        robber()
+        robber(conn)
 
   #Player Selects an Option
     selection = -1
     while selection != 0:
-        player_menu()
+        player_menu(conn)
         try:
             selection = int(input("Please Select One\n"+ player.p_name + "> "))
         except ValueError:
@@ -316,16 +320,21 @@ def player_turn(player, points_to_win):
 
         # Partially implemented
         elif selection == 6:
-            print("Players:")
+            catan_print(conn, "Players:")
             counter  = 1
             for p in config.player_list:
-                print("\t" + str(counter) + ". " + p.p_name)
+                catan_print(conn, "\t" + str(counter) + ". " + p.p_name)
                 counter += 1
-            print("\t" + str(counter) + ". Offer trade to everyone")
-            option = int(input("Who do you want to trade with?")) # gonna have to do error checking on this too...
+            catan_print(conn, "\t" + str(counter) + ". Offer trade to everyone")
+            catan_print(conn, "Who do you want to trade with?")
+
+            option = int(catan_read(conn)) # gonna have to do error checking on this too...
             trade_to = config.player_list[option-1]
-            want = input("What resource(s) do you want?")
-            offer = input("What resource(s) are you offering in exchange?\n> ").upper()
+            catan_print(conn, "What resource(s) do you want?")
+            want = catan_read(conn)
+            catan_print(conn, "What resource(s) are you offering in exchange?\n> ")
+            offer = catan_read(conn)
+
 
             if option <= len(config.player_list):
                 if player.has_resources(offer):
@@ -334,27 +343,28 @@ def player_turn(player, points_to_win):
                     if want_to_trade and they_have_resources:
                         trade_resources(player, trade_to, want, offer)
                 else:
-                    print("You don't have those resources to offer...")
+                    catan_print(conn, "You don't have those resources to offer...")
             elif trade_to == len(player_list) + 1:
-                print("Trade to all players is coming soon")
+                catan_print(conn, "Trade to all players is coming soon")
             else:
-                print("Invalid option")
+                catan_print(conn, "Invalid option")
 
 
 
 
 
         elif selection == 7:
-            want = input("What resource would you like?\n> ")
-            give = input("What resource will you be trading 4 of?\n> ")
-            r = give*4
-            if player.has_resources(r):
+            catan_print(conn, "What resource would you like?\n> ")
+            want = catan_read(conn)
+            catan_print(conn, "What resource will you be trading 4 of?\n> ")
+            give = catan_read(conn)
+            if player.has_resources(give*4):
                 player.p_hand.remove(give)
                 player.p_hand.remove(give)
                 player.p_hand.remove(give)
                 player.p_hand.remove(give)
                 player.p_hand.append(want)
-                print("You traded with the bank!")
+                catan_print(conn, "You traded with the bank!")
 
                 '''
                 for p in config.player_list: # for some reason
@@ -372,25 +382,25 @@ def player_turn(player, points_to_win):
                         print("p_names didn't match?")
                 '''
             else:
-                print("You don't have enough of that resource to trade...")
+                catan_print(conn, "You don't have enough of that resource to trade...")
 
         elif selection == 8:
-            print("Trade using a port")
+            catan_print(conn, "Trade using a port")
 
         elif selection == 9:
-            config.show_board()
+            config.show_board(conn)
 
         elif selection == 10:
-            player.show_dev_cards()
+            player.show_dev_cards(conn)
 
         elif selection == 11:
             if player.p_dev_cards == []:
-                print("You have no development cards!!")
+                catan_print(conn, "You have no development cards!!")
                 continue
-            print("Please select a dev_card: ")
-            player.show_dev_cards()
-            num = input("> ")
-            play_dev_card(player, player.p_dev_cards[num-1])
+            catan_print(conn, "Please select a dev_card: ")
+            player.show_dev_cards(conn)
+            num = catan_read(conn)
+            play_dev_card(conn, player, player.p_dev_cards[num-1])
 
         elif selection == 0:
             pass
@@ -409,21 +419,21 @@ def player_turn(player, points_to_win):
 # START OF GAME
 #========================================================
 
-def place_initial():
+def place_initial(conn):
     for i in config.player_list:
-        print(i.p_name + " is placing their first settlement")
+        catan_print(conn, i.p_name.strip() + " is placing their first settlement")
         items.build_settlement(i, True)
-        config.show_board()
-        print(i.p_name + " is placing their first road")
+        config.show_board(conn)
+        catan_print(conn, i.p_name.strip() + " is placing their first road")
         items.build_road(i, True)
-        config.show_board()
+        config.show_board(conn)
     for i in reversed(config.player_list):
-        print(i.p_name + " is placing their second settlement")
+        catan_print(conn, i.p_name.strip() + " is placing their second settlement")
         items.build_settlement(i, True)
-        config.show_board()
-        print(i.p_name + " is placing their second road")
+        config.show_board(conn)
+        catan_print(conn, i.p_name.strip() + " is placing their second road")
         items.build_road(i, True)
-        config.show_board()
+        config.show_board(conn)
 
 def display_main_menu():
     template = '''
@@ -450,7 +460,7 @@ C:::::C                   A:::::::::::::::::::::A       T:::::T       A:::::::::
         1. Play Catan
         2. Explain Rules
         3. Credits
-'''
+> '''
     return template
 
 def welcome():
@@ -479,8 +489,8 @@ C:::::C                   A:::::::::::::::::::::A       T:::::T       A:::::::::
     return template
 
 
-def explain_rules():
-    input('''
+def explain_rules(conn):
+    catan_print(conn,'''
     Here are the rules for Catan:
 
 
@@ -488,8 +498,9 @@ def explain_rules():
 
     ''')
 
-def display_credits():
-    input('''
+
+def display_credits(conn):
+    catan_print(conn,'''
     Game Created by:
         Grayson "Twiggy" Gordon
         Anthony Walton
@@ -520,7 +531,7 @@ def get_player_info(conn):
             # give player a list of color options
 
             p_color =  color_options.pop(player_choose_color(conn, color_options)-1)
-            catan_print(conn, "You selected: " + p_color)
+            catan_print(conn, "You selected: " + p_color + "\n")
             color = p_color[0].lower()
             config.player_list.append(catan_classes.Player(name,color))
             i+=1
@@ -528,11 +539,11 @@ def get_player_info(conn):
         return True # doesnt matter, as long as it's not None type
 
     except ValueError:
-        print("You must enter an integer")
+        catan_print(conn, "You must enter an integer")
         return
 
     except IndexError:
-        print("You must enter one of the provided options")
+        catan_print(conn, "You must enter one of the provided options")
         return
 
 def declare_pts_to_win(conn):
@@ -542,7 +553,7 @@ def declare_pts_to_win(conn):
         pts_to_win = int(catan_read(conn))
         return pts_to_win
     except ValueError:
-        print("You must provide an integer")
+        catan_print(conn, "You must provide an integer")
 
 
 if __name__ == "__main__":
@@ -550,7 +561,7 @@ if __name__ == "__main__":
 
     # create a socket object
     serversocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    port = 4042
+    port = 4444
 
     # bind to the port
     serversocket.bind(('', port))
