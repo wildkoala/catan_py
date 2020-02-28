@@ -85,8 +85,9 @@ def catan_client(conn):
     curr_player_turn = 0
 
     place_initial(conn)
-    print("OUT OF PLACE INITIAL!! YES!!")
+
     catan_print(conn, items.give_resources(0, True))
+
 
 
     winner = False
@@ -110,7 +111,7 @@ def move_robber(conn):
     knight_placed = False
     while knight_placed == False:
         catan_print(conn, "Which tile will you place the robber on?\n> ")
-        t = catan_read(conn)
+        t = int(catan_read(conn))
         if t == config.robber.on_tile: # can i get the board this way or does it have to be an argument? Maybe just put it in config?
             catan_print(conn, "You must put the robber on a new tile.")
             continue

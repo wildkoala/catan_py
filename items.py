@@ -68,6 +68,7 @@ def connected_roads(node):
     return roads
 
 # NEEDS TESTING FOR ADJACENT ROADS
+# takes player_color and the nodes on either side of the desired road.
 def road_is_connected(player_color, n1, n2):
     print("IN ROAD IS CONNECTED FUNCTION")
     if n1.owns_node.lower() == player_color: # lower makes sure that a city counts too.
@@ -141,34 +142,37 @@ def build_road(a_player, n1, n2, initializing = False): # this is not working fo
         have_resources = has_needed_resources("road", a_player)
         if have_resources:
             # ask for the two nodes they want to build a road between
-            n1 = input("Give the location of the start of the road\n> ") #"1,6"
-            n1 = valid_road_location(n1)
-            if (n1 == False):
-                return
+            alias1 = convert_input_to_format(n1) # n1 and n2 are strings
+            alias2 = convert_input_to_format(n2)
 
-            n2 = input("Give the location of the end of the road\n> ") #"1,5"
-            n2 = valid_road_location(n2)
-            if (n2 == False):
-                return
+            if isinstance(alias1, int) or isinstance(alias2, int):
+                return -1
 
-            is_connected = road_is_connected(a_player.p_color, n1, n2)
-            wanted_road = get_road_with_nodes(n1, n2)
-            if n1.owns_node == a_player.p_color or n2.owns_node == a_player.p_color or is_connected:
+            if is_valid_location(alias1) == False:
+                return -1
+            n1 = get_node_by_alias(alias1)
 
+            if is_valid_location(alias2) == False:
+                return -1
+            n2 = get_node_by_alias(alias2)
+
+            #Checking to see if it's connected to one of your settlements or a road that the player has
+            #road_is_connected checks for both.
+            if road_is_connected(a_player.p_color, n1, n2):
+                wanted_road = get_road_with_nodes(n1, n2)
                 if wanted_road is None:
-                    #print("That's not a valid road segment... Try again.")
                     return -1
                 elif wanted_road.owns_road != "":
-                    #print(wanted_road.owns_road + " is already on that space!!")
                     return -2
+
                 else:
                     wanted_road.owns_road = a_player.p_color
                     a_player.p_hand.remove("B")
                     a_player.p_hand.remove("L")
-                    return a_player.p_name + " has placed a road!!"
+                    return "Road added!!!"
 
             else:
-                return -1
+                return -5
         else:
             return -6
 
@@ -365,12 +369,10 @@ def get_corners(tile_id):
 
 # Return a string to be sent to the user
 def give_resources_to_players(corners, resource):
-    msg_to_user = "\n"
+    msg_to_user = ""
     for n in corners:
         if not n.is_empty():
             if n.is_settlement():
-                print("give_resources_to_players found a node with to give a resource to!!")
-                print(n)
                 for p in config.player_list:
                     if n.owns_node == p.p_color:
                         p.p_hand.append(resource) # need to know what tile this is.
@@ -387,17 +389,21 @@ def give_resources_to_players(corners, resource):
 
 # Return a string to be sent to the user
 def give_resources(roll_num, initial = False):
+    msg_to_user = "\n"
     for t in config.b.tiles:
         if initial:
             corners = get_corners(t.id)
-            return give_resources_to_players(corners,t.resource)
+            msg_to_user += give_resources_to_players(corners,t.resource)
+
+        elif roll_num == 7:
+            # when the robber gets rolled I still need to return
+            return ""
 
         elif t.number == roll_num:
             if t.id == config.robber.on_tile:
                 return "The robber stole your " + t.resource + "!!"
             else:
                 corners = get_corners(t.id)
-                return give_resources_to_players(corners,t.resource)
-        else:
-            # when the robber get's rolled, neither of these trip.
-            return ""
+                msg_to_user += give_resources_to_players(corners,t.resource)
+
+    return msg_to_user
