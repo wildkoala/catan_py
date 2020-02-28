@@ -290,7 +290,7 @@ def show_board():
 # all of the b.tile stuff now needs the padding, i took the spaces out of the template.  The resource ones need 6.
 # should always be three spaces in the format, and 2 characters of padding for all the numbers (id and number)
 # 1 space for resource character, and 5 spaces in format template
-	print(to_print)
+	return to_print
 
 def roll_dice():
     x = random.randint(1, 6)
