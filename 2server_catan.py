@@ -7,6 +7,8 @@
 
 #========================================================
 #BUG SECTION:
+# Not getting resources from second settlement placed in setup phase. (Not at the beginning, and not during gameplay.)
+# Not getting resouces from tiles other than tile 1
 #========================================================
 
 #========================================================
@@ -30,6 +32,25 @@ def catan_print(conn, given_str):
 def catan_read(conn, size=1024):
     s = conn.recv(size).decode('ascii').strip()
     return s
+
+def handle_errors(conn, result):
+    if result == -1:
+        catan_print(conn, "That's an invalid location\n")
+    elif result == -2:
+        catan_print(conn, "Someone is already on that space!!\n")
+    elif result == -3:
+        catan_print(conn, "Someone is on an adjacent space!!\n")
+    elif result == -4:
+        catan_print(conn, "The correct format is tile,corner\n")
+        catan_print(conn, "EXAMPLE: 1,2\n")
+    elif result == -5:
+        catan_print(conn, "Your road must be connected to one of your settlements\n")
+    elif result == -6:
+        catan_print(conn,"Not enough resources!!\n")
+    elif result == 99:
+        catan_print(conn, "Invalid input... Please try again.\n")
+    else:
+        catan_print(conn, "That caused some unknown error, please try to not do that again :)\n")
 
 def catan_client(conn):
     msg = display_main_menu() # returns string
@@ -65,7 +86,8 @@ def catan_client(conn):
 
     place_initial(conn)
     print("OUT OF PLACE INITIAL!! YES!!")
-    items.give_resources(0, True)
+    catan_print(conn, items.give_resources(0, True))
+
 
     winner = False
     while winner != True:
@@ -194,7 +216,7 @@ def player_choose_color(conn, color_options):
 #def valid_discard(a_string, player_hand):
 
 def robber(conn):
-    catan_print(conn, "ROBBER HAS BEEN ROLLED")
+    catan_print(conn, "ROBBER HAS BEEN ROLLED\n")
 
     # Loop checks to see if any players have 7 or more cards
     for i in config.player_list:
@@ -258,10 +280,10 @@ def trade_resources(player, trade_to, want, offer):
         trade_to.p_hand.remove(r)
 
 def trade_accepted(conn, player, trade_to, want, offer):
-    catan_print(conn, trade_to.p_name + ", " + player.p_name + " has offered you:" )
-    catan_print(conn, offer)
-    catan_print(conn, "In exchange for:")
-    catan_print(conn, want)
+    catan_print(conn, trade_to.p_name + ", " + player.p_name + " has offered you: " )
+    catan_print(conn, offer + "\n")
+    catan_print(conn, "In exchange for: ")
+    catan_print(conn, want + "\n")
     choice = ""
     while choice == "":
         catan_print(conn, "Do you want to accept this trade? (y/n)\n> ")
@@ -284,7 +306,8 @@ def player_turn(conn, player, points_to_win):
 
     roll = config.roll_dice()
     catan_print(conn, "\n" + str(roll) + " has been rolled\n")
-    items.give_resources(roll)
+    catan_print(conn, items.give_resources(roll))
+
 
     #Check to see if robber() should be called
     if roll == 7:
@@ -295,35 +318,41 @@ def player_turn(conn, player, points_to_win):
     while selection != 0:
         player_menu(conn)
         try:
-            selection = int(input("Please Select One\n"+ player.p_name + "> "))
+            catan_print(conn, "Please Select One\n"+ player.p_name + "> ")
+            selection = int(catan_read(conn))
         except ValueError:
-            print("You must enter a number corresponding to an option")
+            catan_print(conn, "You must enter a number corresponding to an option")
             selection = -1
 
         if selection == 1:
-            player.show_hand()
+            catan_print(conn, player.show_hand())
 
         elif selection == 2:
-            items.build_road(player)
+            server_build_item(conn, player, "road")
+
 
         elif selection == 3:
-            items.build_settlement(player)
+            server_build_item(conn, player, "settlement")
 
         elif selection == 4:
-            items.build_city(player)
+            server_build_item(conn, player, "city")
 
         elif selection == 5:
-            items.build_dev_card(player)
+            result = items.build_dev_card(player)
+            if isinstance(result, str):
+                catan_print(conn, result)
+            elif isinstance(result, int):
+                handle_errors(conn, result)
 
         # Partially implemented
         elif selection == 6:
-            catan_print(conn, "Players:")
+            catan_print(conn, "Players:\n")
             counter  = 1
             for p in config.player_list:
-                catan_print(conn, "\t" + str(counter) + ". " + p.p_name)
+                catan_print(conn, "\t" + str(counter) + ". " + p.p_name + "\n")
                 counter += 1
-            catan_print(conn, "\t" + str(counter) + ". Offer trade to everyone")
-            catan_print(conn, "Who do you want to trade with?")
+            catan_print(conn, "\t" + str(counter) + ". Offer trade to everyone\n")
+            catan_print(conn, "Who do you want to trade with?\n> ")
 
             option = int(catan_read(conn)) # gonna have to do error checking on this too...
             trade_to = config.player_list[option-1]
@@ -335,7 +364,7 @@ def player_turn(conn, player, points_to_win):
 
             if option <= len(config.player_list):
                 if player.has_resources(offer):
-                    want_to_trade = trade_accepted(player, trade_to, want, offer)
+                    want_to_trade = trade_accepted(conn, player, trade_to, want, offer)
                     they_have_resources = trade_to.has_resources(want)
                     if want_to_trade and they_have_resources:
                         trade_resources(player, trade_to, want, offer)
@@ -385,10 +414,11 @@ def player_turn(conn, player, points_to_win):
             catan_print(conn, "Trade using a port")
 
         elif selection == 9:
-            config.show_board(conn)
+            catan_print(conn, config.show_board())
 
         elif selection == 10:
-            player.show_dev_cards(conn)
+            catan_print(conn, player.show_dev_cards())
+
 
         elif selection == 11:
             if player.p_dev_cards == []:
@@ -416,23 +446,7 @@ def player_turn(conn, player, points_to_win):
 # START OF GAME
 #========================================================
 
-def handle_errors(conn, result):
-    if result == -1:
-        catan_print(conn, "That's an invalid location\n")
-    elif result == -2:
-        catan_print(conn, "Someone is already on that space!!\n")
-    elif result == -3:
-        catan_print(conn, "Someone is on an adjacent space!!\n")
-    elif result == -4:
-        catan_print(conn, "The correct format is tile,corner\n")
-        catan_print(conn, "EXAMPLE: 1,2\n")
-    elif result == -5:
-        catan_print(conn, "Your road must be connected to one of your settlements\n")
 
-    elif result == 99:
-        catan_print(conn, "Invalid input... Please try again.\n")
-    else:
-        catan_print(conn, "That caused some unknown error, please try to not do that again :)\n")
 
 
 def server_build_item(conn, a_player, item, init = False):
@@ -446,25 +460,28 @@ def server_build_item(conn, a_player, item, init = False):
                 catan_print(conn, "Where do you want to place your settlement?\n" + a_player.p_name.strip() + "> ")
                 location = catan_read(conn)
                 result = items.build_settlement(a_player, location, True)
-                if result < 0:
+                if isinstance(result, int):
                     handle_errors(conn, result)
-                    continue
-                else:
-                    catan_print(conn, a_player.p_name + " has placed a settlement!!\n")
-                    return
+                elif isinstance(result, str):
+                    catan_print(conn, result)
+                    settled = True
 
-        else: # NOT IMPLEMENTED: WHAT TO DO IF NOT INIT.
-            settled = False
-            while settled == False:
-                catan_print(conn, "Where do you want to place your settlement?\n> ")
-                location = catan_read(conn)
-                result = items.build_settlement(a_player, location)
+                '''
                 if result < 0:
                     handle_errors(conn, result)
                     continue
                 else:
                     catan_print(conn, a_player.p_name + " has placed a settlement!!\n")
                     return
+                '''
+        else:
+            catan_print(conn, "Where do you want to place your settlement?\n> ")
+            location = catan_read(conn)
+            result = items.build_settlement(a_player, location)
+            if isinstance(result, int):
+                handle_errors(conn, result)
+            elif isinstance(result, str):
+                catan_print(conn, result)
 
     elif item == "road": # not yet written for anything other than initial setup
         if init:
@@ -475,14 +492,32 @@ def server_build_item(conn, a_player, item, init = False):
                 catan_print(conn, "Where do you want to end your road?\n> ")
                 n2 = catan_read(conn)
                 result = items.build_road(a_player, n1, n2, True)
-                if result < 0:
+                if isinstance(result, int):
                     handle_errors(conn, result)
-                    continue
-                else:
-                    catan_print(conn, a_player.p_name + " has placed a road!!")
-                    return
+                elif isinstance(result, str):
+                    catan_print(conn, result)
+                    first_road = True
         else:
-            print("Building roads after init setup is not yet implemented.")
+            catan_print(conn, "Where do you want to start your road?\n> ")
+            n1 = catan_read(conn)
+            catan_print(conn, "Where do you want to end your road?\n> ")
+            n2 = catan_read(conn)
+            result = items.build_road(a_player, n1, n2)
+            if isinstance(result, int):
+                handle_errors(conn, result)
+            elif isinstance(result, str):
+                catan_print(conn, result)
+
+    elif item == "dev card":
+        catan_print(conn, "Where do you want to start your road?\n> ")
+        n1 = catan_read(conn)
+        catan_print(conn, "Where do you want to end your road?\n> ")
+        n2 = catan_read(conn)
+        result = items.build_dev_card(a_player)
+        if isinstance(result, int):
+            handle_errors(conn, result)
+        elif isinstance(result, str):
+            catan_print(conn, result)
 
 
 def place_initial(conn):

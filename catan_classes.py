@@ -25,18 +25,20 @@ class Player:
 
     def show_hand(self):
         if len(self.p_hand) == 0:
-            print("You have no cards")
+            return "You have no cards"
         else:
-            print(''.join(self.p_hand))
+            return ''.join(self.p_hand)
 
     def show_dev_cards(self):
         if len(self.p_dev_cards) == 0:
-            print("You have no development cards")
+            return "You have no development cards"
         else:
             counter = 1
-            for i in self.p_dev_cards:
-                print("\t" + str(counter) + i) # idk if i is gonna work like That
+            msg_to_client = "Development Cards:\n"
+            for card in self.p_dev_cards:
+                msg_to_client += "\t" + str(counter) + card.card_type # idk if i is gonna work like That
                 counter += 1
+            return msg_to_client
 
     def has_resources(self, resources_str):
         resource_list = ["B","L","W","S","O"]

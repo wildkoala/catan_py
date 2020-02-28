@@ -105,7 +105,7 @@ def valid_road_location(n):
 
 
 # maybe have is_init set to False by default (a keyword argument)
-# need to always return an int on the build_ functions because of the error handling after.
+# return a string if it works properly, return int if there's an error.
 def build_road(a_player, n1, n2, initializing = False): # this is not working for having a road connected to another road, makes you have a connected settlement rn.
     if initializing:
 
@@ -132,7 +132,7 @@ def build_road(a_player, n1, n2, initializing = False): # this is not working fo
 
             else:
                 wanted_road.owns_road = a_player.p_color
-                return 0
+                return "Road added!!!"
 
         else:
             return -5
@@ -163,16 +163,14 @@ def build_road(a_player, n1, n2, initializing = False): # this is not working fo
                     return -2
                 else:
                     wanted_road.owns_road = a_player.p_color
-                    print(a_player.p_name + " has placed a road!!")
                     a_player.p_hand.remove("B")
                     a_player.p_hand.remove("L")
-                    placed = True
+                    return a_player.p_name + " has placed a road!!"
 
             else:
-                print("Your road must be connected to one of your settlements or roads")
+                return -1
         else:
-            print("Not enough resources to build a road!!")
-            return
+            return -6
 
 
 def convert_input_to_format(given_input): # takes string, returns tuple of ints
@@ -186,7 +184,7 @@ def convert_input_to_format(given_input): # takes string, returns tuple of ints
 
 
 # partially implemented
-# needs to always return an int so that error handling doesn't get thrown of trying to compare a Nonetype
+# returns string when it worked, int when ther was an error.
 def build_settlement(a_player, location, initializing = False):
 
     if initializing:
@@ -215,7 +213,7 @@ def build_settlement(a_player, location, initializing = False):
             # Okay, you're able to put down a settlement.
             config.node_list[i].owns_node = a_player.p_color
             a_player.p_victory_pts += 1
-            return 0
+            return "Successfully placed settlement!"
 
         except ValueError:
             return -4
@@ -224,53 +222,54 @@ def build_settlement(a_player, location, initializing = False):
     else:
         have_resources = has_needed_resources("settlement", a_player)
         if have_resources:
-            # check if that settlement is open
-            n1 = input("Where do you want to place your settlement?\n> ") #1,6 for example
-            n1 = n1.split(",")
-            n1 = [ int(x) for x in n1]
-            n1 = tuple(n1)
+
+            # Is that a legit location on the map?
+            n1 = convert_input_to_format(location)
+            if isinstance(n1, int):
+                return n1
             if not is_valid_location(n1):
-                return # Since this is in the game loop, just kick them back out to the options menu
+                return -1
             wanted_node = get_node_by_alias(n1)
+            i = config.node_list.index(wanted_node)
 
-            if wanted_node.owns_node != "":
-                print(wanted_node.owns_node + " is already on that space!!")
-                return #this is a NoneType
+            # Is this already taken?
+            if config.node_list[i].owns_node != "":
+                return -2
 
-            for n in wanted_node.adj_nodes:
-                if config.node_list[n-1].owns_node != "":
-                    print("There's a player on an adjacent space!!")
-                    return #this is a NoneType
-
+            # Are there any settlements adjacent to this?
+            for n in config.node_list[i].adj_nodes: #list of id's
+                neighbor = get_node_by_id(n)
+                neighbor_i = config.node_list.index(neighbor)
+                if config.node_list[neighbor_i].owns_node != "":
+                    return -3
+            # Okay, you're able to put down a settlement
             wanted_node.owns_node = a_player.p_color
-            print(a_player.p_name + "has placed down a Settlement!")
             a_player.p_hand.remove("B")
             a_player.p_hand.remove("L")
             a_player.p_hand.remove("S")
             a_player.p_hand.remove("W")
             a_player.p_victory_pts += 1
+            return a_player.p_name + "has placed down a settlement!"
 
         else:
-            print("Not enough resources to build a settlement!!")
+            return -6
 
 # partially implemented
-def build_city(a_player):
+def build_city(a_player,location):
     have_resources = has_needed_resources("city", a_player)
     if have_resources:
-        print("building a city")
+        #print("building a city")
         # check that a player has a settlement at that location
-        n1 = input("Where do you want to place your city?\n> ") #1,6 for example
-        n1 = n1.split(",")
-        n1 = [ int(x) for x in n1]
-        n1 = tuple(n1)
-        if not is_valid_location(n1):
-                return # Since this is in the game loop, just kick them back out to the options menu
-        wanted_node = get_node_by_alias(n1)
+
+        alias = convert_input_to_format(location)
+        if not is_valid_location(alias):
+                return -1
+        wanted_node = get_node_by_alias(alias)
 
         # needs to specifically be a lower case letter.
         if wanted_node.owns_node == a_player.p_color:
-            print("building a city")
-            print(a_player.p_name + "has placed down a city!")
+            #print("building a city")
+
             wanted_node.owns_node = a_player.p_color.upper()
             a_player.p_hand.remove("O")
             a_player.p_hand.remove("O")
@@ -278,33 +277,35 @@ def build_city(a_player):
             a_player.p_hand.remove("W")
             a_player.p_hand.remove("W")
             a_player.p_victory_pts += 1
+            return a_player.p_name + "has placed down a city!\n"
 
         elif wanted_node.owns_node == a_player.p_color.upper():
-            print("That's already a city!")
+            return -1
         elif wanted_node.owns_node != "":
-            print(wanted_node.owns_node + " is already on that space!!")
+            return -1
         else:
-            print("You don't have a settlement here...")
+            return -1
 
     else:
-        print("Not enough resources to upgrade into a city!!")
+        return -6
 # Have a settlement
 # It is a settlement, and not anything else
 
 
 # partially implemented
+#returns string if working, int if error.
 def build_dev_card(a_player):
     have_resources = has_needed_resources("dev_card", a_player)
     if have_resources:
         #print("here's a dev card")
-        print(a_player.p_name + " bought a development card!")
         a_player.p_hand.remove("O")
         a_player.p_hand.remove("S")
         a_player.p_hand.remove("W")
         a_player.p_dev_cards.append(config.dev_cards.pop())
+        return a_player.p_name + " bought a development card!"
 
     else:
-        print("Not enough resources to get dev card!!")
+        return -6
 
 
 
@@ -362,29 +363,41 @@ def get_corners(tile_id):
     corners.append(n6)
     return corners
 
+# Return a string to be sent to the user
 def give_resources_to_players(corners, resource):
+    msg_to_user = "\n"
     for n in corners:
         if not n.is_empty():
             if n.is_settlement():
+                print("give_resources_to_players found a node with to give a resource to!!")
+                print(n)
                 for p in config.player_list:
                     if n.owns_node == p.p_color:
                         p.p_hand.append(resource) # need to know what tile this is.
-                        print(p.p_name + " got a " + resource) # need to know what tile this is.
+                        msg_to_user += p.p_name + " got a " + resource + "\n"# need to know what tile this is.
             else:
-                p.p_hand.append(t.resource)
-                p.p_hand.append(t.resource)
-                print(p.p_name + " got 2 " + resource)
+                msg_to_user = ""
+                for p in config.player_list:
+                    if n.owns_node == p.p_color:
+                        p.p_hand.append(resource) # need to know what tile this is.
+                        p.p_hand.append(resource)
+                        msg_to_user += p.p_name + " got 2 " + resource + "\n"# need to know what tile this is.
+    return msg_to_user
 
-# Need  a function for distributing resources
+
+# Return a string to be sent to the user
 def give_resources(roll_num, initial = False):
     for t in config.b.tiles:
         if initial:
             corners = get_corners(t.id)
-            give_resources_to_players(corners,t.resource)
+            return give_resources_to_players(corners,t.resource)
 
         elif t.number == roll_num:
             if t.id == config.robber.on_tile:
-                print("The robber stole your " + t.resource + "!!")
+                return "The robber stole your " + t.resource + "!!"
             else:
                 corners = get_corners(t.id)
-                give_resources_to_players(corners,t.resource)
+                return give_resources_to_players(corners,t.resource)
+        else:
+            # when the robber get's rolled, neither of these trip.
+            return ""
