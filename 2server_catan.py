@@ -7,8 +7,7 @@
 
 #========================================================
 #BUG SECTION:
-# Not getting resources from second settlement placed in setup phase. (Not at the beginning, and not during gameplay.)
-# Not getting resouces from tiles other than tile 1
+# Selecting "Upgrade into city" functions unexpecetedly
 #========================================================
 
 #========================================================
