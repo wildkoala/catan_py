@@ -24,7 +24,7 @@ import math
 #========================================================
 
 def move_robber():
-    config.show_board()
+    print(config.show_board())
     knight_placed = False
     while knight_placed == False:
         t = int(input("Which tile will you place the robber on?\n> "))
@@ -44,7 +44,7 @@ def check_largest_army(a_player):
     for i in config.player_list:
         if i.has_largest_army == True:
             player_has_largest_army = True
-            print(player.p_name + " has the largest army")
+            print(i.p_name + " has the largest army")
             index = counter
         counter += 1
     #Then if somebody has the largest army check if player has more knights
@@ -343,30 +343,32 @@ def player_turn(player, points_to_win):
 
         # Partially implemented
         elif selection == 6:
-            print("Players:")
-            counter  = 1
-            for p in config.player_list:
-                print("\t" + str(counter) + ". " + p.p_name)
-                counter += 1
-            print("\t" + str(counter) + ". Offer trade to everyone")
-            option = int(input("Who do you want to trade with?")) # gonna have to do error checking on this too...
-            trade_to = config.player_list[option-1]
-            want = input("What resource(s) do you want?")
-            offer = input("What resource(s) are you offering in exchange?\n> ").upper()
+            try:
+                print("Players:")
+                counter  = 1
+                for p in config.player_list:
+                    print("\t" + str(counter) + ". " + p.p_name)
+                    counter += 1
+                print("\t" + str(counter) + ". Offer trade to everyone")
+                option = int(input("Who do you want to trade with?")) # gonna have to do error checking on this too...
+                trade_to = config.player_list[option-1]
+                want = input("What resource(s) do you want?")
+                offer = input("What resource(s) are you offering in exchange?\n> ").upper()
 
-            if option <= len(config.player_list):
-                if player.has_resources(offer):
-                    want_to_trade = trade_accepted(player, trade_to, want, offer)
-                    they_have_resources = trade_to.has_resources(want)
-                    if want_to_trade and they_have_resources:
-                        trade_resources(player, trade_to, want, offer)
+                if option <= len(config.player_list):
+                    if player.has_resources(offer):
+                        want_to_trade = trade_accepted(player, trade_to, want, offer)
+                        they_have_resources = trade_to.has_resources(want)
+                        if want_to_trade and they_have_resources:
+                            trade_resources(player, trade_to, want, offer)
+                    else:
+                        print("You don't have those resources to offer...")
+                elif trade_to == len(player_list) + 1:
+                    print("Trade to all players is coming soon")
                 else:
-                    print("You don't have those resources to offer...")
-            elif trade_to == len(player_list) + 1:
-                print("Trade to all players is coming soon")
-            else:
-                print("Invalid option")
-
+                    print("Invalid option")
+            except:
+                print("Something went wrong")
         elif selection == 7:
             try:
                 want = input("What resource would you like?\n> ")
@@ -405,7 +407,7 @@ def player_turn(player, points_to_win):
             trade_using_port(player)
 
         elif selection == 9:
-            config.show_board()
+            print(config.show_board())
 
         elif selection == 10:
             print("Here are your dev cards:")
@@ -414,20 +416,22 @@ def player_turn(player, points_to_win):
             player.show_played_dev_cards()
 
         elif selection == 11:
-            if has_played_dev_card == False:
-                if player.p_dev_cards == []:
-                    print("You have no development cards!!")
-                    continue
-                print("Please select a dev_card: ")
-                player.show_dev_cards()
-                num = int(input("> "))
-                if player.p_dev_cards[num-1].can_be_played:
-                    has_played_dev_card = play_dev_card(player, player.p_dev_cards[num-1])
+            try:
+                if has_played_dev_card == False:
+                    if player.p_dev_cards == []:
+                        print("You have no development cards!!")
+                        continue
+                    print("Please select a dev_card: ")
+                    player.show_dev_cards()
+                    num = int(input("> "))
+                    if player.p_dev_cards[num-1].can_be_played:
+                        has_played_dev_card = play_dev_card(player, player.p_dev_cards[num-1])
+                    else:
+                        print("A dev card can't be placed the same turn you draw it")
                 else:
-                    print("A dev card can't be placed the same turn you draw it")
-            else:
-                print("You've already played a dev card this round")
-
+                    print("You've already played a dev card this round")
+            except:
+                print("something went wrong")
         elif selection == 0:
             pass
 
@@ -447,17 +451,17 @@ def place_initial():
     for i in config.player_list:
         print(i.p_name + " is placing their first settlement")
         items.build_settlement(i, True)
-        config.show_board()
+        print(config.show_board())
         print(i.p_name + " is placing their first road")
         items.build_road(i, True)
-        config.show_board()
+        print(config.show_board())
     for i in reversed(config.player_list):
         print(i.p_name + " is placing their second settlement")
         items.build_settlement(i, True)
-        config.show_board()
+        print(config.show_board())
         print(i.p_name + " is placing their second road")
         items.build_road(i, True)
-        config.show_board()
+        print(config.show_board())
 
 def display_main_menu():
     selection = input('''
@@ -605,7 +609,7 @@ if __name__ == "__main__":
 
 
     print("Here is the Board:")
-    config.show_board()
+    print(config.show_board())
 
     #Store player_list and points to win in variables
     curr_player_turn = 0
