@@ -21,6 +21,7 @@ class Player:
         self.p_dev_cards = []
         self.p_played_dev_cards = []
         self.p_order = -1
+        self.has_largest_army = False
 
     def present(self):
         print(self.p_name)
@@ -62,8 +63,17 @@ class Player:
     def show_victory_pts(self):
         return self.p_victory_pts
 
-    def calculate_victory_pts(self):
-        pass # needs to be implemented
+    def has_largest_army(self):
+        return self.has_largest_army
+
+    def count_knights(self):
+        counter = 0
+        for i in self.p_played_dev_cards:
+            if i.card_type == "Knight":
+                counter += 1
+        return counter
+
+
 #Partial implementation
 
 class Board:

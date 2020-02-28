@@ -36,6 +36,32 @@ def move_robber():
             config.robber.on_tile = t
             knight_placed = True
 
+def check_largest_army(a_player):
+    player_has_largest_army = False
+    counter = 0
+    index = -1
+    #First check if anybody currently has the largest army
+    for i in config.player_list:
+        if i.has_largest_army == True:
+            player_has_largest_army = True
+            print(player.p_name + " has the largest army")
+            index = counter
+        counter += 1
+    #Then if somebody has the largest army check if player has more knights
+    #nobody has largest army check if player has 3 knights now
+    if player_has_largest_army:
+        if a_player.count_knights() > config.player_list[index].count_knights():
+            a_player.has_largest_army = True
+            a_player.p_victory_pts += 2
+            config.player_list[index].has_largest_army = False
+            config.player_list[index].p_victory_pts -= 2
+            print(a_player.p_name + " has taken the largest army")
+    else:
+        if a_player.count_knights() >= 3:
+            a_player.has_largest_army = True
+            a_player.p_victory_pts += 2
+            print(a_player.p_name + " is the first to get the largest army")
+
 
 def play_dev_card(a_player, dev_card):
     # Partially Implemented
@@ -45,6 +71,7 @@ def play_dev_card(a_player, dev_card):
         move_robber()
         a_player.p_played_dev_cards.append(dev_card)
         a_player.p_dev_cards.remove(dev_card)
+        check_largest_army(a_player)
         # steal a card from a player.
 
     #DONE
@@ -58,9 +85,10 @@ def play_dev_card(a_player, dev_card):
 
         # this should force the player to build two roads
         roads_placed = 0
-        while roads_placed != 2:
+        while roads_placed < 2:
+            road = items.build_road(a_player)
             # have to check they built a valid road. function can return None.
-            if items.build_road(a_player) == None:
+            if road == None:
                 continue
             else:
                 roads_placed += 1
@@ -119,6 +147,7 @@ def play_dev_card(a_player, dev_card):
         a_player.p_victory_pts += 1 # I don't want to tell anyone else that this was played.
         a_player.p_played_dev_cards.append(dev_card)
         a_player.p_dev_cards.remove(dev_card)
+        return False
 
     else:
         print("Not a known development card type")
@@ -167,7 +196,7 @@ def robber():
                     has_cards = False
                     print("You do not have those cards")
             for card in discard:
-                i.p_hand.remove(card)
+                i.p_hand.remove(card.upper())
             print(i.p_name + " this is your new hand: ")
             i.show_hand()
 
