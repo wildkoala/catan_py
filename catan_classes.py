@@ -128,8 +128,9 @@ class Node:
 
 
 class Dev_Card:
-    def __init__(self, card_type):
-        self.card_type = card_type            # options are Knight (14), Road Building(2), Year of Plenty(2), Monopoly(2), Victory Point (5)
+    def __init__(self, card_type, can_be_played = False):
+        self.card_type = card_type
+        self.can_be_played = can_be_played            # options are Knight (14), Road Building(2), Year of Plenty(2), Monopoly(2), Victory Point (5)
 
     def __str__(self):
         return self.card_type

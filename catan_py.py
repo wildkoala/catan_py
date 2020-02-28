@@ -91,7 +91,7 @@ def play_dev_card(a_player, dev_card):
         print(dev_card)
         got_resources = False
         while got_resources == False:
-            wanted_card = input("What resource would you like? Resource (" + str(added_cards+1) + "/2)" )
+            wanted_card = input("What resource would you like to steal from all other players? ")
             if wanted_card.upper() in "BLSWO":
 
                 num_taken = 0
@@ -104,7 +104,7 @@ def play_dev_card(a_player, dev_card):
                 for num in range(0, num_taken):
                     a_player.p_hand.append(wanted_card.upper())
 
-                print(a_player.p_name + " took all everyone's " + wanted_card.upper())
+                print(a_player.p_name + " took everyone's " + wanted_card.upper())
                 got_resources = True
 
             else:
@@ -122,6 +122,8 @@ def play_dev_card(a_player, dev_card):
 
     else:
         print("Not a known development card type")
+
+    return True
 
 def player_choose_color(color_options):
         print("Which color will you be?")
@@ -229,10 +231,10 @@ Please select a port to trade with:
                 give = input("What resource will you be trading 3 of?\n> ")
                 r = give*3
                 if player.has_resources(r):
-                    player.p_hand.remove(give)
-                    player.p_hand.remove(give)
-                    player.p_hand.remove(give)
-                    player.p_hand.append(want)
+                    player.p_hand.remove(give.upper())
+                    player.p_hand.remove(give.upper())
+                    player.p_hand.remove(give.upper())
+                    player.p_hand.append(want.upper())
                 else:
                     print("You do not have enough resources")
             else:
@@ -240,7 +242,7 @@ Please select a port to trade with:
                 if player.has_resources(r):
                     player.p_hand.remove(player_ports[selection-1].type)
                     player.p_hand.remove(player_ports[selection-1].type)
-                    player.p_hand.append(want)
+                    player.p_hand.append(want.upper())
                 else:
                     print("You do not have enough resources")
         except:
@@ -280,6 +282,10 @@ def player_turn(player, points_to_win):
     #Check to see if robber() should be called
     if roll == 7:
         robber()
+
+    has_played_dev_card = False
+    for i in player.p_dev_cards:
+        i.can_be_played = True
 
   #Player Selects an Option
     selection = -1
@@ -333,34 +339,37 @@ def player_turn(player, points_to_win):
                 print("Invalid option")
 
         elif selection == 7:
-            want = input("What resource would you like?\n> ")
-            give = input("What resource will you be trading 4 of?\n> ")
-            r = give*4
-            if player.has_resources(r):
-                player.p_hand.remove(give)
-                player.p_hand.remove(give)
-                player.p_hand.remove(give)
-                player.p_hand.remove(give)
-                player.p_hand.append(want)
-                print("You traded with the bank!")
+            try:
+                want = input("What resource would you like?\n> ")
+                give = input("What resource will you be trading 4 of?\n> ")
+                r = give*4
+                if player.has_resources(r) and want.upper() in "WSLBO":
+                    player.p_hand.remove(give)
+                    player.p_hand.remove(give)
+                    player.p_hand.remove(give)
+                    player.p_hand.remove(give)
+                    player.p_hand.append(want)
+                    print("You traded with the bank!")
 
-                '''
-                for p in config.player_list: # for some reason
-                    print("global p_name: " + p.p_name + " local player: " + player.p_name)
+                    '''
+                    for p in config.player_list: # for some reason
+                        print("global p_name: " + p.p_name + " local player: " + player.p_name)
 
-                    if p.p_name == player.p_name:
+                        if p.p_name == player.p_name:
 
-                        p.p_hand.remove(give)
-                        p.p_hand.remove(give)
-                        p.p_hand.remove(give)
-                        p.p_hand.remove(give)
-                        p.p_hand.append(want)
-                        print("You traded with the bank!")
-                    else:
-                        print("p_names didn't match?")
-                '''
-            else:
-                print("You don't have enough of that resource to trade...")
+                            p.p_hand.remove(give)
+                            p.p_hand.remove(give)
+                            p.p_hand.remove(give)
+                            p.p_hand.remove(give)
+                            p.p_hand.append(want)
+                            print("You traded with the bank!")
+                        else:
+                            print("p_names didn't match?")
+                    '''
+                else:
+                    print("You don't have enough of that resource to trade...")
+            except:
+                print("You entered an invalid input")
 
         elif selection == 8:
             print("Trade using a port")
@@ -376,13 +385,19 @@ def player_turn(player, points_to_win):
             player.show_played_dev_cards()
 
         elif selection == 11:
-            if player.p_dev_cards == []:
-                print("You have no development cards!!")
-                continue
-            print("Please select a dev_card: ")
-            player.show_dev_cards()
-            num = int(input("> "))
-            play_dev_card(player, player.p_dev_cards[num-1])
+            if has_played_dev_card == False:
+                if player.p_dev_cards == []:
+                    print("You have no development cards!!")
+                    continue
+                print("Please select a dev_card: ")
+                player.show_dev_cards()
+                num = int(input("> "))
+                if player.p_dev_cards[num-1].can_be_played:
+                    has_played_dev_card = play_dev_card(player, player.p_dev_cards[num-1])
+                else:
+                    print("A dev card can't be placed the same turn you draw it")
+            else:
+                print("You've already played a dev card this round")
 
         elif selection == 0:
             pass
@@ -512,9 +527,9 @@ def declare_pts_to_win():
 
 def player_order():
     for player in config.player_list:
-        input(player.p_name + " please roll to see order to place settlements")
+        input(player.p_name + " please roll to see order to place settlements (Press Enter)")
         player.p_order = config.roll_dice()
-        print("You rolled a: " + str(player.p_order))
+        print(player.p_name + ", you rolled a: " + str(player.p_order))
     config.player_list = sorted(config.player_list, key=lambda x: x.p_order, reverse = True)
 
     print("The order of players is:")
