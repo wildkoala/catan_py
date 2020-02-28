@@ -683,8 +683,8 @@ if __name__ == "__main__":
     # bind to the port
     serversocket.bind(('', port))
 
-    # queue up to 5 requests
-    serversocket.listen(5)
+    # Only take 1 connection for now until multi-threading works
+    serversocket.listen(1)
     print("CATAN SERVER STARTED\nWaiting for connctions...")
     while True:
         # establish a connection
