@@ -397,9 +397,11 @@ def give_resources_to_players(corners, resource):
                         p.p_hand.append(resource) # need to know what tile this is.
                         print(p.p_name + " got a " + resource) # need to know what tile this is.
             else:
-                p.p_hand.append(t.resource)
-                p.p_hand.append(t.resource)
-                print(p.p_name + " got 2 " + resource)
+                for p in config.player_list:
+                    if n.owns_node == p.p_color:
+                        p.p_hand.append(t.resource)
+                        p.p_hand.append(t.resource)
+                        print(p.p_name + " got 2 " + resource)
 
 # Need  a function for distributing resources
 def give_resources(roll_num, initial = False):
