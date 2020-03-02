@@ -78,44 +78,77 @@ def get_road_by_id(id):
             return r
 
 def get_nodes_by_road(road):
-    n1 = config.node_list[road.start_n]
-    n2 = config.node_list[road.end_n]
+    n1 = config.node_list[road.start_n - 1]
+    n2 = config.node_list[road.end_n - 1]
     return [n1,n2]
 
+#Calculates a players road chains based on breaks in roads and placement of roads
 def merge_chain(a_player):
-    print("entered merge chain")
     if len(a_player.road_chains) >= 2:
-        print("do i reach here?")
         for i in range(0,(len(a_player.road_chains)-1)):
-            print("entered outer loop")
             complist = a_player.road_chains[i]
             for j in range(i+1,len(a_player.road_chains)):
-                print("entered inner loop")
                 complist2 = a_player.road_chains[j]
-                if are_connected_roads(complist, complist2):
-                    print(a_player.road_chains)
+                if are_connected_roads(a_player, complist, complist2):
                     a_player.road_chains.append(a_player.road_chains[i] + a_player.road_chains[j])
-                    print(a_player.road_chains)
                     a_player.road_chains.remove(complist)
-                    print(a_player.road_chains)
                     a_player.road_chains.remove(complist2)
                     return True
-    print(a_player.road_chains)
+    for sort_player in a_player.road_chains:
+        sort_player.sort()
     return False
 
-def are_connected_roads(list1, list2):
+#This function will split a player's road
+def split_road(a_player, node):
+    new_list = []
+    for i in a_player.road_chains:
+        for roads in i:
+            new_list.append([roads])
+    a_player.road_chains = new_list
+    keep_merging = True
+    while keep_merging:
+        keep_merging = merge_chain(a_player)
+
+
+#Called when a player places a road. gets the end node of the road placed
+#and finds other two roads associated with that node. if both roads are owned by
+#a particular player. we know that his road has been split
+def does_split_road(a_player, placed_road):
+    nodes = get_nodes_by_road(placed_road)
+    for placed_node in nodes:
+        player = ""
+        counter = 0
+        for adj_nodes in placed_node.adj_nodes:
+            tested_road = get_road_with_nodes(placed_node, config.node_list[adj_nodes-1])
+            if player != "":
+                    counter += 1
+            else:
+                if tested_road.owns_road != a_player.p_color and tested_road.owns_road != "":
+                    player = tested_road.owns_road
+                    counter += 1
+        if counter == 2:
+            for i in config.player_list:
+                if i.p_color == player:
+                    i.split_roads.append(placed_node.id)
+                    split_road(i, placed_node)
+    pass
+    #
+
+#Currently very messy but it works fine.  the 4 for loops hurt me spiritually
+def are_connected_roads(a_player, list1, list2):
     for r1 in list1:
         for r2 in list2:
             n1 = get_nodes_by_road(get_road_by_id(r1))
             n2 = get_nodes_by_road(get_road_by_id(r2))
-    for node1 in n1:
-        for node2 in n2:
-            if node1.id == node2.id:
-                print(n1)
-                print(n2)
-                print("they connect")
-                return True
-    print("they dont connect")
+            for node1 in n1:
+                for node2 in n2:
+                    print(a_player.split_roads)
+                    if node1.id in a_player.split_roads and node1.id == node2.id:
+                        return False
+                    if node1.id == node2.id:
+                        print(n1)
+                        print(n2)
+                        return True
     return False
 
 def connected_roads(node):
@@ -126,7 +159,6 @@ def connected_roads(node):
 
 # NEEDS TESTING FOR ADJACENT ROADS
 def road_is_connected(player_color, n1, n2):
-    print("IN ROAD IS CONNECTED FUNCTION")
     if n1.owns_node.lower() == player_color: # lower makes sure that a city counts too.
         return True
     else: # this is the part of the code that needs to check for an adj road.
@@ -244,6 +276,7 @@ def build_road(a_player, initializing = False): # this is not working for having
                     val = merge_chain(a_player)
                     if val:
                         val = merge_chain(a_player)
+                    does_split_road(a_player, wanted_road)
 
             else:
                 print("Your road must be connected to one of your settlements or roads")

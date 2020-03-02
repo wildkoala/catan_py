@@ -23,7 +23,8 @@ class Player:
         self.p_order = -1
         self.has_largest_army = False
         self.has_longest_road = False
-        self.road_chains = []
+        self.road_chains = [] #road ids: a list of lists that contain the chains a player has
+        self.split_roads = [] #contains the nodes that will split a players chains
 
     def present(self):
         print(self.p_name)

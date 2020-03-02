@@ -217,6 +217,5 @@ if __name__ == "__main__":
 		adj = items.connected_roads(i)
         #with your node and with adj nodes determine if somebody owns the road
 		for adjacent in adj:
-			if adjacent.owns_road != "":
-				print(adjacent)
+			print(adjacent)
 		print("New adjacencies")
