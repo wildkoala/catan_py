@@ -96,6 +96,7 @@ def merge_chain(a_player):
                     return True
     for sort_player in a_player.road_chains:
         sort_player.sort()
+    print(a_player.road_chains)
     return False
 
 #This function will split a player's road
@@ -142,12 +143,9 @@ def are_connected_roads(a_player, list1, list2):
             n2 = get_nodes_by_road(get_road_by_id(r2))
             for node1 in n1:
                 for node2 in n2:
-                    print(a_player.split_roads)
                     if node1.id in a_player.split_roads and node1.id == node2.id:
                         return False
                     if node1.id == node2.id:
-                        print(n1)
-                        print(n2)
                         return True
     return False
 
@@ -231,10 +229,10 @@ def build_road(a_player, initializing = False): # this is not working for having
                     print(a_player.p_name + " has placed a road!!")
 
                     a_player.road_chains.append([wanted_road.id])
-                    print(a_player.road_chains)
                     val = merge_chain(a_player)
                     if val:
                         val = merge_chain(a_player)
+                    does_split_road(a_player, wanted_road)
 
                     placed = True
 
@@ -272,7 +270,6 @@ def build_road(a_player, initializing = False): # this is not working for having
                     a_player.p_hand.remove("L")
                     placed = True
                     a_player.road_chains.append([wanted_road.id])
-                    print(a_player.road_chains)
                     val = merge_chain(a_player)
                     if val:
                         val = merge_chain(a_player)
