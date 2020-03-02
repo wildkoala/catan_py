@@ -49,7 +49,7 @@ class Player:
 
     #returns how many victory points a player has
     def show_victory_pts(self):
-        return self.p_victory_pts
+        return str(self.p_victory_pts)
 
     def calculate_victory_pts(self):
         pass # needs to be implemented

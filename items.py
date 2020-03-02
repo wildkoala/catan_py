@@ -20,29 +20,32 @@ import config
 #========================================================
 
 def is_valid_location(alias):
-    if alias[0] < 1 or alias[0] > 19:
-        return False
-    elif alias[1] < 1 or alias[1] > 6:
-        return False
-    else:
-        return True
-
+    try:
+        if alias[0] < 1 or alias[0] > 19:
+            return False
+        elif alias[1] < 1 or alias[1] > 6:
+            return False
+        else:
+            return True
+    except:
+        print("User inputted an int and broke the is_valid_location function")
 #this function works, takes a node list and alias as a tuple ex. (1,6)
-def get_node_by_alias(g_alias):
-    for n in config.node_list:
+def get_node_by_alias(g_alias, node_list):
+    for n in node_list:
         if g_alias in n.alias:
             return n
+    print("NO MATCH FOUND")
 
-def get_node_by_id(n):
-    for a in config.node_list:
+def get_node_by_id(n, node_list):
+    for a in node_list:
         if a.id == n:
             return a
 
 #this function works, takes a node list and alias as a tuple ex. (1,6)
-def get_road_with_aliases(alias1, alias2):
-    n1 = get_node_by_alias(config.node_list, alias1)
-    n2 = get_node_by_alias(config.node_list, alias2)
-    for r in config.road_list:
+def get_road_with_aliases(alias1, alias2, node_list, road_list):
+    n1 = get_node_by_alias(alias1,node_list)
+    n2 = get_node_by_alias(alias2, node_list)
+    for r in road_list:
         if r.start_n == n1.id and r.end_n == n2.id:
             return r
         else:
@@ -50,9 +53,9 @@ def get_road_with_aliases(alias1, alias2):
                 return r
     print("COULDN'T FIND ROAD")
 
-def get_road_with_nodes(node1, node2):
+def get_road_with_nodes(node1, node2, road_list):
     #print("Here to debug 1")
-    for r in config.road_list:
+    for r in road_list:
         #print("Here to debug 2")
         if r.start_n == node1.id and r.end_n == node2.id:
             return r
@@ -61,23 +64,23 @@ def get_road_with_nodes(node1, node2):
                 return r
     #print("COULDN'T FIND ROAD")
 
-def connected_roads(node):
+def connected_roads(node, node_list):
     roads = [] # a list of connected roads.
     for adj in node.adj_nodes:
-        roads.append(get_road_with_nodes(node, config.node_list[adj-1]))
+        roads.append(get_road_with_nodes(node, node_list[adj-1]))
     return roads
 
 # NEEDS TESTING FOR ADJACENT ROADS
 # takes player_color and the nodes on either side of the desired road.
-def road_is_connected(player_color, n1, n2):
+def road_is_connected(player_color, n1, n2, node_list):
     print("IN ROAD IS CONNECTED FUNCTION")
     if n1.owns_node.lower() == player_color: # lower makes sure that a city counts too.
         return True
     else: # this is the part of the code that needs to check for an adj road.
-        for r in connected_roads(n1):
+        for r in connected_roads(n1, node_list):
             if r.owns_road == player_color:
                 return True
-        for r in connected_roads(n2):
+        for r in connected_roads(n2, node_list):
             if r.owns_road == player_color:
                 return True
         return False
@@ -107,7 +110,7 @@ def valid_road_location(n):
 
 # maybe have is_init set to False by default (a keyword argument)
 # return a string if it works properly, return int if there's an error.
-def build_road(a_player, n1, n2, initializing = False): # this is not working for having a road connected to another road, makes you have a connected settlement rn.
+def build_road(a_player, n1, n2, node_list, road_list, initializing = False): # this is not working for having a road connected to another road, makes you have a connected settlement rn.
     if initializing:
 
         alias1 = convert_input_to_format(n1) # n1 and n2 are strings
@@ -118,14 +121,14 @@ def build_road(a_player, n1, n2, initializing = False): # this is not working fo
 
         if is_valid_location(alias1) == False:
             return -1
-        n1 = get_node_by_alias(alias1)
+        n1 = get_node_by_alias(alias1, node_list)
 
         if is_valid_location(alias2) == False:
             return -1
-        n2 = get_node_by_alias(alias2)
+        n2 = get_node_by_alias(alias2, node_list)
 
         if n1.owns_node == a_player.p_color or n2.owns_node == a_player.p_color:
-            wanted_road = get_road_with_nodes(n1, n2)
+            wanted_road = get_road_with_nodes(n1, n2, road_list)
             if wanted_road is None:
                 return -1
             elif wanted_road.owns_road != "":
@@ -150,16 +153,16 @@ def build_road(a_player, n1, n2, initializing = False): # this is not working fo
 
             if is_valid_location(alias1) == False:
                 return -1
-            n1 = get_node_by_alias(alias1)
+            n1 = get_node_by_alias(alias1, node_list)
 
             if is_valid_location(alias2) == False:
                 return -1
-            n2 = get_node_by_alias(alias2)
+            n2 = get_node_by_alias(alias2, node_list)
 
             #Checking to see if it's connected to one of your settlements or a road that the player has
             #road_is_connected checks for both.
-            if road_is_connected(a_player.p_color, n1, n2):
-                wanted_road = get_road_with_nodes(n1, n2)
+            if road_is_connected(a_player.p_color, n1, n2, node_list):
+                wanted_road = get_road_with_nodes(n1, n2, road_list)
                 if wanted_road is None:
                     return -1
                 elif wanted_road.owns_road != "":
@@ -189,38 +192,37 @@ def convert_input_to_format(given_input): # takes string, returns tuple of ints
 
 # partially implemented
 # returns string when it worked, int when ther was an error.
-def build_settlement(a_player, location, initializing = False):
+def build_settlement(a_player, location, node_list, initializing = False):
 
     if initializing:
-        try:
-            # Is that a legit location on the map?
-            n1 = convert_input_to_format(location)
-            if isinstance(n1, int):
-                return n1
-            if not is_valid_location(n1):
-                return -1
+        #try:
+        # Is that a legit location on the map?
+        n1 = convert_input_to_format(location)
+        if isinstance(n1, int):
+            return n1
+        if not is_valid_location(n1):
+            return -1
 
-            wanted_node = get_node_by_alias(n1)
-            i = config.node_list.index(wanted_node)
+        wanted_node = get_node_by_alias(n1, node_list)
+        i = node_list.index(wanted_node)
 
-            # Is this already taken?
-            if config.node_list[i].owns_node != "":
-                return -2
+        # Is this already taken?
+        if node_list[i].owns_node != "":
+            return -2
 
-            # Are there any settlements adjacent to this?
-            for n in config.node_list[i].adj_nodes: #list of id's
-                neighbor = get_node_by_id(n)
-                neighbor_i = config.node_list.index(neighbor)
-                if config.node_list[neighbor_i].owns_node != "":
-                    return -3
+        for n in node_list[i].adj_nodes: #list of id's
+            neighbor = get_node_by_id(n, node_list)
+            neighbor_i = node_list.index(neighbor)
+            if node_list[neighbor_i].owns_node != "":
+                return -3
 
-            # Okay, you're able to put down a settlement.
-            config.node_list[i].owns_node = a_player.p_color
-            a_player.p_victory_pts += 1
-            return "Successfully placed settlement!"
+        # Okay, you're able to put down a settlement.
+        node_list[i].owns_node = a_player.p_color
+        a_player.p_victory_pts += 1
+        return "Successfully placed settlement!"
 
-        except ValueError:
-            return -4
+        #except ValueError:
+        #    return -4
 
 
     else:
@@ -233,18 +235,18 @@ def build_settlement(a_player, location, initializing = False):
                 return n1
             if not is_valid_location(n1):
                 return -1
-            wanted_node = get_node_by_alias(n1)
-            i = config.node_list.index(wanted_node)
+            wanted_node = get_node_by_alias(n1, node_list)
+            i = node_list.index(wanted_node)
 
             # Is this already taken?
-            if config.node_list[i].owns_node != "":
+            if node_list[i].owns_node != "":
                 return -2
 
             # Are there any settlements adjacent to this?
-            for n in config.node_list[i].adj_nodes: #list of id's
-                neighbor = get_node_by_id(n)
-                neighbor_i = config.node_list.index(neighbor)
-                if config.node_list[neighbor_i].owns_node != "":
+            for n in node_list[i].adj_nodes: #list of id's
+                neighbor = get_node_by_id(n, node_list)
+                neighbor_i = node_list.index(neighbor)
+                if node_list[neighbor_i].owns_node != "":
                     return -3
             # Okay, you're able to put down a settlement
             wanted_node.owns_node = a_player.p_color
@@ -268,7 +270,7 @@ def build_city(a_player,location):
         alias = convert_input_to_format(location)
         if not is_valid_location(alias):
                 return -1
-        wanted_node = get_node_by_alias(alias)
+        wanted_node = get_node_by_alias(alias, node_list)
 
         # needs to specifically be a lower case letter.
         if wanted_node.owns_node == a_player.p_color:
@@ -298,14 +300,14 @@ def build_city(a_player,location):
 
 # partially implemented
 #returns string if working, int if error.
-def build_dev_card(a_player):
+def build_dev_card(a_player, dev_cards):
     have_resources = has_needed_resources("dev_card", a_player)
     if have_resources:
         #print("here's a dev card")
         a_player.p_hand.remove("O")
         a_player.p_hand.remove("S")
         a_player.p_hand.remove("W")
-        a_player.p_dev_cards.append(config.dev_cards.pop())
+        a_player.p_dev_cards.append(dev_cards.pop())
         return a_player.p_name + " bought a development card!\nDevelopment Card: " + a_player.p_dev_cards[-1].card_type
 
     else:
@@ -349,14 +351,14 @@ def has_needed_resources(item, a_player):
 
 
 
-def get_corners(tile_id):
+def get_corners(tile_id, node_list):
     corners = []
-    n1 = get_node_by_alias((tile_id, 1))
-    n2 = get_node_by_alias((tile_id, 2))
-    n3 = get_node_by_alias((tile_id, 3))
-    n4 = get_node_by_alias((tile_id, 4))
-    n5 = get_node_by_alias((tile_id, 5))
-    n6 = get_node_by_alias((tile_id, 6))
+    n1 = get_node_by_alias((tile_id, 1), node_list)
+    n2 = get_node_by_alias((tile_id, 2), node_list)
+    n3 = get_node_by_alias((tile_id, 3), node_list)
+    n4 = get_node_by_alias((tile_id, 4), node_list)
+    n5 = get_node_by_alias((tile_id, 5), node_list)
+    n6 = get_node_by_alias((tile_id, 6), node_list)
 
     corners = []
     corners.append(n1)
@@ -368,18 +370,18 @@ def get_corners(tile_id):
     return corners
 
 # Return a string to be sent to the user
-def give_resources_to_players(corners, resource):
+def give_resources_to_players(corners, resource, player_list):
     msg_to_user = ""
     for n in corners:
         if not n.is_empty():
             if n.is_settlement():
-                for p in config.player_list:
+                for p in player_list:
                     if n.owns_node == p.p_color:
                         p.p_hand.append(resource) # need to know what tile this is.
                         msg_to_user += p.p_name + " got a " + resource + "\n"# need to know what tile this is.
             else:
                 msg_to_user = ""
-                for p in config.player_list:
+                for p in player_list:
                     if n.owns_node == p.p_color:
                         p.p_hand.append(resource) # need to know what tile this is.
                         p.p_hand.append(resource)
@@ -388,22 +390,22 @@ def give_resources_to_players(corners, resource):
 
 
 # Return a string to be sent to the user
-def give_resources(roll_num, initial = False):
+def give_resources(roll_num, robber, b, player_list, node_list, initial = False):
     msg_to_user = "\n"
-    for t in config.b.tiles:
+    for t in b.tiles:
         if initial:
-            corners = get_corners(t.id)
-            msg_to_user += give_resources_to_players(corners,t.resource)
+            corners = get_corners(t.id, node_list)
+            msg_to_user += give_resources_to_players(corners,t.resource, player_list)
 
         elif roll_num == 7:
             # when the robber gets rolled I still need to return
             return ""
 
         elif t.number == roll_num:
-            if t.id == config.robber.on_tile:
+            if t.id == robber.on_tile:
                 return "The robber stole your " + t.resource + "!!"
             else:
-                corners = get_corners(t.id)
-                msg_to_user += give_resources_to_players(corners,t.resource)
+                corners = get_corners(t.id, node_list)
+                msg_to_user += give_resources_to_players(corners,t.resource, player_list)
 
     return msg_to_user
