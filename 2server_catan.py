@@ -426,11 +426,8 @@ def catan_client(conn):
 
     # establish points to win
     points_to_win = declare_pts_to_win(conn)
-
+    print(str(points_to_win))
     robber = init_robber(random.randint(1, 20))
-
-
-
 
     # show_board returns the board as a string
     catan_print(conn, show_board(b, node_list, road_list, game_robber)) #show_board(b, node_list, road_list, robber)
@@ -470,7 +467,7 @@ def move_robber(conn, game_robber):
             knight_placed = True
 
 
-def play_dev_card(conn, a_player, dev_card, player_list, node_list, road_list, robber):
+def play_dev_card(conn, a_player, dev_card, player_list, node_list, road_list, game_robber):
     # Partially Implemented
     if dev_card.card_type == "Knight":
         catan_print(conn, a_player.p_name + " played a development card: ")
@@ -593,16 +590,16 @@ def robber(conn, player_list, game_robber):
 
                 if i.p_hand.count("O") >= list(discard).count("O") and i.p_hand.count("B") >= list(discard).count("B") and i.p_hand.count("S") >= list(discard).count("S") and i.p_hand.count("W") >= list(discard).count("W") and i.p_hand.count("L") >= list(discard).count("L"):
                     has_cards = True
-                    catan_print(conn, "You have those cards")
+
                 else:
                     has_cards = False
                     catan_print(conn, "You do not have those cards")
             for card in discard:
                 i.p_hand.remove(card)
-            catan_print(conn, i.p_name + " this is your new hand: ")
+            catan_print(conn, "\n" + i.p_name + " this is your new hand: \n")
             i.show_hand()
 
-    move_robber(conn, player_list, game_robber)
+    move_robber(conn, game_robber)
 
 def increment_player_turn(current_player_turn, num_players):
     return (current_player_turn + 1) % num_players
@@ -692,7 +689,7 @@ def player_turn(conn, player, points_to_win, player_list, b, node_list, road_lis
             server_build_item(conn, player, "settlement", node_list,road_list)
 
         elif selection == 4:
-            server_build_item(conn, player, "city", node_list, road_list)
+            server_build_item(conn, player, "city", node_list) #build_city(a_player,location,node_list)
 
         elif selection == 5:
             result = items.build_dev_card(player, dev_cards) #build_dev_card(a_player, dev_cards)
@@ -773,7 +770,7 @@ def player_turn(conn, player, points_to_win, player_list, b, node_list, road_lis
             play_dev_card(conn, player, player.p_dev_cards[num-1], player_list, node_list, road_list, game_robber) #play_dev_card(conn, a_player, dev_card, player_list, node_list, road_list, robber)
 
         elif selection == 12:
-            catan_print(player.show_victory_pts())
+            catan_print(conn, player.show_victory_pts())
 
         elif selection == 0:
             pass
@@ -1034,7 +1031,8 @@ if __name__ == "__main__":
 
     # create a socket object
     serversocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    port = 4444
+    port = 4445
+
 
     # bind to the port
     serversocket.bind(('', port))

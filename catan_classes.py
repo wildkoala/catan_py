@@ -112,8 +112,11 @@ class Node:
         else:
             return False
 
-    def __str__(self):
+    def __repr__(self):
         return "Node: " + str(self.id)
+
+    def __str__(self):
+        return self.owns_node
 
 
 class Dev_Card:
@@ -142,5 +145,11 @@ class Road:
         else:
             return self.owns_road
 
-    def __str__(self):
+    def __repr__(self):
         return "Road: " + str(str(self.start_n) + " " +  str(self.end_n) + " " + str(self.id))
+
+    def __str__(self):
+        if self.owns_road == "":
+            return "."
+        else:
+            return self.owns_road

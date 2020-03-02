@@ -64,23 +64,23 @@ def get_road_with_nodes(node1, node2, road_list):
                 return r
     #print("COULDN'T FIND ROAD")
 
-def connected_roads(node, node_list):
+def connected_roads(node, node_list, road_list):
     roads = [] # a list of connected roads.
     for adj in node.adj_nodes:
-        roads.append(get_road_with_nodes(node, node_list[adj-1]))
+        roads.append(get_road_with_nodes(node, node_list[adj-1], road_list))
     return roads
 
 # NEEDS TESTING FOR ADJACENT ROADS
 # takes player_color and the nodes on either side of the desired road.
-def road_is_connected(player_color, n1, n2, node_list):
+def road_is_connected(player_color, n1, n2, node_list, road_list):
     print("IN ROAD IS CONNECTED FUNCTION")
     if n1.owns_node.lower() == player_color: # lower makes sure that a city counts too.
         return True
     else: # this is the part of the code that needs to check for an adj road.
-        for r in connected_roads(n1, node_list):
+        for r in connected_roads(n1, node_list, road_list):
             if r.owns_road == player_color:
                 return True
-        for r in connected_roads(n2, node_list):
+        for r in connected_roads(n2, node_list, road_list):
             if r.owns_road == player_color:
                 return True
         return False
@@ -161,7 +161,7 @@ def build_road(a_player, n1, n2, node_list, road_list, initializing = False): # 
 
             #Checking to see if it's connected to one of your settlements or a road that the player has
             #road_is_connected checks for both.
-            if road_is_connected(a_player.p_color, n1, n2, node_list):
+            if road_is_connected(a_player.p_color, n1, n2, node_list, road_list):
                 wanted_road = get_road_with_nodes(n1, n2, road_list)
                 if wanted_road is None:
                     return -1
@@ -261,7 +261,7 @@ def build_settlement(a_player, location, node_list, initializing = False):
             return -6
 
 # partially implemented
-def build_city(a_player,location):
+def build_city(a_player,location,node_list):
     have_resources = has_needed_resources("city", a_player)
     if have_resources:
         #print("building a city")
