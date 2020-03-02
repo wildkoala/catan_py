@@ -281,12 +281,12 @@ def build_city(a_player,location):
             a_player.p_hand.remove("W")
             a_player.p_hand.remove("W")
             a_player.p_victory_pts += 1
-            return a_player.p_name + "has placed down a city!\n"
+            return a_player.p_name + " has placed down a city!\n"
 
         elif wanted_node.owns_node == a_player.p_color.upper():
-            return -1
+            return -7
         elif wanted_node.owns_node != "":
-            return -1
+            return -8
         else:
             return -1
 
@@ -306,7 +306,7 @@ def build_dev_card(a_player):
         a_player.p_hand.remove("S")
         a_player.p_hand.remove("W")
         a_player.p_dev_cards.append(config.dev_cards.pop())
-        return a_player.p_name + " bought a development card!"
+        return a_player.p_name + " bought a development card!\nDevelopment Card: " + a_player.p_dev_cards[-1].card_type
 
     else:
         return -6

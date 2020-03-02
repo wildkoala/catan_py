@@ -8,6 +8,9 @@
 #========================================================
 #BUG SECTION:
 # Selecting "Upgrade into city" functions unexpecetedly
+# The game improperly calculates a winner. Gives it out with not enough points.
+# need feedback for what kind of dev card you recieve.
+# Playing a dev card throws an error.
 #========================================================
 
 #========================================================
@@ -46,7 +49,11 @@ def handle_errors(conn, result):
         catan_print(conn, "Your road must be connected to one of your settlements\n")
     elif result == -6:
         catan_print(conn,"Not enough resources!!\n")
-    elif result == 99:
+    elif result == -7:
+        catan_print(conn,"Already a city!! Cannot upgrade\n")
+    elif result == -8:
+        catan_print(conn,"Cannot upgrade unsettled location...\n")
+    elif result == -99:
         catan_print(conn, "Invalid input... Please try again.\n")
     else:
         catan_print(conn, "That caused some unknown error, please try to not do that again :)\n")
@@ -98,7 +105,7 @@ def catan_client(conn):
         curr_player_turn = increment_player_turn(curr_player_turn, len(config.player_list))
 
     # send winner
-    catan_print(conn, "WINNER: " + config.player_list[curr_player_turn].p_name)
+    catan_print(conn, "\nWINNER: " + config.player_list[curr_player_turn].p_name + "\n")
 
     conn.close()
     print("Gracefully closed connection to client")
@@ -141,7 +148,7 @@ def play_dev_card(conn, a_player, dev_card):
         roads_placed = 0
         while roads_placed != 2:
             # have to check they built a valid road. function can return None.
-            if build_road(a_player) == None:
+            if itmes.build_road(a_player) == None:
                 continue
             else:
                 roads_placed += 1
@@ -167,7 +174,7 @@ def play_dev_card(conn, a_player, dev_card):
         catan_print(conn, dev_card.card_type)
         got_resources = False
         while got_resources == False:
-            catan_print(conn, "What resource would you like? Resource (" + str(added_cards+1) + "/2)")
+            catan_print(conn, "What resource would you like?\n> ")
             wanted_card = catan_read(conn)
             if wanted_card.upper() in "BLSWO":
                 num_taken = 0
@@ -189,6 +196,7 @@ def play_dev_card(conn, a_player, dev_card):
 
     #DONE
     elif dev_card.card_type == "Victory Point":
+        catan_print(conn, "Victory point card played!!\n") # make sure this is only adding a victory point once, not now and when they get it.
         a_player.p_victory_pts += 1 # I don't want to tell anyone else that this was played.
 
     else:
@@ -344,7 +352,7 @@ def player_turn(conn, player, points_to_win):
             elif isinstance(result, int):
                 handle_errors(conn, result)
 
-        # Partially implemented
+
         elif selection == 6:
             catan_print(conn, "Players:\n")
             counter  = 1
@@ -392,21 +400,6 @@ def player_turn(conn, player, points_to_win):
                 player.p_hand.append(want)
                 catan_print(conn, "You traded with the bank!")
 
-                '''
-                for p in config.player_list: # for some reason
-                    print("global p_name: " + p.p_name + " local player: " + player.p_name)
-
-                    if p.p_name == player.p_name:
-
-                        p.p_hand.remove(give)
-                        p.p_hand.remove(give)
-                        p.p_hand.remove(give)
-                        p.p_hand.remove(give)
-                        p.p_hand.append(want)
-                        print("You traded with the bank!")
-                    else:
-                        print("p_names didn't match?")
-                '''
             else:
                 catan_print(conn, "You don't have enough of that resource to trade...")
 
@@ -424,9 +417,10 @@ def player_turn(conn, player, points_to_win):
             if player.p_dev_cards == []:
                 catan_print(conn, "You have no development cards!!")
                 continue
-            catan_print(conn, "Please select a dev_card: ")
-            player.show_dev_cards(conn)
-            num = catan_read(conn)
+            catan_print(conn, "Please select a dev_card: \n")
+            msg_to_client = player.show_dev_cards()
+            catan_print(conn, msg_to_client)
+            num = int(catan_read(conn)) # this will break if they give something other than an int.
             play_dev_card(conn, player, player.p_dev_cards[num-1])
 
         elif selection == 0:
@@ -453,7 +447,20 @@ def server_build_item(conn, a_player, item, init = False):
 
     # There's a way to get this down into one thing. More DRY, but i can't figure it out rn.
     # PARTIALLY IMPLEMENTED
-    if item == "settlement":
+    if item == "city":
+        catan_print(conn, "Where would you like to upgrade into a city?\n> ")
+        location = catan_read(conn)
+        result = items.build_city(a_player, location)
+        if isinstance(result, int):
+            handle_errors(conn, result)
+        elif isinstance(result, str):
+            catan_print(conn, result)
+
+
+
+    # There's a way to get this down into one thing. More DRY, but i can't figure it out rn.
+    # PARTIALLY IMPLEMENTED
+    elif item == "settlement":
         if init:
             settled = False
             while settled == False:
@@ -466,14 +473,7 @@ def server_build_item(conn, a_player, item, init = False):
                     catan_print(conn, result)
                     settled = True
 
-                '''
-                if result < 0:
-                    handle_errors(conn, result)
-                    continue
-                else:
-                    catan_print(conn, a_player.p_name + " has placed a settlement!!\n")
-                    return
-                '''
+
         else:
             catan_print(conn, "Where do you want to place your settlement?\n> ")
             location = catan_read(conn)

@@ -4,8 +4,6 @@
 #  the created classes.
 
 #BUG SECTION:
-#  1. showing a tile needs to have a point at the top, not an edge
-# */
 
 #/* Requirements and Exports */
 
@@ -36,9 +34,9 @@ class Player:
             counter = 1
             msg_to_client = "Development Cards:\n"
             for card in self.p_dev_cards:
-                msg_to_client += "\t" + str(counter) + card.card_type # idk if i is gonna work like That
+                msg_to_client += "\t" + str(counter) + ". " + card.card_type + "\n"# idk if i is gonna work like That
                 counter += 1
-            return msg_to_client
+            return msg_to_client + "> "
 
     def has_resources(self, resources_str):
         resource_list = ["B","L","W","S","O"]
