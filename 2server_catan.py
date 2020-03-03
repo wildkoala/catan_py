@@ -7,10 +7,7 @@
 
 #========================================================
 #BUG SECTION:
-# Selecting "Upgrade into city" functions unexpecetedly
-# The game improperly calculates a winner. Gives it out with not enough points.
-# need feedback for what kind of dev card you recieve.
-# Playing a dev card throws an error.
+
 #========================================================
 
 #========================================================
@@ -1028,10 +1025,6 @@ def declare_pts_to_win(conn):
 
 if __name__ == "__main__":
 
-
-
-
-
     connections = [] # list of connected clients
 
     # create a socket object
@@ -1055,12 +1048,3 @@ if __name__ == "__main__":
         connections.append((client_conn, addr))
 
     serversocket.close()
-
-
-'''
-UNIVERSAL ERROR CODES:
-
--1 : Invalid location. Location does not exist on the map
--2: Occupied space. Another player is located here
--3: Adjacent Player. A player is on an adjacent object.
-'''
