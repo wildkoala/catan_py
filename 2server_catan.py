@@ -1,21 +1,14 @@
 
 #========================================================
 #FILE PURPOSE:
-<<<<<<< HEAD
-#  - The functions contained in this file will directly pertain to the game loop.
-=======
 #  - On connection, the user creates a new instance of the game!!!
 #  - The next step is to have a lobby where people can be in the same game together over the network.
->>>>>>> add_networking
 #========================================================
 
 
 #========================================================
 #BUG SECTION:
-<<<<<<< HEAD
-=======
 
->>>>>>> add_networking
 #========================================================
 
 #========================================================
@@ -457,14 +450,6 @@ def catan_client(conn):
 
 
 
-<<<<<<< HEAD
-def move_robber(conn):
-    knight_placed = False
-    while knight_placed == False:
-        catan_print(conn, "Which tile will you place the robber on?\n> ")
-        t = catan_read(conn)
-        if t == config.robber.on_tile: # can i get the board this way or does it have to be an argument? Maybe just put it in config?
-=======
 
 def move_robber(conn, game_robber):
     knight_placed = False
@@ -472,7 +457,6 @@ def move_robber(conn, game_robber):
         catan_print(conn, "Which tile will you place the robber on?\n> ")
         t = int(catan_read(conn))
         if t == game_robber.on_tile: # can i get the board this way or does it have to be an argument? Maybe just put it in config?
->>>>>>> add_networking
             catan_print(conn, "You must put the robber on a new tile.")
             continue
         else:

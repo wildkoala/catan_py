@@ -62,6 +62,34 @@ def check_largest_army(a_player):
             a_player.p_victory_pts += 2
             print(a_player.p_name + " is the first to get the largest army")
 
+def check_longest_road(a_player):
+    player_has_longest_road = False
+    counter = 0
+    index = -1
+    #First check if anybody currently has the largest army
+    for i in config.player_list:
+        if i.has_longest_road == True and i.count_road() >= 5:
+            player_has_longest_road = True
+            print(i.p_name + " has gotten the longest road")
+            index = counter
+        elif i.has_longest_road == True and i.count_road() < 5:
+            i.has_longest_road = False
+            i.p_victory_pts -= 2
+            print(i.p_name + " has lost the longest road")
+        counter += 1
+
+    if player_has_longest_road:
+        if a_player.count_road() > config.player_list[index].count_road():
+            a_player.has_longest_road = True
+            a_player.p_victory_pts += 2
+            config.player_list[index].has_largest_army = False
+            config.player_list[index].p_victory_pts -= 2
+            print(a_player.p_name + " has taken the longest road")
+    else:
+        if a_player.count_road() >= 5:
+            a_player.has_largest_army = True
+            a_player.p_victory_pts += 2
+            print(a_player.p_name + " is the first to get the largest road")
 
 def play_dev_card(a_player, dev_card):
     # Partially Implemented
@@ -331,6 +359,7 @@ def player_turn(player, points_to_win):
 
         elif selection == 2:
             items.build_road(player)
+            check_longest_road(player)
 
         elif selection == 3:
             items.build_settlement(player)
@@ -588,8 +617,9 @@ if __name__ == "__main__":
         else:
             print("Please enter an appropriate value")
 
-    for i in config.road_list:
-        print(i)
+
+    #for i in config.road_list:
+        #print(i)
     # Players Connected: _#_
 
     # assume they chose 1.

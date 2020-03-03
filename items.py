@@ -72,44 +72,75 @@ def get_road_by_id(id):
             return r
 
 def get_nodes_by_road(road):
-    n1 = config.node_list[road.start_n]
-    n2 = config.node_list[road.end_n]
+    n1 = config.node_list[road.start_n - 1]
+    n2 = config.node_list[road.end_n - 1]
     return [n1,n2]
 
+#Calculates a players road chains based on breaks in roads and placement of roads
 def merge_chain(a_player):
-    print("entered merge chain")
     if len(a_player.road_chains) >= 2:
-        print("do i reach here?")
         for i in range(0,(len(a_player.road_chains)-1)):
-            print("entered outer loop")
             complist = a_player.road_chains[i]
             for j in range(i+1,len(a_player.road_chains)):
-                print("entered inner loop")
                 complist2 = a_player.road_chains[j]
-                if are_connected_roads(complist, complist2):
-                    print(a_player.road_chains)
+                if are_connected_roads(a_player, complist, complist2):
                     a_player.road_chains.append(a_player.road_chains[i] + a_player.road_chains[j])
-                    print(a_player.road_chains)
                     a_player.road_chains.remove(complist)
-                    print(a_player.road_chains)
                     a_player.road_chains.remove(complist2)
                     return True
+    for sort_player in a_player.road_chains:
+        sort_player.sort()
     print(a_player.road_chains)
     return False
 
-def are_connected_roads(list1, list2):
+#This function will split a player's road
+def split_road(a_player, node):
+    new_list = []
+    for i in a_player.road_chains:
+        for roads in i:
+            new_list.append([roads])
+    a_player.road_chains = new_list
+    keep_merging = True
+    while keep_merging:
+        keep_merging = merge_chain(a_player)
+
+
+#Called when a player places a road. gets the end node of the road placed
+#and finds other two roads associated with that node. if both roads are owned by
+#a particular player. we know that his road has been split
+def does_split_road(a_player, placed_road):
+    nodes = get_nodes_by_road(placed_road)
+    for placed_node in nodes:
+        player = ""
+        counter = 0
+        for adj_nodes in placed_node.adj_nodes:
+            tested_road = get_road_with_nodes(placed_node, config.node_list[adj_nodes-1])
+            if player != "":
+                    counter += 1
+            else:
+                if tested_road.owns_road != a_player.p_color and tested_road.owns_road != "":
+                    player = tested_road.owns_road
+                    counter += 1
+        if counter == 2:
+            for i in config.player_list:
+                if i.p_color == player:
+                    i.split_roads.append(placed_node.id)
+                    split_road(i, placed_node)
+    pass
+    #
+
+#Currently very messy but it works fine.  the 4 for loops hurt me spiritually
+def are_connected_roads(a_player, list1, list2):
     for r1 in list1:
         for r2 in list2:
             n1 = get_nodes_by_road(get_road_by_id(r1))
             n2 = get_nodes_by_road(get_road_by_id(r2))
-    for node1 in n1:
-        for node2 in n2:
-            if node1.id == node2.id:
-                print(n1)
-                print(n2)
-                print("they connect")
-                return True
-    print("they dont connect")
+            for node1 in n1:
+                for node2 in n2:
+                    if node1.id in a_player.split_roads and node1.id == node2.id:
+                        return False
+                    if node1.id == node2.id:
+                        return True
     return False
 
 def connected_roads(node):
@@ -122,9 +153,13 @@ def connected_roads(node, node_list, road_list):
     return roads
 
 # NEEDS TESTING FOR ADJACENT ROADS
+<<<<<<< HEAD
 # takes player_color and the nodes on either side of the desired road.
 def road_is_connected(player_color, n1, n2, node_list, road_list):
     print("IN ROAD IS CONNECTED FUNCTION")
+=======
+def road_is_connected(player_color, n1, n2):
+>>>>>>> af8f842bc635c5fcab3bfa7f0b900378706a8d51
     if n1.owns_node.lower() == player_color: # lower makes sure that a city counts too.
         return True
     else: # this is the part of the code that needs to check for an adj road.
@@ -152,28 +187,12 @@ get the desired road.
 
 # Whats the point of this function?? Just use is_valid_location.
 def valid_road_location(n):
-<<<<<<< HEAD
-    try:
-        n = n.split(",")
-        n = [ int(x) for x in n]
-        n = tuple(n)
-        if not is_valid_location(n):
-            print("input not valid")
-            return False
-
-        n = get_node_by_alias(n)
-        return n
-    except:
-        print("input not valid")
-        return False
-=======
     n = convert_input_to_format(n)
     if isinstance(n, int):
         return -4
     if not is_valid_location(n):
         return False
     return True
->>>>>>> add_networking
 
 
 # maybe have is_init set to False by default (a keyword argument)
@@ -187,26 +206,6 @@ def build_road(a_player, n1, n2, node_list, road_list, initializing = False): # 
         if isinstance(alias1, int) or isinstance(alias2, int):
             return -1
 
-<<<<<<< HEAD
-                wanted_road = get_road_with_nodes(n1, n2)
-                if wanted_road is None:
-                    print("That's not a valid road segment... Try again.")
-                    continue
-                elif wanted_road.owns_road != "":
-                    print(wanted_road.owns_road + " is already on that space!!")
-                    continue
-                else:
-                    wanted_road.owns_road = a_player.p_color
-                    print(a_player.p_name + " has placed a road!!")
-
-                    a_player.road_chains.append([wanted_road.id])
-                    print(a_player.road_chains)
-                    val = merge_chain(a_player)
-                    if val:
-                        val = merge_chain(a_player)
-
-                    placed = True
-=======
         if is_valid_location(alias1) == False:
             return -1
         n1 = get_node_by_alias(alias1, node_list)
@@ -221,7 +220,6 @@ def build_road(a_player, n1, n2, node_list, road_list, initializing = False): # 
                 return -1
             elif wanted_road.owns_road != "":
                 return -2
->>>>>>> add_networking
 
             else:
                 wanted_road.owns_road = a_player.p_color
@@ -261,16 +259,10 @@ def build_road(a_player, n1, n2, node_list, road_list, initializing = False): # 
                     wanted_road.owns_road = a_player.p_color
                     a_player.p_hand.remove("B")
                     a_player.p_hand.remove("L")
-<<<<<<< HEAD
-                    placed = True
-                    a_player.road_chains.append([wanted_road.id])
-                    print(a_player.road_chains)
-                    val = merge_chain(a_player)
-                    if val:
-                        val = merge_chain(a_player)
-=======
                     return "Road added!!!"
->>>>>>> add_networking
+=======
+                    does_split_road(a_player, wanted_road)
+>>>>>>> af8f842bc635c5fcab3bfa7f0b900378706a8d51
 
             else:
                 return -5
@@ -293,50 +285,6 @@ def convert_input_to_format(given_input): # takes string, returns tuple of ints
 def build_settlement(a_player, location, node_list, initializing = False):
 
     if initializing:
-<<<<<<< HEAD
-        settled = False
-        while not settled:
-            try:
-                adj_player = False
-                n1 = input("Where do you want to place your settlement?\n> ") #1,6 for example
-                n1 = n1.split(",")
-                n1 = [ int(x) for x in n1]
-                n1 = tuple(n1)
-                if not is_valid_location(n1):
-                    continue
-
-                wanted_node = get_node_by_alias(n1)
-
-                # my wanted node is really the node in the global "node_list". Maybe I should get it's index?
-                i = config.node_list.index(wanted_node)
-
-                if config.node_list[i].owns_node != "":
-                    print(wanted_node.owns_node + " is already on that space!!")
-                    continue
-                for n in config.node_list[i].adj_nodes: #list of id's
-                    neighbor = get_node_by_id(n)
-                    neighbor_i = config.node_list.index(neighbor)
-                    #print(neighbor_i)
-                    #print(config.node_list[neighbor_i])
-                    #print(config.node_list[neighbor_i].owns_node)
-                    if config.node_list[neighbor_i].owns_node != "":
-                        print("There's a player on an adjacent space!!")
-                        adj_player = True
-                if not adj_player:
-                    config.node_list[i].owns_node = a_player.p_color
-                    print(a_player.p_name + " has placed a settlement!!")
-                    a_player.p_victory_pts += 1
-                    #Assign player to the port if needed
-                    for port in config.port_list:
-                        for node in port.location:
-                            if node.id == wanted_node.id:
-                                port.player_on = a_player.p_color
-                    settled = True
-
-            except ValueError:
-                print("The correct format is tile,corner")
-                print("EXAMPLE: 1,2")
-=======
         #try:
         # Is that a legit location on the map?
         n1 = convert_input_to_format(location)
@@ -347,7 +295,6 @@ def build_settlement(a_player, location, node_list, initializing = False):
 
         wanted_node = get_node_by_alias(n1, node_list)
         i = node_list.index(wanted_node)
->>>>>>> add_networking
 
         # Is this already taken?
         if node_list[i].owns_node != "":
@@ -398,14 +345,7 @@ def build_settlement(a_player, location, node_list, initializing = False):
             a_player.p_hand.remove("S")
             a_player.p_hand.remove("W")
             a_player.p_victory_pts += 1
-<<<<<<< HEAD
-            for port in config.port_list:
-                for node in port.location:
-                    if node.id == wanted_node.id:
-                        port.player_on = a_player.p_color
-=======
             return a_player.p_name + "has placed down a settlement!"
->>>>>>> add_networking
 
         else:
             return -6
@@ -530,13 +470,6 @@ def give_resources_to_players(corners, resource, player_list):
                         p.p_hand.append(resource) # need to know what tile this is.
                         msg_to_user += p.p_name + " got a " + resource + "\n"# need to know what tile this is.
             else:
-<<<<<<< HEAD
-                for p in config.player_list:
-                    if n.owns_node == p.p_color:
-                        p.p_hand.append(t.resource)
-                        p.p_hand.append(t.resource)
-                        print(p.p_name + " got 2 " + resource)
-=======
                 msg_to_user = ""
                 for p in player_list:
                     if n.owns_node == p.p_color:
@@ -545,7 +478,6 @@ def give_resources_to_players(corners, resource, player_list):
                         msg_to_user += p.p_name + " got 2 " + resource + "\n"# need to know what tile this is.
     return msg_to_user
 
->>>>>>> add_networking
 
 # Return a string to be sent to the user
 def give_resources(roll_num, robber, b, player_list, node_list, initial = False):

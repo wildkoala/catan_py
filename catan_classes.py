@@ -21,7 +21,8 @@ class Player:
         self.p_order = -1
         self.has_largest_army = False
         self.has_longest_road = False
-        self.road_chains = []
+        self.road_chains = [] #road ids: a list of lists that contain the chains a player has
+        self.split_roads = [] #contains the nodes that will split a players chains
 
     def present(self):
         print(self.p_name)
@@ -72,6 +73,17 @@ class Player:
 
     def has_largest_army(self):
         return self.has_largest_army
+
+    def has_longest_road(self):
+        return self.has_longest_road
+
+    def count_road(self):
+        max_road = 0
+        for i in self.road_chains:
+            if len(i) > max_road:
+                max_road = len(i)
+        return max_road
+
 
     def count_knights(self):
         counter = 0
