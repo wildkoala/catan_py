@@ -1,7 +1,8 @@
 
 #========================================================
 #FILE PURPOSE:
-#  - The functions contained in this file will directly pertain to the game loop.
+#  - On connection, the user creates a new instance of the game!!!
+#  - The next step is to have a lobby where people can be in the same game together over the network.
 #========================================================
 
 
