@@ -38,7 +38,6 @@ class Player:
             return "You have no development cards"
         else:
             counter = 1
-<<<<<<< HEAD
             for i in self.p_dev_cards:
                 print(str(counter) + "\t" + str(i)) # idk if i is gonna work like That
                 counter += 1
@@ -50,11 +49,9 @@ class Player:
             counter = 1
             for i in self.p_played_dev_cards:
                 print("\t" + str(i)) # idk if i is gonna work like That
-=======
             msg_to_client = "Development Cards:\n"
             for card in self.p_dev_cards:
                 msg_to_client += "\t" + str(counter) + ". " + card.card_type + "\n"# idk if i is gonna work like That
->>>>>>> add_networking
                 counter += 1
             return msg_to_client + "> "
 
@@ -189,7 +186,6 @@ class Road:
     def __repr__(self):
         return "Road: " + str(str(self.start_n) + " " +  str(self.end_n) + " " + str(self.id))
 
-<<<<<<< HEAD
 class Port:
     def __init__(self, type, location):
         self.type = type
@@ -201,10 +197,8 @@ class Port:
             return True
         else:
             return False
-=======
     def __str__(self):
         if self.owns_road == "":
             return "."
         else:
             return self.owns_road
->>>>>>> add_networking

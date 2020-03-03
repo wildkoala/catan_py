@@ -220,14 +220,6 @@ def build_road(a_player, n1, n2, node_list, road_list, initializing = False): # 
             return -1
         n1 = get_node_by_alias(alias1, node_list)
 
-                    a_player.road_chains.append([wanted_road.id])
-                    val = merge_chain(a_player)
-                    if val:
-                        val = merge_chain(a_player)
-                    does_split_road(a_player, wanted_road)
-                    if does_road_branch(a_player, wanted_road):
-                        print("You idiot branch here")
-
         if n1.owns_node == a_player.p_color or n2.owns_node == a_player.p_color:
             wanted_road = get_road_with_nodes(n1, n2, road_list)
             if wanted_road is None:
@@ -238,6 +230,14 @@ def build_road(a_player, n1, n2, node_list, road_list, initializing = False): # 
             else:
                 wanted_road.owns_road = a_player.p_color
                 return "Road added!!!"
+
+                a_player.road_chains.append([wanted_road.id])
+                val = merge_chain(a_player)
+                if val:
+                    val = merge_chain(a_player)
+                does_split_road(a_player, wanted_road)
+                if does_road_branch(a_player, wanted_road):
+                    print("You idiot branch here")
 
         else:
             return -5
@@ -274,9 +274,7 @@ def build_road(a_player, n1, n2, node_list, road_list, initializing = False): # 
                     a_player.p_hand.remove("B")
                     a_player.p_hand.remove("L")
                     return "Road added!!!"
-=======
                     does_split_road(a_player, wanted_road)
->>>>>>> af8f842bc635c5fcab3bfa7f0b900378706a8d51
 
                     branch_this_road = does_road_branch(a_player, wanted_road)
                     if branch_this_road != None:
