@@ -471,14 +471,14 @@ def play_dev_card(conn, a_player, dev_card, player_list, node_list, road_list, g
     # Partially Implemented
     if dev_card.card_type == "Knight":
         catan_print(conn, a_player.p_name + " played a development card: ")
-        catan_print(conn, dev_card.card_type) # this might break, need to pass a string
+        catan_print(conn, dev_card.card_type + "\n")
         move_robber(conn, game_robber)
         # steal a card from a player.
 
     #DONE
     elif dev_card.card_type == "Road Building":
         catan_print(conn, a_player.p_name + " played a development card: ")
-        catan_print(conn, dev_card.card_type)
+        catan_print(conn, dev_card.card_type + "\n")
         a_player.p_hand.append("B")
         a_player.p_hand.append("L")
         a_player.p_hand.append("B")
@@ -501,11 +501,11 @@ def play_dev_card(conn, a_player, dev_card, player_list, node_list, road_list, g
     #DONE
     elif dev_card.card_type == "Year of Plenty":
         catan_print(conn, a_player.p_name + " played a development card: ")
-        catan_print(conn, dev_card.card_type)
+        catan_print(conn, dev_card.card_type + "\n")
 
         added_cards = 0
         while added_cards != 2: # even if this loo
-            catan_print(conn, "What resource would you like? Resource (" + str(added_cards+1) + "/2)")
+            catan_print(conn, "What resource would you like? Resource (" + str(added_cards+1) + "/2)\n> ")
             wanted_card = catan_read(conn)
             if wanted_card.upper() in "BLSWO":
                     a_player.p_hand.append(wanted_card.upper())
@@ -516,7 +516,7 @@ def play_dev_card(conn, a_player, dev_card, player_list, node_list, road_list, g
     #DONE
     elif dev_card.card_type == "Monopoly":
         catan_print(conn, a_player.p_name + " played a development card: ")
-        catan_print(conn, dev_card.card_type)
+        catan_print(conn, dev_card.card_type + "\n")
         got_resources = False
         while got_resources == False:
             catan_print(conn, "What resource would you like?\n> ")
@@ -689,7 +689,7 @@ def player_turn(conn, player, points_to_win, player_list, b, node_list, road_lis
             server_build_item(conn, player, "settlement", node_list,road_list)
 
         elif selection == 4:
-            server_build_item(conn, player, "city", node_list) #build_city(a_player,location,node_list)
+            server_build_item(conn, player, "city", node_list, road_list) #build_city(a_player,location,node_list)
 
         elif selection == 5:
             result = items.build_dev_card(player, dev_cards) #build_dev_card(a_player, dev_cards)
@@ -877,7 +877,7 @@ def place_initial(conn, player_list, b, node_list, road_list, game_robber):
         # FIRST SETTLEMENT
         server_build_item(conn, p, "settlement", node_list, road_list, init=True)
         catan_print(conn, show_board(b, node_list, road_list, game_robber))
-        p.p_victory_pts += 1
+        #p.p_victory_pts += 1 # Victory points are added in the build function!!
 
 
         # FIRST ROAD
@@ -892,7 +892,7 @@ def place_initial(conn, player_list, b, node_list, road_list, game_robber):
         catan_print(conn, "\n" + p.p_name + " is placing their second settlement\n")
         server_build_item(conn, p, "settlement", node_list, road_list, init=True)
         catan_print(conn, show_board(b, node_list, road_list, game_robber))
-        p.p_victory_pts += 1
+        #p.p_victory_pts += 1 # Victory points are added in the build function!!
 
         # SECOND ROAD
         catan_print(conn, "\n" + p.p_name.strip() + " is placing their second road\n")
@@ -1027,6 +1027,11 @@ def declare_pts_to_win(conn):
 
 
 if __name__ == "__main__":
+
+
+
+
+
     connections = [] # list of connected clients
 
     # create a socket object
