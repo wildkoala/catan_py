@@ -13,7 +13,6 @@
 # Requirements and Exports
 #========================================================
 import catan_classes
-import config
 import itertools
 
 #========================================================
@@ -65,7 +64,7 @@ def get_road_with_nodes(node1, node2, road_list):
                 return r
     #print("COULDN'T FIND ROAD")
 
-<<<<<<< HEAD
+
 def get_road_by_id(id):
     for r in config.road_list:
         if id == r.id:
@@ -143,23 +142,18 @@ def are_connected_roads(a_player, list1, list2):
                         return True
     return False
 
-def connected_roads(node):
-=======
+
 def connected_roads(node, node_list, road_list):
->>>>>>> add_networking
     roads = [] # a list of connected roads.
     for adj in node.adj_nodes:
         roads.append(get_road_with_nodes(node, node_list[adj-1], road_list))
     return roads
 
 # NEEDS TESTING FOR ADJACENT ROADS
-<<<<<<< HEAD
+
 # takes player_color and the nodes on either side of the desired road.
 def road_is_connected(player_color, n1, n2, node_list, road_list):
     print("IN ROAD IS CONNECTED FUNCTION")
-=======
-def road_is_connected(player_color, n1, n2):
->>>>>>> af8f842bc635c5fcab3bfa7f0b900378706a8d51
     if n1.owns_node.lower() == player_color: # lower makes sure that a city counts too.
         return True
     else: # this is the part of the code that needs to check for an adj road.
@@ -260,10 +254,7 @@ def build_road(a_player, n1, n2, node_list, road_list, initializing = False): # 
                     a_player.p_hand.remove("B")
                     a_player.p_hand.remove("L")
                     return "Road added!!!"
-=======
                     does_split_road(a_player, wanted_road)
->>>>>>> af8f842bc635c5fcab3bfa7f0b900378706a8d51
-
             else:
                 return -5
         else:
@@ -480,22 +471,22 @@ def give_resources_to_players(corners, resource, player_list):
 
 
 # Return a string to be sent to the user
-def give_resources(roll_num, robber, b, player_list, node_list, initial = False):
+def give_resources(roll_num, a_game, initial = False): #give_resources(0, game, True)
     msg_to_user = "\n"
-    for t in b.tiles:
+    for t in a_game.b.tiles:
         if initial:
-            corners = get_corners(t.id, node_list)
-            msg_to_user += give_resources_to_players(corners,t.resource, player_list)
+            corners = get_corners(t.id, a_game.node_list)
+            msg_to_user += give_resources_to_players(corners,t.resource, a_game.player_list)
 
         elif roll_num == 7:
             # when the robber gets rolled I still need to return
             return ""
 
         elif t.number == roll_num:
-            if t.id == robber.on_tile:
+            if t.id == a_game.robber.on_tile:
                 return "The robber stole your " + t.resource + "!!"
             else:
-                corners = get_corners(t.id, node_list)
-                msg_to_user += give_resources_to_players(corners,t.resource, player_list)
+                corners = get_corners(t.id, a_game.node_list)
+                msg_to_user += give_resources_to_players(corners,t.resource, a_game.player_list)
 
     return msg_to_user
