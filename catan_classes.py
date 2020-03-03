@@ -4,8 +4,6 @@
 #  the created classes.
 
 #BUG SECTION:
-#  1. showing a tile needs to have a point at the top, not an edge
-# */
 
 #/* Requirements and Exports */
 
@@ -30,15 +28,16 @@ class Player:
 
     def show_hand(self):
         if len(self.p_hand) == 0:
-            print("You have no cards")
+            return "You have no cards"
         else:
-            print(''.join(self.p_hand))
+            return ''.join(self.p_hand)
 
     def show_dev_cards(self):
         if len(self.p_dev_cards) == 0:
-            print("You have no development cards")
+            return "You have no development cards"
         else:
             counter = 1
+<<<<<<< HEAD
             for i in self.p_dev_cards:
                 print(str(counter) + "\t" + str(i)) # idk if i is gonna work like That
                 counter += 1
@@ -50,7 +49,13 @@ class Player:
             counter = 1
             for i in self.p_played_dev_cards:
                 print("\t" + str(i)) # idk if i is gonna work like That
+=======
+            msg_to_client = "Development Cards:\n"
+            for card in self.p_dev_cards:
+                msg_to_client += "\t" + str(counter) + ". " + card.card_type + "\n"# idk if i is gonna work like That
+>>>>>>> add_networking
                 counter += 1
+            return msg_to_client + "> "
 
     def has_resources(self, resources_str):
         resource_list = ["B","L","W","S","O"]
@@ -63,7 +68,7 @@ class Player:
 
     #returns how many victory points a player has
     def show_victory_pts(self):
-        return self.p_victory_pts
+        return str(self.p_victory_pts)
 
     def has_largest_army(self):
         return self.has_largest_army
@@ -135,8 +140,11 @@ class Node:
         else:
             return False
 
-    def __str__(self):
+    def __repr__(self):
         return "Node: " + str(self.id)
+
+    def __str__(self):
+        return self.owns_node
 
 
 class Dev_Card:
@@ -166,9 +174,10 @@ class Road:
         else:
             return self.owns_road
 
-    def __str__(self):
+    def __repr__(self):
         return "Road: " + str(str(self.start_n) + " " +  str(self.end_n) + " " + str(self.id))
 
+<<<<<<< HEAD
 class Port:
     def __init__(self, type, location):
         self.type = type
@@ -180,3 +189,10 @@ class Port:
             return True
         else:
             return False
+=======
+    def __str__(self):
+        if self.owns_road == "":
+            return "."
+        else:
+            return self.owns_road
+>>>>>>> add_networking
