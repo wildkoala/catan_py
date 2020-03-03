@@ -82,6 +82,26 @@ def get_nodes_by_road(road):
     n2 = config.node_list[road.end_n - 1]
     return [n1,n2]
 
+#I need to somehow check to see if a player branches a road rather than extends it
+#Currently any roads attached and not broken will be merged so length of 2 roads
+#will be considered as 3 sometimes etc.
+
+#This returns true if I need to branch a players roads
+#Now i need to create 3 lists that are unmergable
+def does_road_branch(a_player, placed_road):
+    nodes = get_nodes_by_road(placed_road)
+    for placed_node in nodes:
+        counter = 0
+        for adj_nodes in placed_node.adj_nodes:
+            tested_road = get_road_with_nodes(placed_node, config.node_list[adj_nodes-1])
+            if a_player.p_color == tested_road.owns_road:
+                counter += 1
+        if counter == 3:
+            print("I need to branch the player road list here")
+            print(str(placed_node.id) + " is the node where i must branch")
+            return get_node_by_alias(placed_node.id)
+    return None
+
 #Calculates a players road chains based on breaks in roads and placement of roads
 def merge_chain(a_player):
     if len(a_player.road_chains) >= 2:
@@ -94,8 +114,6 @@ def merge_chain(a_player):
                     a_player.road_chains.remove(complist)
                     a_player.road_chains.remove(complist2)
                     return True
-    for sort_player in a_player.road_chains:
-        sort_player.sort()
     print(a_player.road_chains)
     return False
 
@@ -233,6 +251,8 @@ def build_road(a_player, initializing = False): # this is not working for having
                     if val:
                         val = merge_chain(a_player)
                     does_split_road(a_player, wanted_road)
+                    if does_road_branch(a_player, wanted_road):
+                        print("You idiot branch here")
 
                     placed = True
 
@@ -274,6 +294,10 @@ def build_road(a_player, initializing = False): # this is not working for having
                     if val:
                         val = merge_chain(a_player)
                     does_split_road(a_player, wanted_road)
+
+                    branch_this_road = does_road_branch(a_player, wanted_road)
+                    if branch_this_road != None:
+                        print("You idiot branch here")
 
             else:
                 print("Your road must be connected to one of your settlements or roads")
