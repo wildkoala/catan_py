@@ -178,7 +178,7 @@ def init_roads(list_of_nodes):
 
 
 
-
+# returns string that i'll need to send to the clients.
 def show_board():
 	to_print = '''
                               >-----<
