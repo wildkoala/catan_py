@@ -61,10 +61,7 @@ else:
 #========================================================
 # Requirements and Exports
 #========================================================
-import random
 import catan_classes
-import items
-import math
 import socket
 import threading
 #this is a test
@@ -97,7 +94,7 @@ Number of players in the lobby: {}
                 print(result)
                 # okay, if you've got something from the game master, then start the game
                 # right now this will only send the game to the game master, and that's okay.
-                game_thread = threading.Thread(target=multiplayer_client, args=(conn,game_lobbies[i]))
+                game_thread = threading.Thread(target=catan_client, args=(game_lobbies[i],))
                 game_thread.start()
             else:
                 client_msg = "You're in a lobby!! Wait on the Game Owner to start the game...\n"
@@ -114,7 +111,7 @@ Number of players in the lobby: {}
 
     elif result == "n":
         conn.send("You're playing a local game!\n".encode('ascii'))
-        game_thread = threading.Thread(target=local_catan_client, args=(conn,))
+        game_thread = threading.Thread(target=catan_client, args=(conn,))
         single_player_games.append(conn)
         game_thread.start()
         return # returning here should kill the mode_thread... that's the behavior i want.
@@ -123,16 +120,11 @@ Number of players in the lobby: {}
         # Error handling, you have to put in y/n
         pass
 
-def local_catan_client(conn):
-    # create an instance of the game
-    game = catan_classes.Game(conn)
-    conn.close()
-    print("Gracefully closed connection to client")
 
-def multiplayer_client(conns):
+def catan_client(conns):
     # create an instance of the game
     # for right now I'm only passing one connection to Game, because I think that's all it can take rn.
-    game = catan_classes.Game(conns[0])
+    game = catan_classes.Game(conns) # pass a list of sockets.
     for conn in conns:
         conn.close()
     print("Gracefully closed connection to a lobby of clients")
@@ -144,7 +136,7 @@ if __name__ == "__main__":
 
     # Create a socket on the server
     serversocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    serversocket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR,1)
+    serversocket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR,1) #REMOVE THIS OPTION BEFORE DEPLOYING.
     port = 4444
 
     # Bind to the port
