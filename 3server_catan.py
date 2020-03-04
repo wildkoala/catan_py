@@ -85,10 +85,31 @@ def choose_mode(conn):
         # if there are less than 4 people in the game, put them in a lobby.
         if len(game_lobbies[i]) < 4:
             game_lobbies[i].append(conn)
+            print("[+] Added a connected player to an existing lobby")
+            if len(game_lobbies[i]) == 1:
+                given_str = '''You're the game owner.
+Please wait for other players, then press Enter to begin the game.
+Number of players in the lobby: {}
+'''.format(len(game_lobbies[i]))
+                conn.send(given_str.encode('ascii'))
+                result = conn.recv(1024).decode('ascii').strip()
+                print(result)
+                # okay, if you've got something from the game master, then start the game
+                # right now this will only send the game to the game master, and that's okay.
+                game_thread = threading.Thread(target=multiplayer_client, args=(conn,game_lobbies[i]))
+                game_thread.start()
+            else:
+                client_msg = "You're in a lobby!! Wait on the Game Owner to start the game...\n"
+                conn.send(client_msg.encode('ascii'))
+
+                for client in game_lobbies[i]:
+                    given_str = "Number of players in the lobby: {}\n".format(len(game_lobbies[i]))
+                    client.send(given_str.encode('ascii'))
 
         # Otherwise make a new one.
         else:
-            game_lobbies.append([conn]) # is this correct syntax?
+            game_lobbies.append([conn])
+            print("[+] Created new lobby with a player in it.")
 
     elif result == "n":
         conn.send("You're playing a local game!\n".encode('ascii'))
@@ -107,7 +128,13 @@ def local_catan_client(conn):
     conn.close()
     print("Gracefully closed connection to client")
 
-
+def multiplayer_client(conns):
+    # create an instance of the game
+    # for right now I'm only passing one connection to Game, because I think that's all it can take rn.
+    game = catan_classes.Game(conns[0])
+    for conn in conns:
+        conn.close()
+    print("Gracefully closed connection to a lobby of clients")
 
 
 if __name__ == "__main__":

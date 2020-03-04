@@ -100,7 +100,7 @@ class Game:
             1. Play Catan
             2. Explain Rules
             3. Credits
-    > '''
+> '''
         return template
 
     def show_board(self):
