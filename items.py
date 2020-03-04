@@ -286,6 +286,8 @@ def build_settlement(a_player, location, node_list, initializing = False):
         wanted_node = get_node_by_alias(n1, node_list)
         i = node_list.index(wanted_node)
 
+
+
         # Is this already taken?
         if node_list[i].owns_node != "":
             return -2

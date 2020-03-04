@@ -52,7 +52,7 @@ class Game:
         s = conn.recv(size).decode('ascii').strip()
         return s
 
-    def next_player(): # call this next_player... old name is increment_player_turn
+    def next_player(self): # need to get the index of the current player before going to the next one.
         self.curr_player = self.player_list[(self.curr_player + 1) % len(self.player_list)]
 
     #===============================================
@@ -520,31 +520,35 @@ Would you like to play online or locally?
         except ValueError:
             self.catan_print(conn, "You must provide an integer")
 
-    def place_initial(self, conns, current_p):
-        for p in self.player_list:
-            self.catan_sendall(conns, "\n" + p.p_name.strip() + " is placing their first settlement\n")
+    def place_initial(self, conns):
+        i = 0
+        while i < len(conns):
+            self.catan_sendall(conns, "\n" + self.curr_player.p_name.strip() + " is placing their first settlement\n")
 
             # FIRST SETTLEMENT
-            self.server_build_item(current_p.conn, "settlement", init=True)
+            self.server_build_item(self.curr_player.conn, "settlement", True)
             self.catan_sendall(conns, self.show_board())
 
 
             # FIRST ROAD
-            self.catan_sendall(conns, "\n" + p.p_name.strip() + " is placing their first road\n")
-            self.server_build_item(current_p.conn, "road", init=True)
+            self.catan_sendall(conns, "\n" + self.curr_player.p_name.strip() + " is placing their first road\n")
+            self.server_build_item(self.curr_player.conn, "road", True)
             self.catan_sendall(conns, self.show_board())
+
+            i += 1
+            self.next_player()
 
 
         for p in reversed(self.player_list):
 
             # SECOND SETTLEMENT
-            self.catan_sendall(conns, "\n" + p.p_name + " is placing their second settlement\n")
-            self.server_build_item(current_p.conn, "settlement", init=True)
+            self.catan_sendall(conns, "\n" + self.curr_player.p_name + " is placing their second settlement\n")
+            self.server_build_item(self.curr_player.conn, "settlement", True)
             self.catan_sendall(conns, self.show_board())
 
             # SECOND ROAD
-            self.catan_sendall(conns, "\n" + p.p_name.strip() + " is placing their second road\n")
-            self.server_build_item(current_p.conn, "road", init=True)
+            self.catan_sendall(conns, "\n" + self.curr_player.p_name.strip() + " is placing their second road\n")
+            self.server_build_item(self.curr_player.conn, "road", True)
             self.catan_sendall(conns, self.show_board())
 
         self.catan_sendall(conns, items.give_resources(0, self, True)) # will this work for passing a board to a function from items.py?
@@ -611,14 +615,14 @@ Would you like to play online or locally?
         msg = self.show_board()
         for conn in conns:
             self.catan_print(conn, msg)
-            self.place_initial(conns, self.curr_player)
+            self.place_initial(conns) # place initial is requiring resources....
 
         winner = False
         while winner != True:
             winner = self.player_turn(conns) # now it takes a list of sockets.
             if winner:
                 break
-            self.next_player()
+            self.ayer()
         self.catan_print(conn, "\nWINNER: " + self.curr_player.p_name + "\n")
 
     def player_turn(self, conns):
@@ -768,28 +772,28 @@ Would you like to play online or locally?
     # SHITTY FUNCTIONS - These are ass, I'm so sorry. Don't read these. Just let them do their job for now.
     #====================================================
     # this is the worst function in the history of functions, probably ever.
-    def handle_errors(conn, result):
+    def handle_errors(self, conn, result):
         if result == -1:
-            catan_print(conn, "That's an invalid location\n")
+            self.catan_print(conn, "That's an invalid location\n")
         elif result == -2:
-            catan_print(conn, "Someone is already on that space!!\n")
+            self.catan_print(conn, "Someone is already on that space!!\n")
         elif result == -3:
-            catan_print(conn, "Someone is on an adjacent space!!\n")
+            self.catan_print(conn, "Someone is on an adjacent space!!\n")
         elif result == -4:
-            catan_print(conn, "The correct format is tile,corner\n")
-            catan_print(conn, "EXAMPLE: 1,2\n")
+            self.catan_print(conn, "The correct format is tile,corner\n")
+            self.catan_print(conn, "EXAMPLE: 1,2\n")
         elif result == -5:
-            catan_print(conn, "Your road must be connected to one of your settlements\n")
+            self.catan_print(conn, "Your road must be connected to one of your settlements\n")
         elif result == -6:
-            catan_print(conn,"Not enough resources!!\n")
+            self.catan_print(conn,"Not enough resources!!\n")
         elif result == -7:
-            catan_print(conn,"Already a city!! Cannot upgrade\n")
+            self.catan_print(conn,"Already a city!! Cannot upgrade\n")
         elif result == -8:
-            catan_print(conn,"Cannot upgrade unsettled location...\n")
+            self.catan_print(conn,"Cannot upgrade unsettled location...\n")
         elif result == -99:
-            catan_print(conn, "Invalid input... Please try again.\n")
+            self.catan_print(conn, "Invalid input... Please try again.\n")
         else:
-            catan_print(conn, "That caused some unknown error, please try to not do that again :)\n")
+            self.catan_print(conn, "That caused some unknown error, please try to not do that again :)\n")
 
     #this is the second worst function in the history of functions, probably ever.
     def server_build_item(self, conn, item, init = False):
@@ -814,6 +818,7 @@ Would you like to play online or locally?
                     self.catan_print(conn, "Where do you want to place your settlement?\n" + self.curr_player.p_name + "> ")
                     location = self.catan_read(conn)
                     result = items.build_settlement(self.curr_player, location, self.node_list, True)
+                    print(result)
                     if isinstance(result, int):
                         self.handle_errors(conn, result)
                     elif isinstance(result, str):
@@ -830,7 +835,6 @@ Would you like to play online or locally?
                 elif isinstance(result, str):
                     self.catan_print(conn, result)
 
-        #server_build_item(conn, p, "road", node_list, init=True)
         elif item == "road": # not yet written for anything other than initial setup
             if init:
                 first_road = False
@@ -839,7 +843,7 @@ Would you like to play online or locally?
                     n1 = self.catan_read(conn)
                     self.catan_print(conn, "Where do you want to end your road?\n> ")
                     n2 = self.catan_read(conn)
-                    result = items.build_road(self.curr_player, n1, n2, self, True) #can I pass a game like this?
+                    result = items.build_road(self.curr_player, n1, n2, self.node_list, self.road_list, True) # just pass the parts and let the function work
                     if isinstance(result, int):
                         self.handle_errors(conn, result)
                     elif isinstance(result, str):
@@ -850,7 +854,7 @@ Would you like to play online or locally?
                 n1 = self.catan_read(conn)
                 self.catan_print(conn, "Where do you want to end your road?\n> ")
                 n2 = self.catan_read(conn)
-                result = items.build_road(self.curr_player, n1, n2, self)
+                result = items.build_road(self.curr_player, n1, n2, self.node_list, self.road_list)
                 if isinstance(result, int):
                     self.handle_errors(conn, result)
                 elif isinstance(result, str):
