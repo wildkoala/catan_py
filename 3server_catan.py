@@ -66,19 +66,47 @@ import catan_classes
 import items
 import math
 import socket
-from _thread import *
+import threading
 
 #========================================================
 # FUNCTION DECLARATIONS
 #========================================================
+single_player_games = []
+game_lobbies = [[]] # list of lists, where each list represents a lobby that contains the connections for a particular game.
+def choose_mode(conn):
+    global single_player_games
+    global game_lobbies
 
+    given_str = "Welcome to Catan!\nPlay against others Online? (y/n)\n> "
+    conn.send(given_str.encode('ascii'))
+    result = conn.recv(1024).decode('ascii').strip()
+    i = len(game_lobbies)-1
+    if result == "y":
+        # if there are less than 4 people in the game, put them in a lobby.
+        if len(game_lobbies[i]) < 4:
+            game_lobbies[i].append(conn)
 
+        # Otherwise make a new one.
+        else:
+            game_lobbies.append([conn]) # is this correct syntax?
 
-def catan_client(conn):
+    elif result == "n":
+        conn.send("You're playing a local game!\n".encode('ascii'))
+        game_thread = threading.Thread(target=local_catan_client, args=(conn,))
+        single_player_games.append(conn)
+        game_thread.start()
+        return # returning here should kill the mode_thread... that's the behavior i want.
+
+    else:
+        # Error handling, you have to put in y/n
+        pass
+
+def local_catan_client(conn):
     # create an instance of the game
     game = catan_classes.Game(conn)
     conn.close()
     print("Gracefully closed connection to client")
+
 
 
 
@@ -108,7 +136,8 @@ if __name__ == "__main__":
         print("Got a connection from %s" % str(addr))
 
         # Create a thread so you can serve multiple people.
-        thread_id = start_new_thread(catan_client, (client_conn,))
+        mode_thread = threading.Thread(target=choose_mode, args=(client_conn,))
+        mode_thread.start()
 
         # Keeping track of my connections.
         connections.append((client_conn, addr))

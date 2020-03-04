@@ -13,7 +13,6 @@
 # Requirements and Exports
 #========================================================
 import catan_classes
-import itertools
 
 #========================================================
 # FUNCTION DEFINITIONS

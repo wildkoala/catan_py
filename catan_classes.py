@@ -9,7 +9,7 @@
 #===============================================
 
 #===============================================
-
+import random
 
 # do the things in the init method execute in order? Because if they do this will work like a charm.
 class Game:
@@ -17,16 +17,16 @@ class Game:
         #self.player_conns = player_conns # need this for multiplayer?
         #self.conns = conns
 
-        self.opening_menu(conn)
-        self.player_list = self.init_players(conn)
+        self.first_game_menu(conn)
         self.b = self.init_board()
         self.node_list = self.init_nodes()
         self.road_list = self.init_roads()
         self.game_robber = self.init_robber()
         self.dev_cards = self.init_dev_cards()
+        self.player_list = self.init_players(conn)
         self.pts_to_win = self.declare_pts_to_win(conn)
         self.curr_player = self.player_list[0]
-        self.play()
+        self.play(conn) # we'll want this to take a list of conns eventually.
 
     #===============================================
     #COMMUNICATION FUNCTIONS - Functions for communicating between clients and server
@@ -152,7 +152,7 @@ class Game:
     							  '''.format(str(self.b.tiles[2].number).ljust(2, ' '),str(self.b.tiles[2].resource),str(self.b.tiles[2].id).ljust(2, ' '),str(self.b.tiles[1].number).ljust(2, ' '),
     							  str(self.b.tiles[6].number).ljust(2, ' '),str(self.b.tiles[1].resource),str(self.b.tiles[6].resource),str(self.b.tiles[1].id).ljust(2, ' '), str(self.b.tiles[6].id).ljust(2, ' ')
     							  ,str(self.b.tiles[0].number).ljust(2, ' '),str(self.b.tiles[5].number).ljust(2, ' '),str(self.b.tiles[11].number).ljust(2, ' '), str(self.b.tiles[0].resource),
-    							  str(self.b.tiles[5].resource),str(b.tiles[11].resource),str(self.b.tiles[0].id).ljust(2, ' '),str(self.b.tiles[5].id).ljust(2, ' '),str(self.b.tiles[11].id).ljust(2, ' '),
+    							  str(self.b.tiles[5].resource),str(self.b.tiles[11].resource),str(self.b.tiles[0].id).ljust(2, ' '),str(self.b.tiles[5].id).ljust(2, ' '),str(self.b.tiles[11].id).ljust(2, ' '),
     							  str(self.b.tiles[4].number).ljust(2, ' '),str(self.b.tiles[10].number).ljust(2, ' '),str(self.b.tiles[4].resource),str(self.b.tiles[10].resource),
     							  str(self.b.tiles[4].id).ljust(2, ' '),str(self.b.tiles[10].id).ljust(2, ' '),str(self.b.tiles[3].number).ljust(2, ' '),str(self.b.tiles[9].number).ljust(2, ' '),str(self.b.tiles[15].number).ljust(2, ' '),
     							  str(self.b.tiles[3].resource),str(self.b.tiles[9].resource),str(self.b.tiles[15].resource),str(self.b.tiles[3].id).ljust(2, ' '),
@@ -234,6 +234,15 @@ class Game:
             0. End Turn
     '''
         )
+    def online_or_local(conn):
+        self.catan_print(conn,
+    '''
+Would you like to play online or locally?
+
+            1. Online
+            2. Local
+    '''
+        )
 
     #===============================================
     # INITIALIZATION FUNCTIONS - Setting up an instance of the game
@@ -256,7 +265,7 @@ class Game:
                 p_color =  color_options.pop(self.player_choose_color(conn, color_options)-1)
                 self.catan_print(conn, "You selected: " + p_color + "\n")
                 color = p_color[0].lower()
-                player_list.append(catan_classes.Player(name.strip(),color))
+                player_list.append(Player(name.strip(),color))
                 i+=1
 
             return player_list
@@ -271,19 +280,19 @@ class Game:
 
 
     def player_choose_color(self, conn, color_options):
-            catan_print(conn, "Which color will you be?\n")
+            self.catan_print(conn, "Which color will you be?\n")
             i = 1
             for c in color_options:
                 color_format = "\t" + str(i) + ". " + c + "\n"
-                catan_print(conn, color_format)
+                self.catan_print(conn, color_format)
                 i += 1
             try:
-                catan_print(conn, "Chose the number of the color you'd like.\n> ")
-                choice = int(catan_read(conn))
+                self.catan_print(conn, "Chose the number of the color you'd like.\n> ")
+                choice = int(self.catan_read(conn))
                 return choice
 
             except ValueError:
-                catan_print(conn, "You must enter an integer.") # this exception handling might not work...
+                self.catan_print(conn, "You must enter an integer.") # this exception handling might not work...
                 choice = self.player_choose_color(conn, color_options) # I don't want to call this recursively, but im hacking it together.
                 return choice
 
@@ -311,10 +320,10 @@ class Game:
         return rand_tile
 
     def init_board(self):
-        tiles = []
+        b = Board()
         for i in range(1,20):
-            tiles.append(self.random_tile(i))
-        return tiles
+            b.tiles.append(self.random_tile(i))
+        return b
 
     def create_nodes(self):
     	nodes = []
@@ -444,9 +453,9 @@ class Game:
     		for thing in n.adj_nodes:
     			if n.id < thing:
     				new_road = Road(n.id,thing,id)
-    				self.road_list.append(new_road)
+    				road_list.append(new_road)
     				id+=1
-    	return roads
+    	return road_list
 
     def init_dev_cards(self):
         dev_cards = []
@@ -483,30 +492,30 @@ class Game:
 
     def place_initial(self, conn):
         for p in self.player_list:
-            catan_print(conn, "\n" + p.p_name.strip() + " is placing their first settlement\n")
+            self.catan_print(conn, "\n" + p.p_name.strip() + " is placing their first settlement\n")
 
             # FIRST SETTLEMENT
-            server_build_item(conn, p, "settlement", self.node_list, self.road_list, init=True)
-            catan_print(conn, a_game.show_board())
+            self.server_build_item(conn, "settlement", init=True)
+            self.catan_print(conn, self.show_board())
 
 
             # FIRST ROAD
-            catan_print(conn, "\n" + p.p_name.strip() + " is placing their first road\n")
-            server_build_item(conn, p, "road", self.node_list, self.road_list, init=True)
-            catan_print(conn, a_game.show_board())
+            self.catan_print(conn, "\n" + p.p_name.strip() + " is placing their first road\n")
+            self.server_build_item(conn, "road", init=True)
+            self.catan_print(conn, self.show_board())
 
 
-        for p in reversed(player_list):
+        for p in reversed(self.player_list):
 
             # SECOND SETTLEMENT
-            catan_print(conn, "\n" + p.p_name + " is placing their second settlement\n")
-            server_build_item(conn, p, "settlement", self.node_list, self.road_list, init=True)
-            catan_print(conn, a_game.show_board())
+            self.catan_print(conn, "\n" + p.p_name + " is placing their second settlement\n")
+            self.server_build_item(conn, "settlement", init=True)
+            self.catan_print(conn, self.show_board())
 
             # SECOND ROAD
-            catan_print(conn, "\n" + p.p_name.strip() + " is placing their second road\n")
-            server_build_item(conn, p, "road", self.node_list, self.road_list, init=True)
-            catan_print(conn, a_game.show_board())
+            self.catan_print(conn, "\n" + p.p_name.strip() + " is placing their second road\n")
+            self.server_build_item(conn, "road", init=True)
+            self.catan_print(conn, self.show_board())
 
         self.catan_print(items.give_resources(0, self, True)) # will this work for passing a board to a function from items.py?
 
@@ -549,7 +558,7 @@ class Game:
     # NORMAL TURN FUNCTIONS
     #================================================
 
-    def opening_menu(self, conn):
+    def first_game_menu(self, conn):
         start_game = False
         while not start_game:
             msg = self.display_main_menu()
@@ -567,7 +576,7 @@ class Game:
             else:
                 self.catan_print(conn, "Please enter an appropriate value")
 
-    def play(self):
+    def play(self,conn):
         # okay, they want to play a game now. Initalize a locally played game
         msg = self.show_board()
         self.catan_print(conn, msg)
@@ -611,14 +620,14 @@ class Game:
                 self.catan_print(conn, self.curr_player.show_hand())
 
             elif selection == 2:
-                server_build_item(conn, self.curr_player, "road", self.node_list, self.road_list) #BUG: WHAT TO DO ABOT SEVER_BUILD ITEM?
+                server_build_item(conn, "road") #BUG: WHAT TO DO ABOT SEVER_BUILD ITEM?
 
 
             elif selection == 3:
-                server_build_item(conn, self.curr_player, "settlement", self.node_list, self.road_list)
+                server_build_item(conn, "settlement")
 
             elif selection == 4:
-                server_build_item(conn, self.curr_player, "city", self.node_list, self.road_list)
+                server_build_item(conn, "city")
 
             elif selection == 5:
                 result = items.build_dev_card(self.curr_player, self.dev_cards)
@@ -752,7 +761,7 @@ class Game:
             catan_print(conn, "That caused some unknown error, please try to not do that again :)\n")
 
     #this is the second worst function in the history of functions, probably ever.
-    def server_build_item(self, conn, init = False):
+    def server_build_item(self, conn, item, init = False):
 
         # There's a way to get this down into one thing. More DRY, but i can't figure it out rn.
         # PARTIALLY IMPLEMENTED
@@ -771,13 +780,13 @@ class Game:
             if init:
                 settled = False
                 while settled == False:
-                    catan_print(conn, "Where do you want to place your settlement?\n" + a_player.p_name.strip() + "> ")
-                    location = catan_read(conn)
+                    self.catan_print(conn, "Where do you want to place your settlement?\n" + a_player.p_name.strip() + "> ")
+                    location = self.catan_read(conn)
                     result = items.build_settlement(self.curr_player, location, self.node_list, True)
                     if isinstance(result, int):
-                        handle_errors(conn, result)
+                        self.handle_errors(conn, result)
                     elif isinstance(result, str):
-                        catan_print(conn, result)
+                        self.catan_print(conn, result)
                         settled = True
 
 
@@ -786,9 +795,9 @@ class Game:
                 location = self.catan_read(conn)
                 result = items.build_settlement(a_player, location, self.node_list)
                 if isinstance(result, int):
-                    handle_errors(conn, result)
+                    self.handle_errors(conn, result)
                 elif isinstance(result, str):
-                    catan_print(conn, result)
+                    self.catan_print(conn, result)
 
         #server_build_item(conn, p, "road", node_list, init=True)
         elif item == "road": # not yet written for anything other than initial setup
