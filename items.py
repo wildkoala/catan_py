@@ -13,8 +13,6 @@
 # Requirements and Exports
 #========================================================
 import catan_classes
-import config
-import itertools
 
 #========================================================
 # FUNCTION DEFINITIONS
@@ -65,6 +63,7 @@ def get_road_with_nodes(node1, node2, road_list):
                 return r
     #print("COULDN'T FIND ROAD")
 
+
 def get_road_by_id(id):
     for r in config.road_list:
         if id == r.id:
@@ -74,26 +73,6 @@ def get_nodes_by_road(road):
     n1 = config.node_list[road.start_n - 1]
     n2 = config.node_list[road.end_n - 1]
     return [n1,n2]
-
-#I need to somehow check to see if a player branches a road rather than extends it
-#Currently any roads attached and not broken will be merged so length of 2 roads
-#will be considered as 3 sometimes etc.
-
-#This returns true if I need to branch a players roads
-#Now i need to create 3 lists that are unmergable
-def does_road_branch(a_player, placed_road):
-    nodes = get_nodes_by_road(placed_road)
-    for placed_node in nodes:
-        counter = 0
-        for adj_nodes in placed_node.adj_nodes:
-            tested_road = get_road_with_nodes(placed_node, config.node_list[adj_nodes-1])
-            if a_player.p_color == tested_road.owns_road:
-                counter += 1
-        if counter == 3:
-            print("I need to branch the player road list here")
-            print(str(placed_node.id) + " is the node where i must branch")
-            return get_node_by_alias(placed_node.id)
-    return None
 
 #Calculates a players road chains based on breaks in roads and placement of roads
 def merge_chain(a_player):
@@ -107,6 +86,8 @@ def merge_chain(a_player):
                     a_player.road_chains.remove(complist)
                     a_player.road_chains.remove(complist2)
                     return True
+    for sort_player in a_player.road_chains:
+        sort_player.sort()
     print(a_player.road_chains)
     return False
 
@@ -160,13 +141,15 @@ def are_connected_roads(a_player, list1, list2):
                         return True
     return False
 
-def connected_roads(node):
+
+def connected_roads(node, node_list, road_list):
     roads = [] # a list of connected roads.
     for adj in node.adj_nodes:
         roads.append(get_road_with_nodes(node, node_list[adj-1], road_list))
     return roads
 
 # NEEDS TESTING FOR ADJACENT ROADS
+
 # takes player_color and the nodes on either side of the desired road.
 def road_is_connected(player_color, n1, n2, node_list, road_list):
     print("IN ROAD IS CONNECTED FUNCTION")
@@ -220,6 +203,10 @@ def build_road(a_player, n1, n2, node_list, road_list, initializing = False): # 
             return -1
         n1 = get_node_by_alias(alias1, node_list)
 
+        if is_valid_location(alias2) == False:
+            return -1
+        n2 = get_node_by_alias(alias2, node_list)
+
         if n1.owns_node == a_player.p_color or n2.owns_node == a_player.p_color:
             wanted_road = get_road_with_nodes(n1, n2, road_list)
             if wanted_road is None:
@@ -230,14 +217,6 @@ def build_road(a_player, n1, n2, node_list, road_list, initializing = False): # 
             else:
                 wanted_road.owns_road = a_player.p_color
                 return "Road added!!!"
-
-                a_player.road_chains.append([wanted_road.id])
-                val = merge_chain(a_player)
-                if val:
-                    val = merge_chain(a_player)
-                does_split_road(a_player, wanted_road)
-                if does_road_branch(a_player, wanted_road):
-                    print("You idiot branch here")
 
         else:
             return -5
@@ -275,11 +254,6 @@ def build_road(a_player, n1, n2, node_list, road_list, initializing = False): # 
                     a_player.p_hand.remove("L")
                     return "Road added!!!"
                     does_split_road(a_player, wanted_road)
-
-                    branch_this_road = does_road_branch(a_player, wanted_road)
-                    if branch_this_road != None:
-                        print("You idiot branch here")
-
             else:
                 return -5
         else:
@@ -496,22 +470,22 @@ def give_resources_to_players(corners, resource, player_list):
 
 
 # Return a string to be sent to the user
-def give_resources(roll_num, robber, b, player_list, node_list, initial = False):
+def give_resources(roll_num, a_game, initial = False): #give_resources(0, game, True)
     msg_to_user = "\n"
-    for t in b.tiles:
+    for t in a_game.b.tiles:
         if initial:
-            corners = get_corners(t.id, node_list)
-            msg_to_user += give_resources_to_players(corners,t.resource, player_list)
+            corners = get_corners(t.id, a_game.node_list)
+            msg_to_user += give_resources_to_players(corners,t.resource, a_game.player_list)
 
         elif roll_num == 7:
             # when the robber gets rolled I still need to return
             return ""
 
         elif t.number == roll_num:
-            if t.id == robber.on_tile:
+            if t.id == a_game.robber.on_tile:
                 return "The robber stole your " + t.resource + "!!"
             else:
-                corners = get_corners(t.id, node_list)
-                msg_to_user += give_resources_to_players(corners,t.resource, player_list)
+                corners = get_corners(t.id, a_game.node_list)
+                msg_to_user += give_resources_to_players(corners,t.resource, a_game.player_list)
 
     return msg_to_user
