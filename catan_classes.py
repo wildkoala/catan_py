@@ -10,43 +10,29 @@
 
 #===============================================
 import random
-import items
-import math
 
+# do the things in the init method execute in order? Because if they do this will work like a charm.
 class Game:
-    def __init__(self, conns): #conns are a list of connections... Should I save conns as an attribute of the game class? or player? Player seems to make more sense to me.
+    def __init__(self, conn): #conns are a list of connections. It's gonna be conn for now, to make it work with one player.
+        #self.player_conns = player_conns # need this for multiplayer?
+        #self.conns = conns
+
+        self.first_game_menu(conn)
         self.b = self.init_board()
         self.node_list = self.init_nodes()
         self.road_list = self.init_roads()
         self.game_robber = self.init_robber()
         self.dev_cards = self.init_dev_cards()
-
-        if len(conns) == 1:
-            self.first_game_menu(conn)
-            self.player_list = self.init_players(conn)
-            self.pts_to_win = self.declare_pts_to_win(conn)
-            self.curr_player = self.player_list[0]
-            self.play(conn)
-        else:
-            # this is where the multiplayer code is going to go.
-            # okay, don't make life harder than it already is, just iterate over the connections and go in turns.
-
-            self.player_list = self.init_multiplayer(conns)
-            self.pts_to_win = self.declare_pts_to_win(conns[0])
-            self.curr_player = self.player_list[0]
-            self.play(conns)
-
-            #pass
+        self.player_list = self.init_players(conn)
+        self.pts_to_win = self.declare_pts_to_win(conn)
+        self.curr_player = self.player_list[0]
+        self.play(conn) # we'll want this to take a list of conns eventually.
 
     #===============================================
     #COMMUNICATION FUNCTIONS - Functions for communicating between clients and server
     #===============================================
     def catan_print(self, conn, given_str):
         conn.send(given_str.encode('ascii'))
-
-    def catan_sendall(self, conns, given_str):
-        for conn in conns:
-            conn.send(given_str.encode('ascii'))
 
     def catan_read(self, conn, size=1024):
         s = conn.recv(size).decode('ascii').strip()
@@ -261,21 +247,6 @@ Would you like to play online or locally?
     #===============================================
     # INITIALIZATION FUNCTIONS - Setting up an instance of the game
     #===============================================
-    def init_multiplayer(self, conns):
-
-        color_options = ["Red", "Yellow", "Purple", "Green", "Cyan", "Tan"]
-        player_list = []
-        for conn in conns:
-            template = "Please Enter your player name\n> "
-            self.catan_print(conn, template)
-            name = self.catan_read(conn)
-
-            p_color =  color_options.pop(self.player_choose_color(conn, color_options)-1)
-            self.catan_print(conn, "You selected: " + p_color + "\n")
-            color = p_color[0].lower()
-            player_list.append(Player(conn, name.strip(),color)) # should I add conn as an attribute of the Player? I feel like i should.
-        return player_list
-
 
     def init_players(self, conn):
         try:
@@ -284,7 +255,6 @@ Would you like to play online or locally?
 
             num_players = int(self.catan_read(conn))
             i = 0
-
             color_options = ["Red", "Yellow", "Purple", "Green", "Cyan", "Tan"]
 
             while i < num_players:
@@ -520,34 +490,34 @@ Would you like to play online or locally?
         except ValueError:
             self.catan_print(conn, "You must provide an integer")
 
-    def place_initial(self, conns, current_p):
+    def place_initial(self, conn):
         for p in self.player_list:
-            self.catan_sendall(conns, "\n" + p.p_name.strip() + " is placing their first settlement\n")
+            self.catan_print(conn, "\n" + p.p_name.strip() + " is placing their first settlement\n")
 
             # FIRST SETTLEMENT
-            self.server_build_item(current_p.conn, "settlement", init=True)
-            self.catan_sendall(conns, self.show_board())
+            self.server_build_item(conn, "settlement", init=True)
+            self.catan_print(conn, self.show_board())
 
 
             # FIRST ROAD
-            self.catan_sendall(conns, "\n" + p.p_name.strip() + " is placing their first road\n")
-            self.server_build_item(current_p.conn, "road", init=True)
-            self.catan_sendall(conns, self.show_board())
+            self.catan_print(conn, "\n" + p.p_name.strip() + " is placing their first road\n")
+            self.server_build_item(conn, "road", init=True)
+            self.catan_print(conn, self.show_board())
 
 
         for p in reversed(self.player_list):
 
             # SECOND SETTLEMENT
-            self.catan_sendall(conns, "\n" + p.p_name + " is placing their second settlement\n")
-            self.server_build_item(current_p.conn, "settlement", init=True)
-            self.catan_sendall(conns, self.show_board())
+            self.catan_print(conn, "\n" + p.p_name + " is placing their second settlement\n")
+            self.server_build_item(conn, "settlement", init=True)
+            self.catan_print(conn, self.show_board())
 
             # SECOND ROAD
-            self.catan_sendall(conns, "\n" + p.p_name.strip() + " is placing their second road\n")
-            self.server_build_item(current_p.conn, "road", init=True)
-            self.catan_sendall(conns, self.show_board())
+            self.catan_print(conn, "\n" + p.p_name.strip() + " is placing their second road\n")
+            self.server_build_item(conn, "road", init=True)
+            self.catan_print(conn, self.show_board())
 
-        self.catan_sendall(conns, items.give_resources(0, self, True)) # will this work for passing a board to a function from items.py?
+        self.catan_print(items.give_resources(0, self, True)) # will this work for passing a board to a function from items.py?
 
 
     #================================================
@@ -606,35 +576,34 @@ Would you like to play online or locally?
             else:
                 self.catan_print(conn, "Please enter an appropriate value")
 
-    def play(self,conns): # now it takes a list of sockets
-
+    def play(self,conn):
+        # okay, they want to play a game now. Initalize a locally played game
         msg = self.show_board()
-        for conn in conns:
-            self.catan_print(conn, msg)
-            self.place_initial(conns, self.curr_player)
+        self.catan_print(conn, msg)
+        self.place_initial(conn) # this should also hand out the initial resources. Make sure it's working right.
 
         winner = False
         while winner != True:
-            winner = self.player_turn(conns) # now it takes a list of sockets.
+            winner = self.player_turn(conn)
             if winner:
                 break
             self.next_player()
         self.catan_print(conn, "\nWINNER: " + self.curr_player.p_name + "\n")
 
-    def player_turn(self, conns):
-        self.catan_sendall(conns, "\n" + self.curr_player.p_name + " it is your turn!\n")
+    def player_turn(self, conn):
+        self.catan_print(conn, "\n" + self.curr_player.p_name + " it is your turn\n")
 
         self.catan_print(conn, "Press Enter to Roll Die")
         user_input = self.catan_read(conn)
 
         roll = self.roll_dice()
-        self.catan_sendall(conns, "\n" + str(roll) + " has been rolled\n")
-        self.catan_sendall(conns, items.give_resources(roll, a_game)) #BUG? can i give the entire object as an argument to one of it's methods?
+        self.catan_print(conn, "\n" + str(roll) + " has been rolled\n")
+        self.catan_print(conn, items.give_resources(roll, a_game)) #BUG? can i give the entire object as an argument to one of it's methods?
 
 
         #Check to see if robber() should be called
         if roll == 7:
-            self.game_robber.rob_players(self, self.curr_player.conn, a_game) #BUG? can i give the entire object as an argument to one of it's methods? Actually i think this works.
+            self.game_robber.rob_players(self, conn, a_game) #BUG? can i give the entire object as an argument to one of it's methods?
 
         #Player Selects an Option
         selection = -1
@@ -811,7 +780,7 @@ Would you like to play online or locally?
             if init:
                 settled = False
                 while settled == False:
-                    self.catan_print(conn, "Where do you want to place your settlement?\n" + self.curr_player.p_name + "> ")
+                    self.catan_print(conn, "Where do you want to place your settlement?\n" + a_player.p_name.strip() + "> ")
                     location = self.catan_read(conn)
                     result = items.build_settlement(self.curr_player, location, self.node_list, True)
                     if isinstance(result, int):
@@ -824,7 +793,7 @@ Would you like to play online or locally?
             else:
                 self.catan_print(conn, "Where do you want to place your settlement?\n> ")
                 location = self.catan_read(conn)
-                result = items.build_settlement(self.curr_player, location, self.node_list)
+                result = items.build_settlement(a_player, location, self.node_list)
                 if isinstance(result, int):
                     self.handle_errors(conn, result)
                 elif isinstance(result, str):
@@ -839,7 +808,7 @@ Would you like to play online or locally?
                     n1 = self.catan_read(conn)
                     self.catan_print(conn, "Where do you want to end your road?\n> ")
                     n2 = self.catan_read(conn)
-                    result = items.build_road(self.curr_player, n1, n2, self, True) #can I pass a game like this?
+                    result = items.build_road(a_player, n1, n2, self, True) #can I pass a game like this?
                     if isinstance(result, int):
                         self.handle_errors(conn, result)
                     elif isinstance(result, str):
@@ -850,7 +819,7 @@ Would you like to play online or locally?
                 n1 = self.catan_read(conn)
                 self.catan_print(conn, "Where do you want to end your road?\n> ")
                 n2 = self.catan_read(conn)
-                result = items.build_road(self.curr_player, n1, n2, self)
+                result = items.build_road(a_player, n1, n2, self)
                 if isinstance(result, int):
                     self.handle_errors(conn, result)
                 elif isinstance(result, str):
@@ -876,8 +845,7 @@ Would you like to play online or locally?
 
 
 class Player:
-    def __init__(self, conn, name, color):
-        self.conn = conn
+    def __init__(self, name, color):
         self.p_name = name
         self.p_hand = [] # should be a list of characters
         self.p_color = color # Red, Yellow, Purple, Green, Cyan, Tan
