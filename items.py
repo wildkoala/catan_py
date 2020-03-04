@@ -69,19 +69,40 @@ def get_road_by_id(id):
         if id == r.id:
             return r
 
-def get_nodes_by_road(road):
-    n1 = config.node_list[road.start_n - 1]
-    n2 = config.node_list[road.end_n - 1]
+def get_nodes_by_road(road, node_list):
+    n1 = node_list[road.start_n - 1]
+    n2 = node_list[road.end_n - 1]
     return [n1,n2]
 
+
+#I need to somehow check to see if a player branches a road rather than extends it
+#Currently any roads attached and not broken will be merged so length of 2 roads
+#will be considered as 3 sometimes etc.
+
+#This returns true if I need to branch a players roads
+#Now i need to create 3 lists that are unmergable
+def does_road_branch(a_player, placed_road, road_list, node_list):
+    nodes = get_nodes_by_road(placed_road, node_list)
+    for placed_node in nodes:
+        counter = 0
+        for adj_nodes in placed_node.adj_nodes:
+            tested_road = get_road_with_nodes(placed_node, config.node_list[adj_nodes-1],road_list)
+            if a_player.p_color == tested_road.owns_road:
+                counter += 1
+        if counter == 3:
+            print("I need to branch the player road list here")
+            print(str(placed_node.id) + " is the node where i must branch")
+            return get_node_by_alias(placed_node.id)
+    return None
+
 #Calculates a players road chains based on breaks in roads and placement of roads
-def merge_chain(a_player):
+def merge_chain(a_player, node_list):
     if len(a_player.road_chains) >= 2:
         for i in range(0,(len(a_player.road_chains)-1)):
             complist = a_player.road_chains[i]
             for j in range(i+1,len(a_player.road_chains)):
                 complist2 = a_player.road_chains[j]
-                if are_connected_roads(a_player, complist, complist2):
+                if are_connected_roads(a_player, complist, complist2, node_list):
                     a_player.road_chains.append(a_player.road_chains[i] + a_player.road_chains[j])
                     a_player.road_chains.remove(complist)
                     a_player.road_chains.remove(complist2)
@@ -106,13 +127,13 @@ def split_road(a_player, node):
 #Called when a player places a road. gets the end node of the road placed
 #and finds other two roads associated with that node. if both roads are owned by
 #a particular player. we know that his road has been split
-def does_split_road(a_player, placed_road):
-    nodes = get_nodes_by_road(placed_road)
+def does_split_road(a_player, placed_road, node_list, player_list):
+    nodes = get_nodes_by_road(placed_road, node_list)
     for placed_node in nodes:
         player = ""
         counter = 0
         for adj_nodes in placed_node.adj_nodes:
-            tested_road = get_road_with_nodes(placed_node, config.node_list[adj_nodes-1])
+            tested_road = get_road_with_nodes(placed_node, node_list[adj_nodes-1], road_list)
             if player != "":
                     counter += 1
             else:
@@ -120,7 +141,7 @@ def does_split_road(a_player, placed_road):
                     player = tested_road.owns_road
                     counter += 1
         if counter == 2:
-            for i in config.player_list:
+            for i in player_list:
                 if i.p_color == player:
                     i.split_roads.append(placed_node.id)
                     split_road(i, placed_node)
@@ -128,11 +149,11 @@ def does_split_road(a_player, placed_road):
     #
 
 #Currently very messy but it works fine.  the 4 for loops hurt me spiritually
-def are_connected_roads(a_player, list1, list2):
+def are_connected_roads(a_player, list1, list2, node_list):
     for r1 in list1:
         for r2 in list2:
-            n1 = get_nodes_by_road(get_road_by_id(r1))
-            n2 = get_nodes_by_road(get_road_by_id(r2))
+            n1 = get_nodes_by_road(get_road_by_id(r1), node_list)
+            n2 = get_nodes_by_road(get_road_by_id(r2), node_list)
             for node1 in n1:
                 for node2 in n2:
                     if node1.id in a_player.split_roads and node1.id == node2.id:
@@ -190,7 +211,7 @@ def valid_road_location(n):
 
 # maybe have is_init set to False by default (a keyword argument)
 # return a string if it works properly, return int if there's an error.
-def build_road(a_player, n1, n2, node_list, road_list, initializing = False): # this is not working for having a road connected to another road, makes you have a connected settlement rn.
+def build_road(a_player, n1, n2, node_list, road_list, player_list, initializing = False): # this is not working for having a road connected to another road, makes you have a connected settlement rn.
     if initializing:
 
         alias1 = convert_input_to_format(n1) # n1 and n2 are strings
@@ -217,6 +238,13 @@ def build_road(a_player, n1, n2, node_list, road_list, initializing = False): # 
             else:
                 wanted_road.owns_road = a_player.p_color
                 return "Road added!!!"
+                a_player.road_chains.append([wanted_road.id])
+                val = merge_chain(a_player, node_list)
+                if val:
+                    val = merge_chain(a_player, node_list)
+                does_split_road(a_player, wanted_road, node_list, player_list)
+                if does_road_branch(a_player, wanted_road, node_list, player_list):
+                    print("You idiot branch here")
 
         else:
             return -5
@@ -253,7 +281,13 @@ def build_road(a_player, n1, n2, node_list, road_list, initializing = False): # 
                     a_player.p_hand.remove("B")
                     a_player.p_hand.remove("L")
                     return "Road added!!!"
-                    does_split_road(a_player, wanted_road)
+                    a_player.road_chains.append([wanted_road.id])
+                    val = merge_chain(a_player, node_list)
+                    if val:
+                        val = merge_chain(a_player, node_list)
+                    does_split_road(a_player, wanted_road, node_list, player_list)
+                    if does_road_branch(a_player, wanted_road, node_list, player_list):
+                        print("You idiot branch here")
             else:
                 return -5
         else:
