@@ -10,6 +10,8 @@
 # need to give players an id, use first letter of not conflicting colors (NOT BLWSO)
 # Red, Yellow, Purple, Green, Cyan, Tan
 
+#yes?
+
 class Player:
     def __init__(self, name, color):
         self.p_name = name
