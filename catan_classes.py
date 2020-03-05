@@ -24,7 +24,7 @@ class Game:
         self.node_list = self.init_nodes()
         self.road_list = self.init_roads()
         self.game_robber = self.init_robber()
-        self.dev_cards = self.init_dev_cards()
+        self.dev_cards = self.shuffle(self.init_dev_cards())
 
 
         if len(conns) == 1:
