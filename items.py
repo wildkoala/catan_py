@@ -312,7 +312,7 @@ def convert_input_to_format(given_input): # takes string, returns tuple of ints
 
 # partially implemented
 # returns string when it worked, int when ther was an error.
-def build_settlement(a_player, location, node_list, initializing = False):
+def build_settlement(a_player, location, node_list, port_list, initializing = False):
 
     if initializing:
         #try:
@@ -341,6 +341,10 @@ def build_settlement(a_player, location, node_list, initializing = False):
         # Okay, you're able to put down a settlement.
         node_list[i].owns_node = a_player.p_color
         a_player.p_victory_pts += 1
+        for ports in port_list:
+            for nodes in ports.location:
+                if node_list[i] == nodes:
+                    ports.player_on = a_player.p_color
         return "Successfully placed settlement!"
 
         #except ValueError:
@@ -377,6 +381,10 @@ def build_settlement(a_player, location, node_list, initializing = False):
             a_player.p_hand.remove("S")
             a_player.p_hand.remove("W")
             a_player.p_victory_pts += 1
+            for ports in port_list:
+                for nodes in ports.location:
+                    if node_list[i] == nodes:
+                        ports.player_on = a_player.p_color
             return a_player.p_name + "has placed down a settlement!"
 
         else:
