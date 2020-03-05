@@ -7,7 +7,7 @@
 # BUGS:
 # Player options 1-7, 9-11 all work.
 # That means that options 8 and 12 are currently broken.
-# We also need longest road and largest army implemented. 
+# We also need longest road and largest army implemented.
 #========================================================
 
 # POSSIBLE RESOURCES: Ore, Wheat, Brick, Lumber, Sheep
@@ -66,10 +66,7 @@ def get_road_with_nodes(node1, node2, road_list):
                 return r
     #print("COULDN'T FIND ROAD")
 
-<<<<<<< HEAD
 
-=======
->>>>>>> c1e640acf89bb59e13ab42625bf7c0f5b82cce92
 def get_road_by_id(id):
     for r in config.road_list:
         if id == r.id:
@@ -80,31 +77,21 @@ def get_nodes_by_road(road, node_list):
     n2 = node_list[road.end_n - 1]
     return [n1,n2]
 
-<<<<<<< HEAD
 
-=======
->>>>>>> c1e640acf89bb59e13ab42625bf7c0f5b82cce92
 #I need to somehow check to see if a player branches a road rather than extends it
 #Currently any roads attached and not broken will be merged so length of 2 roads
 #will be considered as 3 sometimes etc.
 
 #This returns true if I need to branch a players roads
 #Now i need to create 3 lists that are unmergable
-<<<<<<< HEAD
+
 def does_road_branch(a_player, placed_road, road_list, node_list):
     nodes = get_nodes_by_road(placed_road, node_list)
     for placed_node in nodes:
         counter = 0
         for adj_nodes in placed_node.adj_nodes:
             tested_road = get_road_with_nodes(placed_node, config.node_list[adj_nodes-1],road_list)
-=======
-def does_road_branch(a_player, placed_road):
-    nodes = get_nodes_by_road(placed_road)
-    for placed_node in nodes:
-        counter = 0
-        for adj_nodes in placed_node.adj_nodes:
-            tested_road = get_road_with_nodes(placed_node, config.node_list[adj_nodes-1])
->>>>>>> c1e640acf89bb59e13ab42625bf7c0f5b82cce92
+
             if a_player.p_color == tested_road.owns_road:
                 counter += 1
         if counter == 3:
@@ -178,27 +165,18 @@ def are_connected_roads(a_player, list1, list2, node_list):
                         return True
     return False
 
-<<<<<<< HEAD
-
 def connected_roads(node, node_list, road_list):
-=======
-def connected_roads(node):
->>>>>>> c1e640acf89bb59e13ab42625bf7c0f5b82cce92
+
     roads = [] # a list of connected roads.
     for adj in node.adj_nodes:
         roads.append(get_road_with_nodes(node, node_list[adj-1], road_list))
     return roads
 
 # NEEDS TESTING FOR ADJACENT ROADS
-<<<<<<< HEAD
+
 
 # takes player_color and the nodes on either side of the desired road.
 def road_is_connected(player_color, n1, n2, node_list, road_list):
-=======
-# takes player_color and the nodes on either side of the desired road.
-def road_is_connected(player_color, n1, n2, node_list, road_list):
-    print("IN ROAD IS CONNECTED FUNCTION")
->>>>>>> c1e640acf89bb59e13ab42625bf7c0f5b82cce92
     if n1.owns_node.lower() == player_color: # lower makes sure that a city counts too.
         return True
     else: # this is the part of the code that needs to check for an adj road.
@@ -310,22 +288,14 @@ def build_road(a_player, n1, n2, node_list, road_list, player_list, initializing
                     a_player.p_hand.remove("B")
                     a_player.p_hand.remove("L")
                     return "Road added!!!"
-<<<<<<< HEAD
+
                     a_player.road_chains.append([wanted_road.id])
                     val = merge_chain(a_player, node_list)
                     if val:
                         val = merge_chain(a_player, node_list)
                     does_split_road(a_player, wanted_road, node_list, player_list)
-                    if does_road_branch(a_player, wanted_road, node_list, player_list):
-                        print("You idiot branch here")
-=======
-                    does_split_road(a_player, wanted_road)
 
-                    branch_this_road = does_road_branch(a_player, wanted_road)
-                    if branch_this_road != None:
-                        print("You idiot branch here")
 
->>>>>>> c1e640acf89bb59e13ab42625bf7c0f5b82cce92
             else:
                 return -5
         else:

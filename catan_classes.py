@@ -968,14 +968,10 @@ class Player:
         else:
             counter = 1
             for i in self.p_played_dev_cards:
-<<<<<<< HEAD
-                print("\t" + str(counter) + ". " + str(i))
-=======
-                print("\t" + str(i)) # idk if i is gonna work like That
+                print("\t" + str(i)) # this needs a catan_print
             msg_to_client = "Development Cards:\n"
             for card in self.p_dev_cards:
                 msg_to_client += "\t" + str(counter) + ". " + card.card_type + "\n"# idk if i is gonna work like That
->>>>>>> c1e640acf89bb59e13ab42625bf7c0f5b82cce92
                 counter += 1
             return msg_to_client + "> "
 
@@ -1234,10 +1230,7 @@ class Road:
     def __repr__(self):
         return "Road: " + str(str(self.start_n) + " " +  str(self.end_n) + " " + str(self.id))
 
-<<<<<<< HEAD
 
-=======
->>>>>>> c1e640acf89bb59e13ab42625bf7c0f5b82cce92
 class Port:
     def __init__(self, type, location):
         self.type = type
@@ -1249,10 +1242,7 @@ class Port:
             return True
         else:
             return False
-<<<<<<< HEAD
 
-=======
->>>>>>> c1e640acf89bb59e13ab42625bf7c0f5b82cce92
     def __str__(self):
         if self.owns_road == "":
             return "."
