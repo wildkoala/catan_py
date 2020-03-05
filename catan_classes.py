@@ -542,13 +542,13 @@ Would you like to play online or locally?
             self.catan_sendall(conns, "\n" + self.curr_player.p_name.strip() + " is placing their first settlement\n")
 
             # FIRST SETTLEMENT
-            self.server_build_item(self.curr_player.conn, "settlement", True)
+            self.server_build_item(conns, "settlement", True)
             self.catan_sendall(conns, self.show_board())
 
 
             # FIRST ROAD
             self.catan_sendall(conns, "\n" + self.curr_player.p_name.strip() + " is placing their first road\n")
-            self.server_build_item(self.curr_player.conn, "road", True)
+            self.server_build_item(conns, "road", True)
             self.catan_sendall(conns, self.show_board())
 
             i += 1
@@ -557,6 +557,7 @@ Would you like to play online or locally?
         i = 0
 
         while i < len(conns):
+<<<<<<< HEAD
             self.catan_sendall(reversed_conns, "\n" + self.curr_player.p_name + " is placing their second settlement\n")
             self.server_build_item(self.curr_player.conn, "settlement", True)
             self.catan_sendall(reversed_conns, self.show_board())
@@ -565,6 +566,16 @@ Would you like to play online or locally?
             self.catan_sendall(reversed_conns, "\n" + self.curr_player.p_name.strip() + " is placing their second road\n")
             self.server_build_item(self.curr_player.conn, "road", True)
             self.catan_sendall(reversed_conns, self.show_board())
+=======
+            self.catan_sendall(conns, "\n" + self.curr_player.p_name + " is placing their second settlement\n")
+            self.server_build_item(conns, "settlement", True)
+            self.catan_sendall(conns, self.show_board())
+
+            # SECOND ROAD
+            self.catan_sendall(conns, "\n" + self.curr_player.p_name.strip() + " is placing their second road\n")
+            self.server_build_item(conns, "road", True)
+            self.catan_sendall(conns, self.show_board())
+>>>>>>> 9e5809d276cbe58516a9772a449794589177195f
 
             # Go back one player.
             i += 1
@@ -588,8 +599,8 @@ Would you like to play online or locally?
             player.p_hand.append(r)
             trade_to.p_hand.remove(r)
 
-    def trade_accepted(conn, player, trade_to, want, offer):
-        catan_print(conn, trade_to.p_name + ", " + player.p_name + " has offered you: " )
+    def trade_accepted(self, conn, trade_to, want, offer):
+        catan_print(conn, trade_to.p_name + ", " + self.curr_player.p_name + " has offered you: " )
         catan_print(conn, offer + "\n")
         catan_print(conn, "In exchange for: ")
         catan_print(conn, want + "\n")
@@ -642,7 +653,7 @@ Would you like to play online or locally?
             winner = self.player_turn(conns)
             if winner:
                 break
-            self.ayer()
+            self.next_player()
         self.catan_print(conn, "\nWINNER: " + self.curr_player.p_name + "\n")
 
     def player_turn(self, conns):
@@ -658,7 +669,7 @@ Would you like to play online or locally?
 
         #Check to see if robber() should be called
         if roll == 7:
-            self.game_robber.rob_players(self, self.curr_player.conn, self) #BUG? can i give the entire object as an argument to one of it's methods?
+            self.game_robber.rob_players(self.curr_player.conn, self) #BUG? can i give the entire object as an argument to one of it's methods?
 
         #Player Selects an Option
         selection = -1
@@ -675,21 +686,21 @@ Would you like to play online or locally?
                 self.catan_print(self.curr_player.conn, self.curr_player.show_hand())
 
             elif selection == 2:
-                self.server_build_item(self.curr_player.conn, "road")
+                self.server_build_item(conns, "road")
 
 
             elif selection == 3:
-                self.server_build_item(self.curr_player.conn, "settlement")
+                self.server_build_item(conns, "settlement")
 
             elif selection == 4:
-                self.server_build_item(self.curr_player.conn, "city")
+                self.server_build_item(conns, "city")
 
             elif selection == 5:
                 result = items.build_dev_card(self.curr_player, self.dev_cards)
                 if isinstance(result, str):
-                    self.catan_print(conn, result)
+                    self.catan_print(self.curr_player.conn, result)
                 elif isinstance(result, int):
-                    self.handle_errors(conn, result)
+                    self.handle_errors(self.curr_player.conn, result)
 
 
             elif selection == 6:
@@ -702,14 +713,15 @@ Would you like to play online or locally?
                 self.catan_print(self.curr_player.conn, "Who do you want to trade with?\n" + self.curr_player.p_name + "> ")
                 option = int(self.catan_read(self.curr_player.conn)) # BUG: gonna have to do error checking on this too... Giving anything other than an int breaks it.
                 trade_to = self.player_list[option-1]
-                self.catan_print(self.curr_player.conn, "What resource(s) do you want?")
+                self.catan_print(self.curr_player.conn, "What resource(s) do you want?\n" + self.curr_player.p_name + "> ")
                 want = self.catan_read(self.curr_player.conn)
-                self.catan_print(conn, "What resource(s) are you offering in exchange?\n" + self.curr_player.p_name + "> ")
+                self.catan_print(self.curr_player.conn, "What resource(s) are you offering in exchange?\n" + self.curr_player.p_name + "> ")
                 offer = self.catan_read(self.curr_player.conn)
 
                 if option <= len(self.player_list):
                     if self.curr_player.has_resources(offer):
-                        want_to_trade = self.trade_accepted(conn, player, trade_to, want, offer) # BUG: going to have to bring over the trade_accepted function
+
+                        want_to_trade = self.trade_accepted(trade_to.conn, trade_to, want, offer)
                         they_have_resources = trade_to.has_resources(want)
                         if want_to_trade and they_have_resources:
                             self.trade_resources(player, trade_to, want, offer)
@@ -815,18 +827,18 @@ Would you like to play online or locally?
             self.catan_print(conn, "That caused some unknown error, please try to not do that again :)\n")
 
     #this is the second worst function in the history of functions, probably ever.
-    def server_build_item(self, conn, item, init = False):
+    def server_build_item(self, conns, item, init = False): #change from conn to conns
 
         # There's a way to get this down into one thing. More DRY, but i can't figure it out rn.
         # PARTIALLY IMPLEMENTED
         if item == "city":
-            catan_print(conn, "Where would you like to upgrade into a city?\n" + self.curr_player.p_name + "> ")
-            location = self.catan_read(conn)
+            catan_print(self.curr_player.conn, "Where would you like to upgrade into a city?\n" + self.curr_player.p_name + "> ")
+            location = self.catan_read(self.curr_player.conn)
             result = items.build_city(self.curr_player, location, self.node_list)
             if isinstance(result, int):
-                handle_errors(conn, result)
+                handle_errors(self.curr_player.conn, result)
             elif isinstance(result, str):
-                catan_print(conn, result)
+                catan_print(self.curr_player.conn, result)
 
         # There's a way to get this down into one thing. More DRY, but i can't figure it out rn.
         # PARTIALLY IMPLEMENTED
@@ -834,61 +846,62 @@ Would you like to play online or locally?
             if init:
                 settled = False
                 while settled == False:
-                    self.catan_print(conn, "Where do you want to place your settlement?\n" + self.curr_player.p_name + "> ")
-                    location = self.catan_read(conn)
+                    self.catan_print(self.curr_player.conn, "Where do you want to place your settlement?\n" + self.curr_player.p_name + "> ")
+                    location = self.catan_read(self.curr_player.conn)
                     result = items.build_settlement(self.curr_player, location, self.node_list, True)
                     print(result)
                     if isinstance(result, int):
-                        self.handle_errors(conn, result)
+                        self.handle_errors(self.curr_player.conn, result)
                     elif isinstance(result, str):
-                        self.catan_print(conn, result)
+                        self.catan_print(self.curr_player.conn, result)
                         settled = True
 
 
             else:
-                self.catan_print(conn, "Where do you want to place your settlement?\n" + self.curr_player.p_name + "> ")
-                location = self.catan_read(conn)
+                self.catan_print(self.curr_player.conn, "Where do you want to place your settlement?\n" + self.curr_player.p_name + "> ")
+                location = self.catan_read(self.curr_player.conn)
                 result = items.build_settlement(self.curr_player, location, self.node_list)
                 if isinstance(result, int):
-                    self.handle_errors(conn, result)
+                    self.handle_errors(self.curr_player.conn, result)
                 elif isinstance(result, str):
-                    self.catan_print(conn, result)
+                    self.catan_print(self.curr_player.conn, result)
 
         elif item == "road": # not yet written for anything other than initial setup
             if init:
                 first_road = False
                 while first_road == False:
-                    self.catan_print(conn, "Where do you want to start your road?\n" + self.curr_player.p_name + "> ")
-                    n1 = self.catan_read(conn)
-                    self.catan_print(conn, "Where do you want to end your road?\n" + self.curr_player.p_name + "> ")
-                    n2 = self.catan_read(conn)
+                    self.catan_print(self.curr_player.conn, "Where do you want to start your road?\n" + self.curr_player.p_name + "> ")
+                    n1 = self.catan_read(self.curr_player.conn)
+                    self.catan_print(self.curr_player.conn, "Where do you want to end your road?\n" + self.curr_player.p_name + "> ")
+                    n2 = self.catan_read(self.curr_player.conn)
                     result = items.build_road(self.curr_player, n1, n2, self.node_list, self.road_list, self.player_list, True) # just pass the parts and let the function work
                     if isinstance(result, int):
-                        self.handle_errors(conn, result)
+                        self.handle_errors(self.curr_player.conn, result)
                     elif isinstance(result, str):
-                        self.catan_print(conn, result)
+                        self.catan_print(self.curr_player.conn, result)
+                        self.catan_sendall(conns, self.show_board())
                         first_road = True
             else:
-                self.catan_print(conn, "Where do you want to start your road?\n" + self.curr_player.p_name + "> ")
-                n1 = self.catan_read(conn)
-                self.catan_print(conn, "Where do you want to end your road?\n" + self.curr_player.p_name + "> ")
-                n2 = self.catan_read(conn)
+                self.catan_print(self.curr_player.conn, "Where do you want to start your road?\n" + self.curr_player.p_name + "> ")
+                n1 = self.catan_read(self.curr_player.conn)
+                self.catan_print(self.curr_player.conn, "Where do you want to end your road?\n" + self.curr_player.p_name + "> ")
+                n2 = self.catan_read(self.curr_player.conn)
                 result = items.build_road(self.curr_player, n1, n2, self.node_list, self.road_list, self.player_list)
                 if isinstance(result, int):
-                    self.handle_errors(conn, result)
+                    self.handle_errors(self.curr_player.conn, result)
                 elif isinstance(result, str):
-                    self.catan_print(conn, result)
+                    self.catan_print(self.curr_player.conn, result)
 
         elif item == "dev card":
-            self.catan_print(conn, "Where do you want to start your road?\n" + self.curr_player.p_name + "> ")
-            n1 = self.catan_read(conn)
-            self.catan_print(conn, "Where do you want to end your road?\n" + self.curr_player.p_name + "> ")
-            n2 = self.catan_read(conn)
+            self.catan_print(self.curr_player.conn, "Where do you want to start your road?\n" + self.curr_player.p_name + "> ")
+            n1 = self.catan_read(self.curr_player.conn)
+            self.catan_print(self.curr_player.conn, "Where do you want to end your road?\n" + self.curr_player.p_name + "> ")
+            n2 = self.catan_read(self.curr_player.conn)
             result = items.build_dev_card(self.curr_player)
             if isinstance(result, int):
-                self.handle_errors(conn, result)
+                self.handle_errors(self.curr_player.conn, result)
             elif isinstance(result, str):
-                self.catan_print(conn, result)
+                self.catan_print(self.curr_player.conn, result)
 
 
 
@@ -997,7 +1010,7 @@ class Robber:
             return " "
 
     def rob_players(self, conn, a_game):
-        catan_print(conn, "ROBBER HAS BEEN ROLLED\n") # going to have to include this where it's called
+        a_game.catan_print(conn, "\nROBBER HAS BEEN ROLLED\n") # going to have to include this where it's called
 
         # Loop checks to see if any players have 7 or more cards
         for p in a_game.player_list:
@@ -1006,36 +1019,36 @@ class Robber:
                 discard = ""
                 has_cards = False
                 while len(discard) != num_to_discard or has_cards == False:
-                    catan_print(conn, p.p_name + " this is your current hand: ")
+                    a_game.catan_print(conn, p.p_name + " this is your current hand: ")
                     i.show_hand()
-                    catan_print(conn, p.p_name + " Please discard " + str(num_to_discard) + " cards\n> ")
-                    discard = catan_read(conn)
+                    a_game.catan_print(conn, p.p_name + " Please discard " + str(num_to_discard) + " cards\n> ")
+                    discard = a_game.catan_read(conn)
                     if len(discard) > num_to_discard:
-                        catan_print(conn, "You have discarded more cards than necessary.")
+                        a_game.catan_print(conn, "You have discarded more cards than necessary.")
 
                     elif len(discard) < num_to_discard:
-                        catan_print(conn, "You didn't discard enough cards... try again.")
+                        a_game.catan_print(conn, "You didn't discard enough cards... try again.")
 
                     if p.p_hand.count("O") >= list(discard).count("O") and p.p_hand.count("B") >= list(discard).count("B") and p.p_hand.count("S") >= list(discard).count("S") and p.p_hand.count("W") >= list(discard).count("W") and p.p_hand.count("L") >= list(discard).count("L"):
                         has_cards = True
 
                     else:
                         has_cards = False
-                        catan_print(conn, "You do not have those cards")
+                        a_game.catan_print(conn, "You do not have those cards")
                 for card in discard:
                     p.p_hand.remove(card)
-                catan_print(conn, "\n" + p.p_name + " this is your new hand: \n")
+                a_game.catan_print(conn, "\n" + p.p_name + " this is your new hand: \n")
                 p.show_hand()
 
         self.move_robber(conn, a_game)
 
-    def move_robber(conn, a_game):
+    def move_robber(self, conn, a_game):
         knight_placed = False
         while knight_placed == False:
-            catan_print(conn, "Which tile will you place the robber on?\n> ")
-            t = int(catan_read(conn))
+            a_game.catan_print(conn, "Which tile will you place the robber on?\n> ")
+            t = int(a_game.catan_read(conn))
             if t == a_game.game_robber.on_tile: # can i get the board this way or does it have to be an argument? Maybe just put it in config?
-                catan_print(conn, "You must put the robber on a new tile.\n")
+                a_game.catan_print(conn, "You must put the robber on a new tile.\n")
                 continue
             else:
                 # maybe the tile that the robber is on should be an attribute of the robber, because im going to have to iterate over all the times to "undo" the old robber.
