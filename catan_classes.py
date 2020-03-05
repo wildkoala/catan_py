@@ -35,6 +35,7 @@ class Game:
             for i in range(1, num_players):
                 conns.append(conn)
             self.player_list = self.init_multiplayer(conns)
+            self.player_order(conns)
             self.pts_to_win = self.declare_pts_to_win(conn)
             self.curr_player = self.player_list[0]
             self.play(conns)
@@ -43,6 +44,7 @@ class Game:
             # okay, don't make life harder than it already is, just iterate over the connections and go in turns.
 
             self.player_list = self.init_multiplayer(conns)
+            self.player_order(conns)
             self.pts_to_win = self.declare_pts_to_win(conns[0])
             self.curr_player = self.player_list[0]
             self.play(conns)
@@ -578,6 +580,17 @@ Would you like to play online or locally?
         result = items.give_resources(0, self, True) # I don't know if I can pass the entire object to one of its methods like this. I can!
         self.catan_sendall(conns, result)
 
+    def player_order(self, conns):
+        for player in self.player_list:
+            self.catan_sendall(conns, "\n" + player.p_name.strip() + " please roll to see order to place settlements (Press Enter)")
+            player.p_order = self.roll_dice()
+            self.catan_sendall(conns, "\n" + player.p_name.strip() + ", you rolled a: " + str(player.p_order))
+        self.player_list = sorted(self.player_list, key=lambda x: x.p_order, reverse = True)
+
+        self.catan_sendall(conns, "\nThe order of players is:")
+        for i in self.player_list:
+            self.catan_sendall(conns, "\n" + i.p_name.strip())
+        return
 
     #================================================
     # TRADING FUNCTIONS
