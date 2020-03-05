@@ -30,7 +30,11 @@ class Game:
         if len(conns) == 1:
             conn = conns[0]
             self.first_game_menu(conn)
-            self.player_list = self.init_players(conn)
+            #self.player_list = self.init_players(conn)
+            num_players = self.init_players(conn)
+            for i in range(1, num_players):
+                conns.append(conn)
+            self.player_list = self.init_multiplayer(conns)
             self.pts_to_win = self.declare_pts_to_win(conn)
             self.curr_player = self.player_list[0]
             self.play(conns)
@@ -51,8 +55,11 @@ class Game:
         conn.send(given_str.encode('ascii'))
 
     def catan_sendall(self, conns, given_str):
-        for conn in conns:
-            conn.send(given_str.encode('ascii'))
+        if conns[0] == conns[1]:
+            conns[0].send(given_str.encode('ascii'))
+        else:
+            for conn in conns:
+                conn.send(given_str.encode('ascii'))
 
 
     def catan_read(self, conn, size=1024):
@@ -292,7 +299,7 @@ Would you like to play online or locally?
             self.catan_print(conn, "Please enter the number of players\n> ")
 
             num_players = int(self.catan_read(conn))
-            i = 0
+            '''i = 0
             color_options = ["Red", "Yellow", "Purple", "Green", "Cyan", "Tan"]
 
             while i < num_players:
@@ -307,7 +314,8 @@ Would you like to play online or locally?
                 i+=1
 
             return player_list
-
+            '''
+            return num_players
         except ValueError:
             catan_print(conn, "You must enter an integer")
             return
@@ -547,21 +555,21 @@ Would you like to play online or locally?
             self.next_player()
 
         i = 0
+
         while i < len(conns):
-            self.catan_sendall(conns, "\n" + self.curr_player.p_name + " is placing their second settlement\n")
+            self.catan_sendall(reversed_conns, "\n" + self.curr_player.p_name + " is placing their second settlement\n")
             self.server_build_item(self.curr_player.conn, "settlement", True)
-            self.catan_sendall(conns, self.show_board())
+            self.catan_sendall(reversed_conns, self.show_board())
 
             # SECOND ROAD
-            self.catan_sendall(conns, "\n" + self.curr_player.p_name.strip() + " is placing their second road\n")
+            self.catan_sendall(reversed_conns, "\n" + self.curr_player.p_name.strip() + " is placing their second road\n")
             self.server_build_item(self.curr_player.conn, "road", True)
-            self.catan_sendall(conns, self.show_board())
+            self.catan_sendall(reversed_conns, self.show_board())
 
             # Go back one player.
             i += 1
-            index = self.player_list.index(self.curr_player)
-            self.curr_player = self.player_list[(index - 1) % len(self.player_list)]
-
+            #index = self.player_list.index(self.curr_player)
+            #self.curr_player = self.player_list[(index - 1) % len(self.player_list)]
 
         result = items.give_resources(0, self, True) # I don't know if I can pass the entire object to one of its methods like this. I can!
         self.catan_sendall(conns, result)
