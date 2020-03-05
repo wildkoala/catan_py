@@ -111,7 +111,7 @@ Number of players in the lobby: {}
 
     elif result == "n":
         conn.send("You're playing a local game!\n".encode('ascii'))
-        game_thread = threading.Thread(target=catan_client, args=(conn,))
+        game_thread = threading.Thread(target=catan_client, args=([conn],))
         single_player_games.append(conn)
         game_thread.start()
         return # returning here should kill the mode_thread... that's the behavior i want.

@@ -28,11 +28,12 @@ class Game:
 
 
         if len(conns) == 1:
+            conn = conns[0]
             self.first_game_menu(conn)
             self.player_list = self.init_players(conn)
             self.pts_to_win = self.declare_pts_to_win(conn)
             self.curr_player = self.player_list[0]
-            self.play(conn)
+            self.play(conns)
         else:
             # this is where the multiplayer code is going to go.
             # okay, don't make life harder than it already is, just iterate over the connections and go in turns.
@@ -59,7 +60,7 @@ class Game:
         return s
 
     def next_player(self): # need to get the index of the current player before going to the next one.
-        i = self.player_list.index(curr_player)
+        i = self.player_list.index(self.curr_player)
         self.curr_player = self.player_list[(i+ 1) % len(self.player_list)]
 
     #===============================================
@@ -67,7 +68,7 @@ class Game:
     #===============================================
 
     def display_credits(self, conn):
-        catan_print(conn,'''
+        self.catan_print(conn,'''
         Game Created by:
             Grayson "Twiggy" Gordon
             Anthony Walton
@@ -82,18 +83,18 @@ class Game:
 
     Please press Enter to go back to the main menu
         ''')
-        reply = catan_read(conn)
+        reply = self.catan_read(conn)
         return reply
 
-    def explain_rules(conn):
-        catan_print(conn,'''
+    def explain_rules(self, conn):
+        self.catan_print(conn,'''
         Here are the rules for Catan:
 
 
         Please press Enter to go back to the main menu
 
         ''')
-        reply = catan_read(conn)
+        reply = self.catan_read(conn)
         return reply
 
     def display_main_menu(self):
@@ -302,7 +303,7 @@ Would you like to play online or locally?
                 p_color =  color_options.pop(self.player_choose_color(conn, color_options)-1)
                 self.catan_print(conn, "You selected: " + p_color + "\n")
                 color = p_color[0].lower()
-                player_list.append(Player(name.strip(),color))
+                player_list.append(Player(conn, name.strip(), color))
                 i+=1
 
             return player_list
