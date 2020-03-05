@@ -5,9 +5,6 @@
 
 #========================================================
 # BUGS:
-# Player options 1-7, 9-11 all work.
-# That means that options 8 and 12 are currently broken.
-# We also need longest road and largest army implemented.
 #========================================================
 
 # POSSIBLE RESOURCES: Ore, Wheat, Brick, Lumber, Sheep

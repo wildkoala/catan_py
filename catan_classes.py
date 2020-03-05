@@ -4,9 +4,12 @@
 #  the created classes.
 #===============================================
 
-#===============================================
-#BUG SECTION:
-#===============================================
+#========================================================
+# BUGS:
+# Player options 1-7, 9-11 all work.
+# That means that options 8 and 12 are currently broken.
+# We also need longest road and largest army implemented.
+#========================================================
 
 #===============================================
 import random
@@ -609,14 +612,14 @@ Would you like to play online or locally?
     def player_order(self, conns):
         for player in self.player_list:
             self.catan_sendall(conns, "\n" + player.p_name.strip() + " please roll to see order to place settlements (Press Enter)")
+            self.catan_read(player.conn)
             player.p_order = self.roll_dice()
-            self.catan_sendall(conns, "\n" + player.p_name.strip() + ", you rolled a: " + str(player.p_order))
+            self.catan_sendall(conns, "\n" + player.p_name.strip() + " rolled a: " + str(player.p_order))
         self.player_list = sorted(self.player_list, key=lambda x: x.p_order, reverse = True)
 
         self.catan_sendall(conns, "\nThe order of players is:")
         for i in self.player_list:
             self.catan_sendall(conns, "\n" + i.p_name.strip())
-        return
 
     #================================================
     # TRADING FUNCTIONS
