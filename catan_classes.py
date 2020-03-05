@@ -557,30 +557,21 @@ Would you like to play online or locally?
         i = 0
 
         while i < len(conns):
-<<<<<<< HEAD
-            self.catan_sendall(reversed_conns, "\n" + self.curr_player.p_name + " is placing their second settlement\n")
-            self.server_build_item(self.curr_player.conn, "settlement", True)
-            self.catan_sendall(reversed_conns, self.show_board())
+            self.catan_sendall(conns, "\n" + self.curr_player.p_name.strip() + " is placing their first settlement\n")
 
-            # SECOND ROAD
-            self.catan_sendall(reversed_conns, "\n" + self.curr_player.p_name.strip() + " is placing their second road\n")
-            self.server_build_item(self.curr_player.conn, "road", True)
-            self.catan_sendall(reversed_conns, self.show_board())
-=======
-            self.catan_sendall(conns, "\n" + self.curr_player.p_name + " is placing their second settlement\n")
+            # FIRST SETTLEMENT
             self.server_build_item(conns, "settlement", True)
             self.catan_sendall(conns, self.show_board())
 
-            # SECOND ROAD
-            self.catan_sendall(conns, "\n" + self.curr_player.p_name.strip() + " is placing their second road\n")
+
+            # FIRST ROAD
+            self.catan_sendall(conns, "\n" + self.curr_player.p_name.strip() + " is placing their first road\n")
             self.server_build_item(conns, "road", True)
             self.catan_sendall(conns, self.show_board())
->>>>>>> 9e5809d276cbe58516a9772a449794589177195f
 
-            # Go back one player.
             i += 1
-            #index = self.player_list.index(self.curr_player)
-            #self.curr_player = self.player_list[(index - 1) % len(self.player_list)]
+            index = self.player_list.index(self.curr_player)
+            self.curr_player = self.player_list[(index - 1) % len(self.player_list)]
 
         result = items.give_resources(0, self, True) # I don't know if I can pass the entire object to one of its methods like this. I can!
         self.catan_sendall(conns, result)
