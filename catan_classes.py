@@ -42,11 +42,6 @@ class Game:
             self.curr_player = self.player_list[0]
             self.play(conns)
 
-            #pass
-        #self.player_list = self.init_players(conn)
-        #self.pts_to_win = self.declare_pts_to_win(conn)
-        #self.curr_player = self.player_list[0]
-        #self.play(conn) # we'll want this to take a list of conns eventually.
 
     #===============================================
     #COMMUNICATION FUNCTIONS - Functions for communicating between clients and server
@@ -64,7 +59,8 @@ class Game:
         return s
 
     def next_player(self): # need to get the index of the current player before going to the next one.
-        self.curr_player = self.player_list[(self.curr_player + 1) % len(self.player_list)]
+        i = self.player_list.index(curr_player)
+        self.curr_player = self.player_list[(i+ 1) % len(self.player_list)]
 
     #===============================================
     # PRINTING FUNCTIONS - Functions for formating strings/output to user.
