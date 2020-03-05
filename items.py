@@ -381,15 +381,11 @@ def build_settlement(a_player, location, node_list, port_list, initializing = Fa
             a_player.p_hand.remove("S")
             a_player.p_hand.remove("W")
             a_player.p_victory_pts += 1
-<<<<<<< HEAD
-            return a_player.p_name + " has placed down a settlement!"
-=======
             for ports in port_list:
                 for nodes in ports.location:
                     if node_list[i] == nodes:
                         ports.player_on = a_player.p_color
             return a_player.p_name + "has placed down a settlement!"
->>>>>>> c2bddcb669e8118e96e6ece10a877bf5d9cc6979
 
         else:
             return -6
@@ -483,7 +479,10 @@ def has_needed_resources(item, a_player):
         else:
             return False
 
-
+def get_player_by_color(color_ltr, player_list): # 1 ltr string
+    for p in player_list:
+        if p.color == color_ltr:
+            return p
 
 def get_corners(tile_id, node_list):
     corners = []

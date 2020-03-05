@@ -1098,6 +1098,12 @@ class Player:
                 counter += 1
         return counter
 
+    def steal_card_from_player(self, other_p):
+        hand_len = len(other_p.p_hand)
+        random_card_i = random.randint(0, hand_len-1)
+        stolen_card = other_p.pop(random_card_i)
+        self.p_hand.append(stolen_card)
+
 
 class Board:
     def __init__(self):
@@ -1165,10 +1171,32 @@ class Robber:
             else:
                 a_game.game_robber.on_tile = t
                 # iterate over the corners of that tile and identify what players are on there
-                # if there's no one on any of the corners, return.
-                # if there is just one player, have the current player steal a card from them
-                # if there are multiple players, give the client the choice of who to steal from,
-                # take a random card and give it to the current player. return to menu.
+                can_steal_from = []
+                corners = items.get_corners(t, self.node_list)
+                for c in corners: # c's are nodes
+                    if c.owns_node == "":
+                        pass
+                    else:
+                        can_steal_from.append(c.owns_node)
+
+                if len(can_steal_from) > 0:
+                    if len(can_steal_from) == 1:
+                        other_p = items.get_player_by_color(can_steal_from[0], a_game.player_list) # this returns a player, but idk if it's the same as the one in the game obj
+                        a_game.curr_player.steal_card_from_player(a_game.curr_player, other_p)
+
+                    else:
+                        msg_to_client = "Which player would you like to steal from?\n"
+                        counter = 1
+                        for ltr in can_steal_from:
+                            msg_to_client += "\t" + str(counter) + ". " + ltr + "\n"
+                        msg_to_client += "\n" + a_game.curr_player.p_name + "> "
+                        a_game.catan_print(a_game.curr_player.conn, msg_to_client)
+                        result = int(a_game.catan_read(a_game.curr_player.conn)) - 1
+                        other_p = items.get_player_by_color(can_steal_from[result], a_game.player_list)
+                        a_game.curr_player.steal_card_from_player(a_game.curr_player, other_p)
+
+                        # right now this allows you to steal from yourself potentially, but we'll ignore that.
+
                 knight_placed = True
 
 
