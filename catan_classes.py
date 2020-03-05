@@ -741,6 +741,7 @@ Would you like to play online or locally?
         # okay, they want to play a game now. Initalize a locally played game
         msg = self.show_board()
         self.catan_sendall(conns, msg)
+        self.catan_sendall(conns, "\nWe're playing to " + str(self.pts_to_win) + " Victory Points!")
         self.place_initial(conns)
 
         winner = False
@@ -936,7 +937,7 @@ Would you like to play online or locally?
             location = self.catan_read(self.curr_player.conn)
             result = items.build_city(self.curr_player, location, self.node_list)
             if isinstance(result, int):
-                handle_errors(self.curr_player.conn, result)
+                self.handle_errors(self.curr_player.conn, result)
             elif isinstance(result, str):
                 self.catan_print(self.curr_player.conn, result)
             self.catan_sendall(conns, self.show_board())

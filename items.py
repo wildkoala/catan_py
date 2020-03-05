@@ -377,7 +377,7 @@ def build_settlement(a_player, location, node_list, initializing = False):
             a_player.p_hand.remove("S")
             a_player.p_hand.remove("W")
             a_player.p_victory_pts += 1
-            return a_player.p_name + "has placed down a settlement!"
+            return a_player.p_name + " has placed down a settlement!"
 
         else:
             return -6
