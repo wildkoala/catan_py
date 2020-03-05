@@ -19,7 +19,7 @@ class Game:
         #self.player_conns = player_conns # need this for multiplayer?
         #self.conns = conns
 
-        self.first_game_menu(conn)
+        #self.first_game_menu(conn)
         self.b = self.init_board()
         self.node_list = self.init_nodes()
         self.road_list = self.init_roads()
@@ -43,10 +43,10 @@ class Game:
             self.play(conns)
 
             #pass
-        self.player_list = self.init_players(conn)
-        self.pts_to_win = self.declare_pts_to_win(conn)
-        self.curr_player = self.player_list[0]
-        self.play(conn) # we'll want this to take a list of conns eventually.
+        #self.player_list = self.init_players(conn)
+        #self.pts_to_win = self.declare_pts_to_win(conn)
+        #self.curr_player = self.player_list[0]
+        #self.play(conn) # we'll want this to take a list of conns eventually.
 
     #===============================================
     #COMMUNICATION FUNCTIONS - Functions for communicating between clients and server
@@ -492,7 +492,7 @@ Would you like to play online or locally?
     	id = 0
     	for n in self.node_list:
     		for thing in n.adj_nodes:
-    			if n.id < thing:class Player
+    			if n.id < thing:#class Player
     				new_road = Road(n.id,thing,id)
     				road_list.append(new_road)
     				id+=1
