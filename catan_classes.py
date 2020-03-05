@@ -826,7 +826,7 @@ Would you like to play online or locally?
             if init:
                 settled = False
                 while settled == False:
-                    self.catan_print(conn, "Where do you want to place your settlement?\n" + a_player.p_name.strip() + "> ")
+                    self.catan_print(conn, "Where do you want to place your settlement?\n" + self.curr_player.p_name.strip() + "> ")
                     location = self.catan_read(conn)
                     result = items.build_settlement(self.curr_player, location, self.node_list, True)
                     print(result)
@@ -854,7 +854,7 @@ Would you like to play online or locally?
                     n1 = self.catan_read(conn)
                     self.catan_print(conn, "Where do you want to end your road?\n> ")
                     n2 = self.catan_read(conn)
-                    result = items.build_road(self.curr_player, n1, n2, self.node_list, self.road_list, True) # just pass the parts and let the function work
+                    result = items.build_road(self.curr_player, n1, n2, self.node_list, self.road_list, self.player_list, True) # just pass the parts and let the function work
                     if isinstance(result, int):
                         self.handle_errors(conn, result)
                     elif isinstance(result, str):
@@ -865,7 +865,7 @@ Would you like to play online or locally?
                 n1 = self.catan_read(conn)
                 self.catan_print(conn, "Where do you want to end your road?\n> ")
                 n2 = self.catan_read(conn)
-                result = items.build_road(self.curr_player, n1, n2, self.node_list, self.road_list)
+                result = items.build_road(self.curr_player, n1, n2, self.node_list, self.road_list, self.player_list)
                 if isinstance(result, int):
                     self.handle_errors(conn, result)
                 elif isinstance(result, str):
