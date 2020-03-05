@@ -604,7 +604,7 @@ Would you like to play online or locally?
         index = self.player_list.index(self.curr_player)
         self.curr_player = self.player_list[(len(conns) - index-1) % len(self.player_list)]
         while i < len(conns):
-            self.catan_sendall(conns, "\n" + self.curr_player.p_name.strip() + " is placing their first settlement\n")
+            self.catan_sendall(conns, "\n" + self.curr_player.p_name.strip() + " is placing their second settlement\n")
 
             # FIRST SETTLEMENT
             self.server_build_item(conns, "settlement", True)
@@ -612,7 +612,7 @@ Would you like to play online or locally?
 
 
             # FIRST ROAD
-            self.catan_sendall(conns, "\n" + self.curr_player.p_name.strip() + " is placing their first road\n")
+            self.catan_sendall(conns, "\n" + self.curr_player.p_name.strip() + " is placing their second road\n")
             self.server_build_item(conns, "road", True)
             self.catan_sendall(conns, self.show_board())
 
@@ -634,6 +634,7 @@ Would you like to play online or locally?
         self.catan_sendall(conns, "\nThe order of players is:")
         for i in self.player_list:
             self.catan_sendall(conns, "\n" + i.p_name.strip())
+        self.catan_sendall(conns, "\n")
 
     #================================================
     # TRADING FUNCTIONS
@@ -870,7 +871,7 @@ Would you like to play online or locally?
                 card_to_play.play_dev_card(self.curr_player.conn, self) # Again, can I pass the whole game as an argument? Or no?
 
             elif selection == 12:
-                self.catan_print(self.curr_player.conn, self.curr_player.show_victory_pts())
+                self.catan_print(self.curr_player.conn, "Victory Points: " + self.curr_player.show_victory_pts() + "\n")
 
             elif selection == 0:
                 pass
