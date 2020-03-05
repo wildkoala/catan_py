@@ -10,10 +10,12 @@
 
 #===============================================
 import random
+import items
+import math
 
 # do the things in the init method execute in order? Because if they do this will work like a charm.
 class Game:
-    def __init__(self, conn): #conns are a list of connections. It's gonna be conn for now, to make it work with one player.
+    def __init__(self, conns): #conns are a list of connections... Should I save conns as an attribute of the game class? or player? Player seems to make more sense to me.
         #self.player_conns = player_conns # need this for multiplayer?
         #self.conns = conns
 
@@ -23,6 +25,24 @@ class Game:
         self.road_list = self.init_roads()
         self.game_robber = self.init_robber()
         self.dev_cards = self.init_dev_cards()
+
+
+        if len(conns) == 1:
+            self.first_game_menu(conn)
+            self.player_list = self.init_players(conn)
+            self.pts_to_win = self.declare_pts_to_win(conn)
+            self.curr_player = self.player_list[0]
+            self.play(conn)
+        else:
+            # this is where the multiplayer code is going to go.
+            # okay, don't make life harder than it already is, just iterate over the connections and go in turns.
+
+            self.player_list = self.init_multiplayer(conns)
+            self.pts_to_win = self.declare_pts_to_win(conns[0])
+            self.curr_player = self.player_list[0]
+            self.play(conns)
+
+            #pass
         self.player_list = self.init_players(conn)
         self.pts_to_win = self.declare_pts_to_win(conn)
         self.curr_player = self.player_list[0]
@@ -33,6 +53,11 @@ class Game:
     #===============================================
     def catan_print(self, conn, given_str):
         conn.send(given_str.encode('ascii'))
+
+    def catan_sendall(self, conns, given_str):
+        for conn in conns:
+            conn.send(given_str.encode('ascii'))
+
 
     def catan_read(self, conn, size=1024):
         s = conn.recv(size).decode('ascii').strip()
@@ -248,6 +273,22 @@ Would you like to play online or locally?
     # INITIALIZATION FUNCTIONS - Setting up an instance of the game
     #===============================================
 
+    def init_multiplayer(self, conns):
+
+        color_options = ["Red", "Yellow", "Purple", "Green", "Cyan", "Tan"]
+        player_list = []
+        for conn in conns:
+            template = "Please Enter your player name\n> "
+            self.catan_print(conn, template)
+            name = self.catan_read(conn)
+
+            p_color =  color_options.pop(self.player_choose_color(conn, color_options)-1)
+            self.catan_print(conn, "You selected: " + p_color + "\n")
+            color = p_color[0].lower()
+            player_list.append(Player(conn, name.strip(),color)) # should I add conn as an attribute of the Player? I feel like i should.
+        return player_list
+
+
     def init_players(self, conn):
         try:
             player_list = []
@@ -451,7 +492,7 @@ Would you like to play online or locally?
     	id = 0
     	for n in self.node_list:
     		for thing in n.adj_nodes:
-    			if n.id < thing:
+    			if n.id < thing:class Player
     				new_road = Road(n.id,thing,id)
     				road_list.append(new_road)
     				id+=1
@@ -490,7 +531,7 @@ Would you like to play online or locally?
         except ValueError:
             self.catan_print(conn, "You must provide an integer")
 
-    def place_initial(self, conns):
+    def place_initial(self, conns, current_p):
         i = 0
         while i < len(conns):
             self.catan_sendall(conns, "\n" + self.curr_player.p_name.strip() + " is placing their first settlement\n")
@@ -580,42 +621,42 @@ Would you like to play online or locally?
             else:
                 self.catan_print(conn, "Please enter an appropriate value")
 
-    def play(self,conn):
+    def play(self,conns):
         # okay, they want to play a game now. Initalize a locally played game
         msg = self.show_board()
         for conn in conns:
             self.catan_print(conn, msg)
-            self.place_initial(conns) # place initial is requiring resources....
+            self.place_initial(conns, self.curr_player) # place initial is requiring resources....
 
         winner = False
         while winner != True:
-            winner = self.player_turn(conn)
+            winner = self.player_turn(conns)
             if winner:
                 break
             self.ayer()
         self.catan_print(conn, "\nWINNER: " + self.curr_player.p_name + "\n")
 
-    def player_turn(self, conn):
-        self.catan_print(conn, "\n" + self.curr_player.p_name + " it is your turn\n")
+    def player_turn(self, conns):
+        self.catan_sendall(conns, "\n" + self.curr_player.p_name + " it is your turn\n")
 
         self.catan_print(conn, "Press Enter to Roll Die")
         user_input = self.catan_read(conn)
 
         roll = self.roll_dice()
-        self.catan_print(conn, "\n" + str(roll) + " has been rolled\n")
-        self.catan_print(conn, items.give_resources(roll, a_game)) #BUG? can i give the entire object as an argument to one of it's methods?
+        self.catan_sendall(conns, "\n" + str(roll) + " has been rolled\n")
+        self.catan_sendall(conns, items.give_resources(roll, a_game)) #BUG? can i give the entire object as an argument to one of it's methods?
 
 
         #Check to see if robber() should be called
         if roll == 7:
-            self.game_robber.rob_players(self, conn, a_game) #BUG? can i give the entire object as an argument to one of it's methods?
+            self.game_robber.rob_players(self, self.curr_player.conn, a_game) #BUG? can i give the entire object as an argument to one of it's methods?
 
         #Player Selects an Option
         selection = -1
         while selection != 0:
             self.player_menu(conn)
             try:
-                self.catan_print(conn, "Please Select One\n"+ player.p_name + "> ")
+                self.catan_print(conn, "Please Select One\n"+ self.curr_player.p_name + "> ")
                 selection = int(self.catan_read(conn))
             except ValueError:
                 self.catan_print(conn, "You must enter a number corresponding to an option")
@@ -850,7 +891,8 @@ Would you like to play online or locally?
 
 
 class Player:
-    def __init__(self, name, color):
+    def __init__(self, conn, name, color):
+        self.conn = conn
         self.p_name = name
         self.p_hand = [] # should be a list of characters
         self.p_color = color # Red, Yellow, Purple, Green, Cyan, Tan
