@@ -24,13 +24,18 @@ class Game:
         self.node_list = self.init_nodes()
         self.road_list = self.init_roads()
         self.game_robber = self.init_robber()
-        self.dev_cards = self.init_dev_cards()
+        self.dev_cards = self.shuffle(self.init_dev_cards())
 
 
         if len(conns) == 1:
             conn = conns[0]
             self.first_game_menu(conn)
-            self.player_list = self.init_players(conn)
+            #self.player_list = self.init_players(conn)
+            num_players = self.init_players(conn)
+            for i in range(1, num_players):
+                conns.append(conn)
+            self.player_list = self.init_multiplayer(conns)
+            self.player_order(conns)
             self.pts_to_win = self.declare_pts_to_win(conn)
             self.curr_player = self.player_list[0]
             self.play(conns)
@@ -39,6 +44,7 @@ class Game:
             # okay, don't make life harder than it already is, just iterate over the connections and go in turns.
 
             self.player_list = self.init_multiplayer(conns)
+            self.player_order(conns)
             self.pts_to_win = self.declare_pts_to_win(conns[0])
             self.curr_player = self.player_list[0]
             # give people cards at the beginning just for testing things.
@@ -77,8 +83,11 @@ class Game:
         conn.send(given_str.encode('ascii'))
 
     def catan_sendall(self, conns, given_str):
-        for conn in conns:
-            conn.send(given_str.encode('ascii'))
+        if conns[0] == conns[1]:
+            conns[0].send(given_str.encode('ascii'))
+        else:
+            for conn in conns:
+                conn.send(given_str.encode('ascii'))
 
 
     def catan_read(self, conn, size=1024):
@@ -318,7 +327,7 @@ Would you like to play online or locally?
             self.catan_print(conn, "Please enter the number of players\n> ")
 
             num_players = int(self.catan_read(conn))
-            i = 0
+            '''i = 0
             color_options = ["Red", "Yellow", "Purple", "Green", "Cyan", "Tan"]
 
             while i < num_players:
@@ -333,7 +342,8 @@ Would you like to play online or locally?
                 i+=1
 
             return player_list
-
+            '''
+            return num_players
         except ValueError:
             catan_print(conn, "You must enter an integer")
             return
@@ -573,25 +583,40 @@ Would you like to play online or locally?
             self.next_player()
 
         i = 0
+
+        index = self.player_list.index(self.curr_player)
+        self.curr_player = self.player_list[(len(conns) - index-1) % len(self.player_list)]
         while i < len(conns):
-            self.catan_sendall(conns, "\n" + self.curr_player.p_name + " is placing their second settlement\n")
+            self.catan_sendall(conns, "\n" + self.curr_player.p_name.strip() + " is placing their first settlement\n")
+
+            # FIRST SETTLEMENT
             self.server_build_item(conns, "settlement", True)
             self.catan_sendall(conns, self.show_board())
 
-            # SECOND ROAD
-            self.catan_sendall(conns, "\n" + self.curr_player.p_name.strip() + " is placing their second road\n")
+
+            # FIRST ROAD
+            self.catan_sendall(conns, "\n" + self.curr_player.p_name.strip() + " is placing their first road\n")
             self.server_build_item(conns, "road", True)
             self.catan_sendall(conns, self.show_board())
 
-            # Go back one player.
             i += 1
-            index = self.player_list.index(self.curr_player)
-            self.curr_player = self.player_list[(index - 1) % len(self.player_list)]
-
+            index += 1
+            self.curr_player = self.player_list[(len(conns) - index-1) % len(self.player_list)]
 
         result = items.give_resources(0, self, True) # I don't know if I can pass the entire object to one of its methods like this. I can!
         self.catan_sendall(conns, result)
 
+    def player_order(self, conns):
+        for player in self.player_list:
+            self.catan_sendall(conns, "\n" + player.p_name.strip() + " please roll to see order to place settlements (Press Enter)")
+            player.p_order = self.roll_dice()
+            self.catan_sendall(conns, "\n" + player.p_name.strip() + ", you rolled a: " + str(player.p_order))
+        self.player_list = sorted(self.player_list, key=lambda x: x.p_order, reverse = True)
+
+        self.catan_sendall(conns, "\nThe order of players is:")
+        for i in self.player_list:
+            self.catan_sendall(conns, "\n" + i.p_name.strip())
+        return
 
     #================================================
     # TRADING FUNCTIONS
