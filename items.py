@@ -518,7 +518,7 @@ def give_resources(roll_num, a_game, initial = False): #give_resources(0, game, 
             return ""
 
         elif t.number == roll_num:
-            if t.id == a_game.robber.on_tile:
+            if t.id == a_game.game_robber.on_tile:
                 return "The robber stole your " + t.resource + "!!"
             else:
                 corners = get_corners(t.id, a_game.node_list)
