@@ -66,7 +66,10 @@ def get_road_with_nodes(node1, node2, road_list):
                 return r
     #print("COULDN'T FIND ROAD")
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> c1e640acf89bb59e13ab42625bf7c0f5b82cce92
 def get_road_by_id(id):
     for r in config.road_list:
         if id == r.id:
@@ -77,19 +80,31 @@ def get_nodes_by_road(road, node_list):
     n2 = node_list[road.end_n - 1]
     return [n1,n2]
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> c1e640acf89bb59e13ab42625bf7c0f5b82cce92
 #I need to somehow check to see if a player branches a road rather than extends it
 #Currently any roads attached and not broken will be merged so length of 2 roads
 #will be considered as 3 sometimes etc.
 
 #This returns true if I need to branch a players roads
 #Now i need to create 3 lists that are unmergable
+<<<<<<< HEAD
 def does_road_branch(a_player, placed_road, road_list, node_list):
     nodes = get_nodes_by_road(placed_road, node_list)
     for placed_node in nodes:
         counter = 0
         for adj_nodes in placed_node.adj_nodes:
             tested_road = get_road_with_nodes(placed_node, config.node_list[adj_nodes-1],road_list)
+=======
+def does_road_branch(a_player, placed_road):
+    nodes = get_nodes_by_road(placed_road)
+    for placed_node in nodes:
+        counter = 0
+        for adj_nodes in placed_node.adj_nodes:
+            tested_road = get_road_with_nodes(placed_node, config.node_list[adj_nodes-1])
+>>>>>>> c1e640acf89bb59e13ab42625bf7c0f5b82cce92
             if a_player.p_color == tested_road.owns_road:
                 counter += 1
         if counter == 3:
@@ -110,8 +125,6 @@ def merge_chain(a_player, node_list):
                     a_player.road_chains.remove(complist)
                     a_player.road_chains.remove(complist2)
                     return True
-    for sort_player in a_player.road_chains:
-        sort_player.sort()
     print(a_player.road_chains)
     return False
 
@@ -165,17 +178,27 @@ def are_connected_roads(a_player, list1, list2, node_list):
                         return True
     return False
 
+<<<<<<< HEAD
 
 def connected_roads(node, node_list, road_list):
+=======
+def connected_roads(node):
+>>>>>>> c1e640acf89bb59e13ab42625bf7c0f5b82cce92
     roads = [] # a list of connected roads.
     for adj in node.adj_nodes:
         roads.append(get_road_with_nodes(node, node_list[adj-1], road_list))
     return roads
 
 # NEEDS TESTING FOR ADJACENT ROADS
+<<<<<<< HEAD
 
 # takes player_color and the nodes on either side of the desired road.
 def road_is_connected(player_color, n1, n2, node_list, road_list):
+=======
+# takes player_color and the nodes on either side of the desired road.
+def road_is_connected(player_color, n1, n2, node_list, road_list):
+    print("IN ROAD IS CONNECTED FUNCTION")
+>>>>>>> c1e640acf89bb59e13ab42625bf7c0f5b82cce92
     if n1.owns_node.lower() == player_color: # lower makes sure that a city counts too.
         return True
     else: # this is the part of the code that needs to check for an adj road.
@@ -226,10 +249,6 @@ def build_road(a_player, n1, n2, node_list, road_list, player_list, initializing
             return -1
         n1 = get_node_by_alias(alias1, node_list)
 
-        if is_valid_location(alias2) == False:
-            return -1
-        n2 = get_node_by_alias(alias2, node_list)
-
         if n1.owns_node == a_player.p_color or n2.owns_node == a_player.p_color:
             wanted_road = get_road_with_nodes(n1, n2, road_list)
             if wanted_road is None:
@@ -246,6 +265,14 @@ def build_road(a_player, n1, n2, node_list, road_list, player_list, initializing
                     val = merge_chain(a_player, node_list)
                 does_split_road(a_player, wanted_road, node_list, player_list)
                 if does_road_branch(a_player, wanted_road, node_list, player_list):
+                    print("You idiot branch here")
+
+                a_player.road_chains.append([wanted_road.id])
+                val = merge_chain(a_player)
+                if val:
+                    val = merge_chain(a_player)
+                does_split_road(a_player, wanted_road)
+                if does_road_branch(a_player, wanted_road):
                     print("You idiot branch here")
 
         else:
@@ -283,6 +310,7 @@ def build_road(a_player, n1, n2, node_list, road_list, player_list, initializing
                     a_player.p_hand.remove("B")
                     a_player.p_hand.remove("L")
                     return "Road added!!!"
+<<<<<<< HEAD
                     a_player.road_chains.append([wanted_road.id])
                     val = merge_chain(a_player, node_list)
                     if val:
@@ -290,6 +318,14 @@ def build_road(a_player, n1, n2, node_list, road_list, player_list, initializing
                     does_split_road(a_player, wanted_road, node_list, player_list)
                     if does_road_branch(a_player, wanted_road, node_list, player_list):
                         print("You idiot branch here")
+=======
+                    does_split_road(a_player, wanted_road)
+
+                    branch_this_road = does_road_branch(a_player, wanted_road)
+                    if branch_this_road != None:
+                        print("You idiot branch here")
+
+>>>>>>> c1e640acf89bb59e13ab42625bf7c0f5b82cce92
             else:
                 return -5
         else:
