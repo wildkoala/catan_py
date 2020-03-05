@@ -87,7 +87,7 @@ def does_road_branch(a_player, placed_road, road_list, node_list):
     for placed_node in nodes:
         counter = 0
         for adj_nodes in placed_node.adj_nodes:
-            tested_road = get_road_with_nodes(placed_node, config.node_list[adj_nodes-1],road_list)
+            tested_road = get_road_with_nodes(placed_node, node_list[adj_nodes-1],road_list)
 
             if a_player.p_color == tested_road.owns_road:
                 counter += 1
@@ -113,7 +113,7 @@ def merge_chain(a_player, node_list):
     return False
 
 #This function will split a player's road
-def split_road(a_player, node):
+def split_road(a_player, node, node_list):
     new_list = []
     for i in a_player.road_chains:
         for roads in i:
@@ -121,7 +121,7 @@ def split_road(a_player, node):
     a_player.road_chains = new_list
     keep_merging = True
     while keep_merging:
-        keep_merging = merge_chain(a_player)
+        keep_merging = merge_chain(a_player, node_list)
 
 
 #Called when a player places a road. gets the end node of the road placed
@@ -144,7 +144,7 @@ def does_split_road(a_player, placed_road, node_list, player_list):
             for i in player_list:
                 if i.p_color == player:
                     i.split_roads.append(placed_node.id)
-                    split_road(i, placed_node)
+                    split_road(i, placed_node, node_list)
     pass
     #
 
@@ -485,7 +485,7 @@ def has_needed_resources(item, a_player):
 
 def get_player_by_color(color_ltr, player_list): # 1 ltr string
     for p in player_list:
-        if p.color == color_ltr:
+        if p.p_color == color_ltr:
             return p
 
 def get_corners(tile_id, node_list):

@@ -1115,7 +1115,9 @@ Would you like to play online or locally?
                 self.curr_player.has_longest_road = True
                 self.curr_player.p_victory_pts += 2
                 self.catan_sendall(conns, "\n" + a_player.p_name + " is the first to get the largest road")
-
+            else:
+                self.catan_sendall(conns, "\nNobody has longest road")
+                self.catan_sendall(conns, "\n" + self.curr_player.road_chains[1])
 
 
 class Player:
@@ -1282,7 +1284,7 @@ class Robber:
                 if len(can_steal_from) > 0:
                     if len(can_steal_from) == 1:
                         other_p = items.get_player_by_color(can_steal_from[0], a_game.player_list) # this returns a player, but idk if it's the same as the one in the game obj
-                        a_game.curr_player.steal_card_from_player(a_game.curr_player, other_p)
+                        a_game.curr_player.steal_card_from_player(other_p)
 
                     else:
                         msg_to_client = "Which player would you like to steal from?\n"
@@ -1293,7 +1295,7 @@ class Robber:
                         a_game.catan_print(a_game.curr_player.conn, msg_to_client)
                         result = int(a_game.catan_read(a_game.curr_player.conn)) - 1
                         other_p = items.get_player_by_color(can_steal_from[result], a_game.player_list)
-                        a_game.curr_player.steal_card_from_player(a_game.curr_player, other_p)
+                        a_game.curr_player.steal_card_from_player(other_p)
 
                         # right now this allows you to steal from yourself potentially, but we'll ignore that.
 
