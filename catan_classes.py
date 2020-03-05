@@ -27,6 +27,7 @@ class Game:
         self.road_list = self.init_roads()
         self.game_robber = self.init_robber()
         self.dev_cards = self.shuffle(self.init_dev_cards())
+        self.port_list = self.init_ports()
 
 
         if len(conns) == 1:
@@ -558,6 +559,19 @@ Would you like to play online or locally?
     	r = Robber(random.randint(1, 20))
     	return r
 
+    def init_ports(self):
+        ports = []
+        ports.append(Port("W", (self.node_list[49],self.node_list[50])))
+        ports.append(Port("O", (self.node_list[36],self.node_list[46])))
+        ports.append(Port("S", (self.node_list[14],self.node_list[24])))
+        ports.append(Port("L", (self.node_list[2],self.node_list[3])))
+        ports.append(Port("B", (self.node_list[7],self.node_list[15])))
+        ports.append(Port("3", (self.node_list[5],self.node_list[6])))
+        ports.append(Port("3", (self.node_list[26],self.node_list[27])))
+        ports.append(Port("3", (self.node_list[39],self.node_list[38])))
+        ports.append(Port("3", (self.node_list[52],self.node_list[53])))
+        return ports
+
     def declare_pts_to_win(self, conn):
         try:
             self.catan_print(conn, "Enter the Amount of Points Required to Win\n> ")
@@ -652,6 +666,52 @@ Would you like to play online or locally?
             return True
         elif choice == "n":
             return False
+
+    def trade_using_port(self, player):
+        port = False
+        player_ports = []
+        for i in self.port_list:
+            if i.is_player_on(player):
+                player_ports.append(i)
+                port = True
+        if port:
+            try:
+                selection = -1
+                while selection < 0 or selection > len(player_ports):
+                    self.catan_print(pplayer.conn, '''
+    Please select a port to trade with:
+    0   to go back to main menu''')
+                    count = 1
+                    for i in player_ports:
+                        self.catan_print(player.conn, "\n" + str(count) + "   " + i.type + " Port")
+                        count+=1
+                        selection = self.catan_read(player.conn)
+                    if selection == 0:
+                        return
+
+                want = catan_print(player.conn, "\nWhat resource would you like?\n> ")
+                if player_ports[selection-1].type == "3":
+                    give = input("What resource will you be trading 3 of?\n> ")
+                    r = give*3
+                    if player.has_resources(r):
+                        player.p_hand.remove(give.upper())
+                        player.p_hand.remove(give.upper())
+                        player.p_hand.remove(give.upper())
+                        player.p_hand.append(want.upper())
+                    else:
+                        catan_print(player.conn, "\nYou do not have enough resources")
+                else:
+                    r = player_ports[selection-1].type*2
+                    if player.has_resources(r):
+                        player.p_hand.remove(player_ports[selection-1].type)
+                        player.p_hand.remove(player_ports[selection-1].type)
+                        player.p_hand.append(want.upper())
+                    else:
+                        catan_print(player.conn, "\nYou do not have enough resources")
+            except:
+                catan_print(player.conn,"\nAn error has occurred please try again")
+        else:
+            catan_print(player.conn,"\nYou are not on any ports")
 
     # Add function for trading with ports here.
 
