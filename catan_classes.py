@@ -52,13 +52,13 @@ class Game:
             self.curr_player = self.player_list[0]
             # give people cards at the beginning just for testing things.
             for p in self.player_list:
-                p.p_hand.append("B")
-                p.p_hand.append("B")
-                p.p_hand.append("B")
+                p.p_hand.append("O")
+                p.p_hand.append("O")
+                p.p_hand.append("O")
 
-                p.p_hand.append("L")
-                p.p_hand.append("L")
-                p.p_hand.append("L")
+                p.p_hand.append("S")
+                p.p_hand.append("S")
+                p.p_hand.append("S")
 
                 p.p_hand.append("S")
                 p.p_hand.append("S")
@@ -68,13 +68,13 @@ class Game:
                 p.p_hand.append("W")
                 p.p_hand.append("W")
 
-                p.p_hand.append("B")
-                p.p_hand.append("B")
-                p.p_hand.append("B")
+                p.p_hand.append("O")
+                p.p_hand.append("O")
+                p.p_hand.append("O")
 
-                p.p_hand.append("L")
-                p.p_hand.append("L")
-                p.p_hand.append("L")
+                p.p_hand.append("W")
+                p.p_hand.append("W")
+                p.p_hand.append("W")
 
             self.play(conns)
 
@@ -871,7 +871,7 @@ Would you like to play online or locally?
                 self.catan_print(self.curr_player.conn, "\n" + self.curr_player.p_name + "> ")
                 num = int(self.catan_read(self.curr_player.conn)) # this will break if they give something other than an int.
                 card_to_play = self.curr_player.p_dev_cards[num-1]
-                card_to_play.play_dev_card(self.curr_player.conn, self) # Again, can I pass the whole game as an argument? Or no?
+                card_to_play.play_dev_card(self.curr_player.conn, self, conns) # Again, can I pass the whole game as an argument? Or no?
 
             elif selection == 12:
                 self.catan_print(self.curr_player.conn, "Victory Points: " + self.curr_player.show_victory_pts() + "\n")
@@ -999,6 +999,7 @@ Would you like to play online or locally?
                 elif isinstance(result, str):
                     self.catan_print(self.curr_player.conn, result)
                 self.catan_sendall(conns, self.show_board())
+                self.check_longest_road(conns)
 
         elif item == "dev card":
             self.catan_print(self.curr_player.conn, "Where do you want to start your road?\n" + self.curr_player.p_name + "> ")
@@ -1011,11 +1012,60 @@ Would you like to play online or locally?
             elif isinstance(result, str):
                 self.catan_print(self.curr_player.conn, result)
 
+    def check_largest_army(self, conns):
+        player_has_largest_army = False
+        counter = 0
+        index = -1
+        #First check if anybody currently has the largest army
+        for i in self.player_list:
+            if i.has_largest_army == True:
+                player_has_largest_army = True
+                self.catan_print(i.conn, "\n" + i.p_name + " has the largest army")
+                index = counter
+            counter += 1
+        #Then if somebody has the largest army check if player has more knights
+        #nobody has largest army check if player has 3 knights now
+        if player_has_largest_army:
+            if self.curr_player.count_knights() > self.player_list[index].count_knights():
+                self.curr_player.has_largest_army = True
+                self.curr_player.p_victory_pts += 2
+                self.player_list[index].has_largest_army = False
+                self.player_list[index].p_victory_pts -= 2
+                self.catan_sendall(conns, "\n" + self.curr_player.p_name + " has taken the largest army")
+        else:
+            if self.curr_player.count_knights() >= 3:
+                self.curr_player.has_largest_army = True
+                self.curr_player.p_victory_pts += 2
+                self.catan_sendall(conns, "\n" + self.curr_player.p_name + " is the first to get the largest army")
 
+    def check_longest_road(self, conns):
+        player_has_longest_road = False
+        counter = 0
+        index = -1
+        #First check if anybody currently has the largest army
+        for i in self.player_list:
+            if i.has_longest_road == True and i.count_road() >= 5:
+                player_has_longest_road = True
+                self.catan_sendall(conns, "\n" + i.p_name + " has gotten the longest road")
+                index = counter
+            elif i.has_longest_road == True and i.count_road() < 5:
+                i.has_longest_road = False
+                i.p_victory_pts -= 2
+                self.catan_sendall(conns, "\n" + i.p_name + " has lost the longest road")
+            counter += 1
 
-
-
-
+        if player_has_longest_road:
+            if self.curr_player.count_road() > self.player_list[index].count_road():
+                self.curr_player.has_longest_road = True
+                self.curr_player.p_victory_pts += 2
+                self.player_list[index].has_largest_army = False
+                self.player_list[index].p_victory_pts -= 2
+                self.catan_sendall(conns, "\n" + self.curr_player.p_name + " has taken the longest road")
+        else:
+            if self.curr_player.count_road() >= 5:
+                self.curr_player.has_longest_road = True
+                self.curr_player.p_victory_pts += 2
+                self.catan_sendall(conns, "\n" + a_player.p_name + " is the first to get the largest road")
 
 
 
@@ -1134,7 +1184,7 @@ class Robber:
                     a_game.catan_print(p.conn, p.p_name + " this is your current hand: ")
                     a_game.catan_print(p.conn, p.show_hand())
                     a_game.catan_print(p.conn, "\n" + p.p_name + " Please discard " + str(num_to_discard) + " cards.\n> ")
-                    discard = a_game.catan_read(conn)
+                    discard = a_game.catan_read(p.conn)
                     if len(discard) > num_to_discard:
                         a_game.catan_print(p.conn, "You have discarded more cards than necessary.")
 
@@ -1224,13 +1274,16 @@ class Dev_Card:
     def __str__(self):
         return self.card_type
 
-    def play_dev_card(self, conn, a_game):
+    def play_dev_card(self, conn, a_game, conns):
 
         # Partially Implemented
         if self.card_type == "Knight":
             a_game.catan_print(conn, a_game.curr_player.p_name + " played a development card: ")
             a_game.catan_print(conn, self.card_type + "\n")
-            move_robber(conn, a_game.game_robber)
+            a_game.game_robber.move_robber(conn, a_game)
+            a_game.curr_player.p_dev_cards.remove(self)
+            a_game.curr_player.p_played_dev_cards.append(self)
+            a_game.check_largest_army(conns)
             # this should steal a card from a player. Write that into move_robber
 
         #DONE

@@ -381,15 +381,15 @@ def build_settlement(a_player, location, node_list, port_list, initializing = Fa
             a_player.p_hand.remove("S")
             a_player.p_hand.remove("W")
             a_player.p_victory_pts += 1
-<<<<<<< HEAD
+
             return a_player.p_name + " has placed down a settlement!"
-=======
+
             for ports in port_list:
                 for nodes in ports.location:
                     if node_list[i] == nodes:
                         ports.player_on = a_player.p_color
             return a_player.p_name + "has placed down a settlement!"
->>>>>>> c2bddcb669e8118e96e6ece10a877bf5d9cc6979
+
 
         else:
             return -6
