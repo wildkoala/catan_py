@@ -41,6 +41,32 @@ class Game:
             self.player_list = self.init_multiplayer(conns)
             self.pts_to_win = self.declare_pts_to_win(conns[0])
             self.curr_player = self.player_list[0]
+            # give people cards at the beginning just for testing things.
+            for p in self.player_list:
+                p.p_hand.append("B")
+                p.p_hand.append("B")
+                p.p_hand.append("B")
+
+                p.p_hand.append("L")
+                p.p_hand.append("L")
+                p.p_hand.append("L")
+
+                p.p_hand.append("S")
+                p.p_hand.append("S")
+                p.p_hand.append("S")
+
+                p.p_hand.append("W")
+                p.p_hand.append("W")
+                p.p_hand.append("W")
+
+                p.p_hand.append("B")
+                p.p_hand.append("B")
+                p.p_hand.append("B")
+
+                p.p_hand.append("L")
+                p.p_hand.append("L")
+                p.p_hand.append("L")
+
             self.play(conns)
 
 
@@ -571,7 +597,7 @@ Would you like to play online or locally?
     # TRADING FUNCTIONS
     #================================================
 
-    def trade_resources(player, trade_to, want, offer):
+    def trade_resources(self, player, trade_to, want, offer):
         for r in offer:
             player.p_hand.remove(r)
             trade_to.p_hand.append(r)
@@ -580,17 +606,17 @@ Would you like to play online or locally?
             player.p_hand.append(r)
             trade_to.p_hand.remove(r)
 
-    def trade_accepted(self, conn, trade_to, want, offer):
-        catan_print(conn, trade_to.p_name + ", " + self.curr_player.p_name + " has offered you: " )
-        catan_print(conn, offer + "\n")
-        catan_print(conn, "In exchange for: ")
-        catan_print(conn, want + "\n")
+    def trade_accepted(self, trade_to, want, offer):
+        self.catan_print(trade_to.conn, trade_to.p_name + ", " + self.curr_player.p_name + " has offered you: " )
+        self.catan_print(trade_to.conn, offer + "\n")
+        self.catan_print(trade_to.conn, "In exchange for: ")
+        self.catan_print(trade_to.conn, want + "\n")
         choice = ""
         while choice == "":
-            catan_print(conn, "Do you want to accept this trade? (y/n)\n> ")
-            choice = catan_read(conn)
+            self.catan_print(trade_to.conn, "Do you want to accept this trade? (y/n)\n> ")
+            choice = self.catan_read(trade_to.conn)
             if choice not in "yn": #BUG, they could enter "yn" and break the program
-                catan_print(conn, "You must enter 'y' or 'n'")
+                self.catan_print(trade_to.conn, "You must enter 'y' or 'n'")
                 choice = ""
                 continue
 
@@ -644,7 +670,7 @@ Would you like to play online or locally?
         user_input = self.catan_read(self.curr_player.conn)
 
         roll = self.roll_dice()
-        self.catan_sendall(conns, "\n" + str(roll) + " has been rolled")
+        self.catan_sendall(conns, "\n" + str(roll) + " has been rolled\n")
         self.catan_sendall(conns, items.give_resources(roll, self)) #Apparent, we can pass an entire object to one of its own methods.
 
 
@@ -702,10 +728,13 @@ Would you like to play online or locally?
                 if option <= len(self.player_list):
                     if self.curr_player.has_resources(offer):
 
-                        want_to_trade = self.trade_accepted(trade_to.conn, trade_to, want, offer)
+                        want_to_trade = self.trade_accepted(trade_to, want, offer)
                         they_have_resources = trade_to.has_resources(want)
                         if want_to_trade and they_have_resources:
-                            self.trade_resources(player, trade_to, want, offer)
+                            self.catan_print(self.curr_player.conn, "[+] " + trade_to.p_name + " accepted the trade!\n")
+                            self.trade_resources(self.curr_player, trade_to, want, offer)
+                        else:
+                            self.catan_print(self.curr_player.conn, "[+] " + trade_to.p_name + " denied the trade...\n")
                     else:
                         self.catan_print(self.curr_player.conn, "You don't have those resources to offer...")
                 elif trade_to == len(player_list) + 1:
@@ -718,7 +747,7 @@ Would you like to play online or locally?
                 want = self.catan_read(self.curr_player.conn)
                 self.catan_print(self.curr_player.conn, "What resource will you be trading 4 of?\n" + self.curr_player.p_name + "> ")
                 give = self.catan_read(self.curr_player.conn)
-                if player.has_resources(give*4):
+                if self.curr_player.has_resources(give*4):
                     self.curr_player.p_hand.remove(give)
                     self.curr_player.p_hand.remove(give)
                     self.curr_player.p_hand.remove(give)
@@ -736,6 +765,7 @@ Would you like to play online or locally?
                 self.catan_print(self.curr_player.conn, self.show_board())
 
             elif selection == 10:
+                self.catan_print(self.curr_player.conn, "Here are your development cards\n")
                 self.catan_print(self.curr_player.conn, self.curr_player.show_dev_cards())
 
 
@@ -743,15 +773,16 @@ Would you like to play online or locally?
                 if self.curr_player.p_dev_cards == []:
                     self.catan_print(self.curr_player.conn, "You have no development cards!!\n")
                     continue
-                self.catan_print(conn, "Please select a dev_card: \n")
+                self.catan_print(self.curr_player.conn, "Please select a development card: \n")
                 msg_to_client = self.curr_player.show_dev_cards()
                 self.catan_print(self.curr_player.conn, msg_to_client)
+                self.catan_print(self.curr_player.conn, "\n" + self.curr_player.p_name + "> ")
                 num = int(self.catan_read(self.curr_player.conn)) # this will break if they give something other than an int.
                 card_to_play = self.curr_player.p_dev_cards[num-1]
                 card_to_play.play_dev_card(self.curr_player.conn, self) # Again, can I pass the whole game as an argument? Or no?
 
             elif selection == 12:
-                self.catan_print(self.curr_player.conn, player.show_victory_pts())
+                self.catan_print(self.curr_player.conn, self.curr_player.show_victory_pts())
 
             elif selection == 0:
                 pass
@@ -813,13 +844,14 @@ Would you like to play online or locally?
         # There's a way to get this down into one thing. More DRY, but i can't figure it out rn.
         # PARTIALLY IMPLEMENTED
         if item == "city":
-            catan_print(self.curr_player.conn, "Where would you like to upgrade into a city?\n" + self.curr_player.p_name + "> ")
+            self.catan_print(self.curr_player.conn, "Where would you like to upgrade into a city?\n" + self.curr_player.p_name + "> ")
             location = self.catan_read(self.curr_player.conn)
             result = items.build_city(self.curr_player, location, self.node_list)
             if isinstance(result, int):
                 handle_errors(self.curr_player.conn, result)
             elif isinstance(result, str):
-                catan_print(self.curr_player.conn, result)
+                self.catan_print(self.curr_player.conn, result)
+            self.catan_sendall(conns, self.show_board())
 
         # There's a way to get this down into one thing. More DRY, but i can't figure it out rn.
         # PARTIALLY IMPLEMENTED
@@ -838,6 +870,7 @@ Would you like to play online or locally?
                         settled = True
 
 
+
             else:
                 self.catan_print(self.curr_player.conn, "Where do you want to place your settlement?\n" + self.curr_player.p_name + "> ")
                 location = self.catan_read(self.curr_player.conn)
@@ -846,6 +879,7 @@ Would you like to play online or locally?
                     self.handle_errors(self.curr_player.conn, result)
                 elif isinstance(result, str):
                     self.catan_print(self.curr_player.conn, result)
+                self.catan_sendall(conns, self.show_board())
 
         elif item == "road": # not yet written for anything other than initial setup
             if init:
@@ -872,6 +906,7 @@ Would you like to play online or locally?
                     self.handle_errors(self.curr_player.conn, result)
                 elif isinstance(result, str):
                     self.catan_print(self.curr_player.conn, result)
+                self.catan_sendall(conns, self.show_board())
 
         elif item == "dev card":
             self.catan_print(self.curr_player.conn, "Where do you want to start your road?\n" + self.curr_player.p_name + "> ")
@@ -920,19 +955,20 @@ class Player:
         if len(self.p_dev_cards) == 0:
             return "You have no development cards"
         else:
+            client_msg = ""
             counter = 1
-
             for i in self.p_dev_cards:
-                print(str(counter) + "\t" + str(i)) # idk if i is gonna work like That
+                client_msg += "\t" + str(counter) + ". " + str(i) + "\n"
                 counter += 1
+            return client_msg
 
     def show_played_dev_cards(self):
         if len(self.p_played_dev_cards) == 0:
-            print("You have no played development cards")
+            return "You have no played development cards"
         else:
             counter = 1
             for i in self.p_played_dev_cards:
-                print("\t" + str(i)) # idk if i is gonna work like That
+                print("\t" + str(counter) + ". " + str(i))
                 counter += 1
             return msg_to_client + "> "
 
@@ -1000,26 +1036,26 @@ class Robber:
                 discard = ""
                 has_cards = False
                 while len(discard) != num_to_discard or has_cards == False:
-                    a_game.catan_print(conn, p.p_name + " this is your current hand: ")
-                    i.show_hand()
-                    a_game.catan_print(conn, p.p_name + " Please discard " + str(num_to_discard) + " cards\n> ")
+                    a_game.catan_print(p.conn, p.p_name + " this is your current hand: ")
+                    a_game.catan_print(p.conn, p.show_hand())
+                    a_game.catan_print(p.conn, "\n" + p.p_name + " Please discard " + str(num_to_discard) + " cards.\n> ")
                     discard = a_game.catan_read(conn)
                     if len(discard) > num_to_discard:
-                        a_game.catan_print(conn, "You have discarded more cards than necessary.")
+                        a_game.catan_print(p.conn, "You have discarded more cards than necessary.")
 
                     elif len(discard) < num_to_discard:
-                        a_game.catan_print(conn, "You didn't discard enough cards... try again.")
+                        a_game.catan_print(p.conn, "You didn't discard enough cards... try again.\n")
 
                     if p.p_hand.count("O") >= list(discard).count("O") and p.p_hand.count("B") >= list(discard).count("B") and p.p_hand.count("S") >= list(discard).count("S") and p.p_hand.count("W") >= list(discard).count("W") and p.p_hand.count("L") >= list(discard).count("L"):
                         has_cards = True
 
                     else:
                         has_cards = False
-                        a_game.catan_print(conn, "You do not have those cards")
+                        a_game.catan_print(p.conn, "You do not have those cards")
                 for card in discard:
                     p.p_hand.remove(card)
-                a_game.catan_print(conn, "\n" + p.p_name + " this is your new hand: \n")
-                p.show_hand()
+                a_game.catan_print(p.conn, "\n" + p.p_name + " this is your new hand: \n")
+                a_game.catan_print(p.conn, p.show_hand())
 
         self.move_robber(conn, a_game)
 
@@ -1153,7 +1189,7 @@ class Dev_Card:
                     for num in range(0, num_taken):
                         a_game.curr_player.p_hand.append(wanted_card.upper())
 
-                    catan_print(conn, a_game.curr_player.p_name + " took all everyone's " + wanted_card.upper())
+                    a_game.catan_print(conn, a_game.curr_player.p_name + " took everyone's " + wanted_card.upper())
                     got_resources = True
 
                 else:

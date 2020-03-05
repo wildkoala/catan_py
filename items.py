@@ -4,7 +4,10 @@
 #========================================================
 
 #========================================================
-# BUGS: some functions only have n set as a node id instead of a node object.
+# BUGS:
+# Player options 1-7, 9-11 all work.
+# That means that options 8 and 12 are currently broken.
+# We also need longest road and largest army implemented. 
 #========================================================
 
 # POSSIBLE RESOURCES: Ore, Wheat, Brick, Lumber, Sheep
@@ -173,7 +176,6 @@ def connected_roads(node, node_list, road_list):
 
 # takes player_color and the nodes on either side of the desired road.
 def road_is_connected(player_color, n1, n2, node_list, road_list):
-    print("IN ROAD IS CONNECTED FUNCTION")
     if n1.owns_node.lower() == player_color: # lower makes sure that a city counts too.
         return True
     else: # this is the part of the code that needs to check for an adj road.
@@ -237,7 +239,7 @@ def build_road(a_player, n1, n2, node_list, road_list, player_list, initializing
 
             else:
                 wanted_road.owns_road = a_player.p_color
-                return "Road added!!!"
+                return "ed!!!"
                 a_player.road_chains.append([wanted_road.id])
                 val = merge_chain(a_player, node_list)
                 if val:
