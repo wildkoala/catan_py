@@ -223,6 +223,7 @@ def build_road(a_player, n1, n2, node_list, road_list, player_list, initializing
         if is_valid_location(alias1) == False:
             return -1
         n1 = get_node_by_alias(alias1, node_list)
+        n2 = get_node_by_alias(alias2, node_list)
 
         if n1.owns_node == a_player.p_color or n2.owns_node == a_player.p_color:
             wanted_road = get_road_with_nodes(n1, n2, road_list)
