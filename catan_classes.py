@@ -6,9 +6,8 @@
 
 #========================================================
 # BUGS:
-# Player options 1-7, 9-11 all work.
-# That means that options 8 and 12 are currently broken.
-# We also need longest road and largest army implemented.
+# Need to implement trading with a port.
+# We also need longest road and largest army.
 #========================================================
 
 #===============================================
@@ -1100,19 +1099,23 @@ class Robber:
                 a_game.catan_print(conn, "You must put the robber on a new tile.\n")
                 continue
             else:
-                # maybe the tile that the robber is on should be an attribute of the robber, because im going to have to iterate over all the times to "undo" the old robber.
                 a_game.game_robber.on_tile = t
+                # iterate over the corners of that tile and identify what players are on there
+                # if there's no one on any of the corners, return.
+                # if there is just one player, have the current player steal a card from them
+                # if there are multiple players, give the client the choice of who to steal from,
+                # take a random card and give it to the current player. return to menu.
                 knight_placed = True
 
 
 
 class Node:
-    def __init__(self, id): # Just gonna have every node have an id.
+    def __init__(self, id):
         self.id = id
-        self.owns_node = "" # color of player with a settlement or city on this node
-        self.alias = [] # this is a list of tuples, where the first vvalue is the tile it's on, and the second is the corner that it is.
-        self.can_place = False # basically, this is only true in limited circumstances
-        self.adj_nodes = [] # list of id's for connected nodes
+        self.owns_node = ""
+        self.alias = []
+        self.can_place = False
+        self.adj_nodes = []
 
     def is_empty(self):
         if self.owns_node == "":
@@ -1157,19 +1160,19 @@ class Dev_Card:
     def __str__(self):
         return self.card_type
 
-    def play_dev_card(self, conn, a_game): # want this to take a game object... I'll fix this later
+    def play_dev_card(self, conn, a_game):
 
         # Partially Implemented
         if self.card_type == "Knight":
-            catan_print(conn, a_game.curr_player.p_name + " played a development card: ")
-            catan_print(conn, self.card_type + "\n")
+            a_game.catan_print(conn, a_game.curr_player.p_name + " played a development card: ")
+            a_game.catan_print(conn, self.card_type + "\n")
             move_robber(conn, a_game.game_robber)
-            # steal a card from a player.
+            # this should steal a card from a player. Write that into move_robber
 
         #DONE
         elif self.card_type == "Road Building":
-            catan_print(conn, a_game.curr_player.p_name + " played a development card: ")
-            catan_print(conn, self.card_type + "\n")
+            a_game.catan_print(conn, a_game.curr_player.p_name + " played a development card: ")
+            a_game.catan_print(conn, self.card_type + "\n")
             a_player.p_hand.append("B")
             a_player.p_hand.append("L")
             a_player.p_hand.append("B")
@@ -1200,7 +1203,7 @@ class Dev_Card:
                         a_game.curr_player.p_hand.append(wanted_card.upper())
                         added_cards += 1
                 else:
-                    catan_print(conn, wanted_card + " is not a valid resource")
+                    a_game.catan_print(conn, wanted_card + " is not a valid resource")
 
         #DONE
         elif self.card_type == "Monopoly":
@@ -1230,7 +1233,7 @@ class Dev_Card:
 
         #DONE
         elif self.card_type == "Victory Point":
-            a_game.catan_print(conn, "Victory point card played!!\n") # make sure this is only adding a victory point once, not now and when they get it.
+            a_game.catan_print(conn, "Victory point card played!!\n")
             a_game.curr_player.p_victory_pts += 1 # I don't want to tell anyone else that this was played.
 
         else:
