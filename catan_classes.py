@@ -556,6 +556,8 @@ Would you like to play online or locally?
 
         i = 0
 
+        index = self.player_list.index(self.curr_player)
+        self.curr_player = self.player_list[(len(conns) - index-1) % len(self.player_list)]
         while i < len(conns):
             self.catan_sendall(conns, "\n" + self.curr_player.p_name.strip() + " is placing their first settlement\n")
 
@@ -570,8 +572,8 @@ Would you like to play online or locally?
             self.catan_sendall(conns, self.show_board())
 
             i += 1
-            index = self.player_list.index(self.curr_player)
-            self.curr_player = self.player_list[(index - 1) % len(self.player_list)]
+            index += 1
+            self.curr_player = self.player_list[(len(conns) - index-1) % len(self.player_list)]
 
         result = items.give_resources(0, self, True) # I don't know if I can pass the entire object to one of its methods like this. I can!
         self.catan_sendall(conns, result)
