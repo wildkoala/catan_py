@@ -678,20 +678,22 @@ Would you like to play online or locally?
             try:
                 selection = -1
                 while selection < 0 or selection > len(player_ports):
-                    self.catan_print(pplayer.conn, '''
+                    self.catan_print(player.conn, '''
     Please select a port to trade with:
     0   to go back to main menu''')
                     count = 1
                     for i in player_ports:
-                        self.catan_print(player.conn, "\n" + str(count) + "   " + i.type + " Port")
+                        self.catan_print(player.conn, "\n" + str(count) + "   " + i.type + " Port\n")
                         count+=1
-                        selection = self.catan_read(player.conn)
+                    selection = int(self.catan_read(player.conn))
                     if selection == 0:
                         return
 
-                want = catan_print(player.conn, "\nWhat resource would you like?\n> ")
+                self.catan_print(player.conn, "\nWhat resource would you like?\n> ")
+                want = self.catan_read(player.conn)
                 if player_ports[selection-1].type == "3":
-                    give = input("What resource will you be trading 3 of?\n> ")
+                    self.catan_print(player.conn, "\nWhat resource will you be trading 3 of?\n> ")
+                    give = self.catan_read(player.conn)
                     r = give*3
                     if player.has_resources(r):
                         player.p_hand.remove(give.upper())
@@ -699,7 +701,7 @@ Would you like to play online or locally?
                         player.p_hand.remove(give.upper())
                         player.p_hand.append(want.upper())
                     else:
-                        catan_print(player.conn, "\nYou do not have enough resources")
+                        self.catan_print(player.conn, "\nYou do not have enough resources")
                 else:
                     r = player_ports[selection-1].type*2
                     if player.has_resources(r):
@@ -707,11 +709,11 @@ Would you like to play online or locally?
                         player.p_hand.remove(player_ports[selection-1].type)
                         player.p_hand.append(want.upper())
                     else:
-                        catan_print(player.conn, "\nYou do not have enough resources")
-            except:
-                catan_print(player.conn,"\nAn error has occurred please try again")
+                        self.catan_print(player.conn, "\nYou do not have enough resources")
+            except TypeError:
+                self.catan_print(player.conn,"\nAn error has occurred please try again")
         else:
-            catan_print(player.conn,"\nYou are not on any ports")
+            self.catan_print(player.conn,"\nYou are not on any ports")
 
     # Add function for trading with ports here.
 
@@ -848,7 +850,8 @@ Would you like to play online or locally?
                     self.catan_print(self.curr_player.conn, "You don't have enough of that resource to trade...")
 
             elif selection == 8:
-                self.catan_print(self.curr_player.conn, "Trade using a port\n")
+                self.trade_using_port(self.curr_player)
+                #self.catan_print(self.curr_player.conn, "Trade using a port\n")
 
             elif selection == 9:
                 self.catan_print(self.curr_player.conn, self.show_board())
@@ -950,7 +953,7 @@ Would you like to play online or locally?
                 while settled == False:
                     self.catan_print(self.curr_player.conn, "Where do you want to place your settlement?\n" + self.curr_player.p_name + "> ")
                     location = self.catan_read(self.curr_player.conn)
-                    result = items.build_settlement(self.curr_player, location, self.node_list, True)
+                    result = items.build_settlement(self.curr_player, location, self.node_list, self.port_list, True)
                     print(result)
                     if isinstance(result, int):
                         self.handle_errors(self.curr_player.conn, result)
