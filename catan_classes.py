@@ -7,7 +7,10 @@
 #========================================================
 # BUGS:
 # Need to implement trading with a port.
-# We also need longest road and largest army.
+# We also need longest road.
+
+# Dev cards should not be able to be played on the turn that you buy them
+# You should only be able to play one dev card per turn # SHOULD BE FIXED
 #========================================================
 
 #===============================================
@@ -41,7 +44,33 @@ class Game:
             self.player_order(conns)
             self.pts_to_win = self.declare_pts_to_win(conn)
             self.curr_player = self.player_list[0]
+            # give people cards at the beginning just for testing things.
+            for p in self.player_list:
+                p.p_hand.append("O")
+                p.p_hand.append("O")
+                p.p_hand.append("O")
+
+                p.p_hand.append("S")
+                p.p_hand.append("S")
+                p.p_hand.append("S")
+
+                p.p_hand.append("S")
+                p.p_hand.append("S")
+                p.p_hand.append("S")
+
+                p.p_hand.append("W")
+                p.p_hand.append("W")
+                p.p_hand.append("W")
+
+                p.p_hand.append("O")
+                p.p_hand.append("O")
+                p.p_hand.append("O")
+
+                p.p_hand.append("W")
+                p.p_hand.append("W")
+                p.p_hand.append("W")
             self.play(conns)
+
         else:
             # this is where the multiplayer code is going to go.
             # okay, don't make life harder than it already is, just iterate over the connections and go in turns.
@@ -86,7 +115,7 @@ class Game:
         conn.send(given_str.encode('ascii'))
 
     def catan_sendall(self, conns, given_str):
-        if conns[0] == conns[1]:
+        if len(conns) == 1:
             conns[0].send(given_str.encode('ascii'))
         else:
             for conn in conns:
@@ -862,16 +891,27 @@ Would you like to play online or locally?
 
 
             elif selection == 11:
-                if self.curr_player.p_dev_cards == []:
-                    self.catan_print(self.curr_player.conn, "You have no development cards!!\n")
-                    continue
-                self.catan_print(self.curr_player.conn, "Please select a development card: \n")
-                msg_to_client = self.curr_player.show_dev_cards()
-                self.catan_print(self.curr_player.conn, msg_to_client)
-                self.catan_print(self.curr_player.conn, "\n" + self.curr_player.p_name + "> ")
-                num = int(self.catan_read(self.curr_player.conn)) # this will break if they give something other than an int.
-                card_to_play = self.curr_player.p_dev_cards[num-1]
-                card_to_play.play_dev_card(self.curr_player.conn, self, conns) # Again, can I pass the whole game as an argument? Or no?
+                if self.curr_player.played_dev == True:
+                    self.catan_print(self.curr_player.conn, "You can only play one development card per turn!!\n")
+
+                else:
+                    if self.curr_player.p_dev_cards == []:
+                        self.catan_print(self.curr_player.conn, "You have no development cards!!\n")
+                        continue
+                    self.catan_print(self.curr_player.conn, "Please select a development card: \n")
+                    msg_to_client = self.curr_player.show_dev_cards()
+                    self.catan_print(self.curr_player.conn, msg_to_client)
+                    self.catan_print(self.curr_player.conn, "\n" + self.curr_player.p_name + "> ")
+                    num = int(self.catan_read(self.curr_player.conn)) # this will break if they give something other than an int.
+                    card_to_play = self.curr_player.p_dev_cards[num-1]
+                    if card_to_play.can_be_played:
+                        card_to_play.play_dev_card(self.curr_player.conn, self, conns)
+                        self.curr_player.played_dev = True # this will only allow them to play one dev card a turn, must be reset after turn.
+                    else:
+                        self.catan_print(self.curr_player.conn, "You can't play that card this turn... you just got it!")
+
+
+
 
             elif selection == 12:
                 self.catan_print(self.curr_player.conn, "Victory Points: " + self.curr_player.show_victory_pts() + "\n")
@@ -883,8 +923,17 @@ Would you like to play online or locally?
             if int(self.curr_player.show_victory_pts()) >= self.pts_to_win:
                 return True
 
+        self.reset_dev_cards_and_players()
         return False
 
+
+    def reset_dev_cards_and_players(self):
+        # update dev cards so that they can be played next turn.
+        # update player.played_dev so that they can play one next turn.
+        for p in self.player_list:
+            p.played_dev = False
+            for c in p.p_dev_cards:
+                c.can_be_played = True
 
     def roll_dice(self):
         x = random.randint(1, 6)
@@ -1083,6 +1132,7 @@ class Player:
         self.has_longest_road = False
         self.road_chains = [] #road ids: a list of lists that contain the chains a player has
         self.split_roads = [] #contains the nodes that will split a players chains
+        self.played_dev = False
 
     def present(self):
         print(self.p_name)
@@ -1222,7 +1272,7 @@ class Robber:
                 a_game.game_robber.on_tile = t
                 # iterate over the corners of that tile and identify what players are on there
                 can_steal_from = []
-                corners = items.get_corners(t, self.node_list)
+                corners = items.get_corners(t, a_game.node_list)
                 for c in corners: # c's are nodes
                     if c.owns_node == "":
                         pass
